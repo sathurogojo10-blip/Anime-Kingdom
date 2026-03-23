@@ -3,33 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANIME KINGDOM | Instant Stream</title>
+    <title>ANIME KINGDOM | Fast Stream</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
         :root { --accent: #e50914; --bg: #08080a; --card-bg: #14141d; --text: #ffffff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 80px; }
+        
         .top-nav { display: flex; justify-content: center; padding: 15px 0; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #222; backdrop-filter: blur(10px); }
         .logo { font-size: 26px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
-        .hero-banner { position: relative; width: 100%; min-height: 400px; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+
+        .hero-banner { position: relative; width: 100%; min-height: 380px; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
         .banner-img { position: absolute; width: 100%; height: 100%; object-fit: cover; opacity: 0.6; filter: brightness(0.6); }
         .hero-info { position: relative; z-index: 10; text-align: center; width: 90%; }
-        .search-container { display: flex; justify-content: center; margin: 25px auto; max-width: 600px; width: 95%; }
-        #searchInput { flex: 1; height: 50px; background: rgba(0,0,0,0.8); border: 2px solid var(--accent); border-right: none; padding: 0 25px; color: white; border-radius: 30px 0 0 30px; outline: none; font-size: 16px; }
+        
+        .search-container { display: flex; justify-content: center; margin: 25px auto; max-width: 550px; width: 95%; }
+        #searchInput { flex: 1; height: 50px; background: rgba(0,0,0,0.8); border: 2px solid var(--accent); border-right: none; padding: 0 20px; color: white; border-radius: 30px 0 0 30px; outline: none; }
         .search-btn { height: 50px; padding: 0 30px; background: var(--accent); color: white; border: none; border-radius: 0 30px 30px 0; font-weight: bold; cursor: pointer; }
+
         .row-section { padding: 30px 0 0 20px; }
         .row-header h2 { font-size: 22px; border-left: 5px solid var(--accent); padding-left: 15px; margin-bottom: 20px; }
-        .anime-row { display: flex; overflow-x: auto; gap: 20px; padding: 15px 5px; scrollbar-width: none; }
+        .anime-row { display: flex; overflow-x: auto; gap: 15px; padding: 15px 5px; scrollbar-width: none; }
         .anime-row::-webkit-scrollbar { display: none; }
-        .card { position: relative; min-width: 170px; max-width: 170px; background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.4s; cursor: pointer; border: 1px solid #222; }
-        .card:hover { transform: scale(1.1); border-color: var(--accent); box-shadow: 0 10px 30px rgba(229, 9, 20, 0.4); }
-        .card img { width: 100%; height: 240px; object-fit: cover; }
-        .card-title { font-size: 13px; padding: 12px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-weight: 600; }
+
+        .card { position: relative; min-width: 160px; max-width: 160px; background: var(--card-bg); border-radius: 10px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; }
+        .card:hover { transform: scale(1.08); border-color: var(--accent); box-shadow: 0 10px 25px rgba(229, 9, 20, 0.4); }
+        .card img { width: 100%; height: 230px; object-fit: cover; background: #222; }
+        .card-title { font-size: 13px; padding: 10px 5px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+
         .loader { text-align: center; padding: 20px; color: var(--accent); font-weight: bold; }
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; display: flex; padding: 15px 0; border-top: 1px solid #222; z-index: 1500; }
-        .nav-item { flex: 1; color: #888; font-size: 13px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .nav-item { flex: 1; color: #888; font-size: 12px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
         .nav-item.active { color: var(--accent); }
-        .nav-item i { font-size: 22px; margin-bottom: 5px; }
     </style>
 </head>
 <body>
@@ -39,7 +44,7 @@
     <div class="hero-banner">
         <img src="IMG_20260322_225449_963.jpg" class="banner-img" onerror="this.src='https://wallpaperaccess.com'">
         <div class="hero-info">
-            <h1 style="font-size: clamp(28px, 6vw, 42px); font-weight: 800;">UNLIMITED STREAMING</h1>
+            <h1 style="font-size: 32px;">UNLIMITED STREAMING</h1>
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="Search anime..." onkeypress="if(event.key === 'Enter') searchAnime()">
                 <button class="search-btn" onclick="searchAnime()">සොයන්න</button>
@@ -47,7 +52,7 @@
         </div>
     </div>
 
-    <div id="loader" class="loader">දත්ත ලබා ගනිමින්...</div>
+    <div id="loader" class="loader">Loading Fast...</div>
 
     <div class="row-section">
         <h2 id="gridTitle">Trending Now</h2>
@@ -99,18 +104,18 @@
             const grid = document.getElementById('animeGrid');
             grid.innerHTML = list.map(function(anime) {
                 var title = anime.title.english || anime.title.romaji;
-                // නමේ තියෙන ' අකුරු ඉවත් කිරීම (Javascript Error නොවන්නට)
                 var safeTitle = title.replace(/'/g, "").replace(/"/g, "");
+                var imgUrl = anime.coverImage.large; // මම මෙතන large image එක පාවිච්චි කළා ප්ලෝඩ් වීම වේගවත් කරන්න
+                
                 return '<div class="card" onclick="watchNow(\'' + safeTitle + '\')">' +
-                       '<img src="' + anime.coverImage.large + '" referrerpolicy="no-referrer">' +
+                       '<img src="' + imgUrl + '" referrerpolicy="no-referrer" loading="lazy" alt="' + title + '">' +
                        '<div class="card-title">' + title + '</div>' +
                        '</div>';
             }).join('');
         }
 
-        // --- වැදගත්ම කොටස: මෙහිදී Slash එක සහ නම හරියටම වෙන් කර ඇත ---
         function watchNow(title) {
-            // වැරදීමක් වෙන්න බැරි විදියට ලින්ක් එක සරලවම මෙහෙම හදමු
+            // URL එක හරියටම මෙහෙම හදමු (Slash එක අනිවාර්යයි)
             var baseUrl = "https://vidsrc.me";
             var finalUrl = baseUrl + encodeURIComponent(title);
             
