@@ -1,223 +1,269 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Kingdom | HiAnime Search</title>
-    <!-- Font Awesome for Search Icon -->
+    <title>AniLab Web | Anime Kingdom</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
         :root {
-            --primary: #ffdd95; 
-            --bg: #0f1113;
-            --card-bg: #1a1c1e;
+            --accent: #ff0032; /* AniLab Red */
+            --bg: #ffffff;
+            --surface: #f8f9fa;
+            --text-main: #1a1a1a;
+            --text-sub: #666666;
         }
 
         body {
             background-color: var(--bg);
-            color: white;
-            font-family: 'Segoe UI', sans-serif;
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
             margin: 0;
-            padding: 0;
+            padding-bottom: 80px; /* Bottom Nav space */
         }
 
-        /* Hero & Search Bar Section */
-        .hero {
-            height: 450px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.5), var(--bg)),
-                        url('https://images.alphacoders.com');
+        /* Top Header */
+        header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 100;
+        }
+
+        .logo { font-size: 1.5rem; font-weight: 800; color: var(--accent); }
+
+        /* Search Bar - AniLab Style */
+        .search-wrapper {
+            padding: 10px 20px;
+        }
+        .search-bar {
+            background: var(--surface);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border: 1px solid #eee;
+        }
+        .search-bar input {
+            border: none;
+            background: none;
+            outline: none;
+            width: 100%;
+            margin-left: 10px;
+            font-size: 1rem;
+        }
+
+        /* Big Banner */
+        .hero-banner {
+            width: 90%;
+            height: 200px;
+            margin: 10px auto;
+            border-radius: 20px;
+            background: linear-gradient(to right, rgba(0,0,0,0.7), transparent), 
+                        url('https://s4.anilist.co');
             background-size: cover;
             background-position: center;
             display: flex;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-        }
-
-        .hero h1 {
-            font-size: 3.5rem;
-            color: var(--primary);
-            margin-bottom: 20px;
-        }
-
-        .search-container {
-            position: relative;
-            width: 80%;
-            max-width: 600px;
-        }
-
-        .search-container input {
-            width: 100%;
-            padding: 15px 50px 15px 20px;
-            border-radius: 30px;
-            border: none;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            padding: 0 30px;
             color: white;
-            font-size: 1.1rem;
-            outline: none;
-            border: 2px solid transparent;
-            transition: 0.3s;
         }
 
-        .search-container input:focus {
-            border-color: var(--primary);
-            background: rgba(255, 255, 255, 0.2);
-        }
-
-        .search-container i {
-            position: absolute;
-            right: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--primary);
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-
-        /* Results Grid */
-        .container { padding: 40px 5%; }
-        
-        .anime-grid {
+        /* Anime Grid */
+        .section-title { padding: 20px; font-weight: 700; font-size: 1.2rem; }
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 15px;
+            padding: 0 20px;
         }
 
-        .anime-card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
+        .card {
             cursor: pointer;
-            transition: 0.3s;
             position: relative;
         }
+        .card img {
+            width: 100%;
+            aspect-ratio: 2/3;
+            object-fit: cover;
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .card-title {
+            font-size: 0.85rem;
+            margin-top: 8px;
+            font-weight: 500;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
 
-        .anime-card:hover { transform: translateY(-10px); }
-
-        .anime-card img { width: 100%; height: 280px; object-fit: cover; }
-
-        .anime-info { padding: 15px; text-align: center; }
-
-        /* Modal Settings */
-        .modal {
-            display: none;
+        /* Full Details Modal */
+        .detail-view {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: white;
             z-index: 1000;
+            display: none;
             overflow-y: auto;
         }
-
-        .modal-content {
-            background: var(--card-bg);
-            margin: 50px auto;
-            width: 90%;
-            max-width: 800px;
-            padding: 30px;
-            border-radius: 15px;
+        .back-btn {
+            position: absolute; top: 20px; left: 20px;
+            background: rgba(255,255,255,0.8);
+            border-radius: 50%; padding: 10px 14px; cursor: pointer;
         }
-
-        .ep-grid {
+        .detail-banner { width: 100%; height: 250px; object-fit: cover; }
+        .info-panel { padding: 20px; margin-top: -50px; background: white; border-radius: 30px 30px 0 0; position: relative; }
+        
+        .ep-list {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 10px;
             margin-top: 20px;
         }
-
-        .ep-link {
-            background: #333;
-            color: white;
-            text-decoration: none;
-            padding: 10px;
+        .ep-item {
+            background: var(--surface);
+            padding: 12px;
             text-align: center;
-            border-radius: 5px;
-            font-size: 0.9rem;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            border: 1px solid #eee;
         }
+        .ep-item:hover { background: var(--accent); color: white; border-color: var(--accent); }
 
-        .ep-link:hover { background: var(--primary); color: black; }
+        /* Bottom Nav */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; width: 100%;
+            background: white;
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+            border-top: 1px solid #eee;
+        }
+        .nav-item { color: #ccc; font-size: 1.2rem; cursor: pointer; }
+        .nav-item.active { color: var(--accent); }
+
     </style>
 </head>
 <body>
 
-    <section class="hero">
-        <h1>ANIME KINGDOM</h1>
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search Anime from HiAnime..." onkeypress="handleSearch(event)">
-            <i class="fas fa-search" onclick="searchAnime()"></i>
-        </div>
-    </section>
+    <header>
+        <div class="logo">Anime Kingdom</div>
+        <i class="fa-regular fa-bell"></i>
+    </header>
 
-    <div class="container">
-        <h2 id="resultTitle">Trending on HiAnime</h2>
-        <div class="anime-grid" id="animeDisplay">
-            <!-- සෙවුම් ප්‍රතිඵල මෙහි පෙන්වයි -->
+    <div class="search-wrapper">
+        <div class="search-bar">
+            <i class="fa-solid fa-magnifying-glass" style="color: #999;"></i>
+            <input type="text" id="searchInput" placeholder="Search anime..." onkeypress="if(event.key==='Enter') searchAnime()">
         </div>
     </div>
 
-    <!-- Details Modal -->
-    <div id="detailsModal" class="modal">
-        <div class="modal-content">
-            <span style="float:right; cursor:pointer;" onclick="closeModal()"><i class="fas fa-times"></i></span>
-            <h2 id="modalTitle" style="color: var(--primary);"></h2>
-            <div id="seasonSection">
-                <h4>Seasons & Episodes</h4>
-                <div class="ep-grid" id="episodeList"></div>
-            </div>
+    <div class="hero-banner">
+        <div>
+            <h2 style="margin:0">Solo Leveling</h2>
+            <p style="font-size: 0.8rem; opacity: 0.8;">Trending Now</p>
         </div>
     </div>
+
+    <div class="section-title">Popular Anime</div>
+    <div class="grid" id="animeGrid">
+        <!-- AniList Data here -->
+    </div>
+
+    <!-- Detail View Modal -->
+    <div id="detailView" class="detail-view">
+        <div class="back-btn" onclick="closeDetails()"><i class="fa-solid fa-chevron-left"></i></div>
+        <img id="dBanner" class="detail-banner" src="">
+        <div class="info-panel">
+            <h2 id="dTitle" style="margin-bottom: 5px;"></h2>
+            <p id="dDesc" style="color: var(--text-sub); font-size: 0.9rem; line-height: 1.4;"></p>
+            
+            <h3 style="margin-top: 30px;">Episodes</h3>
+            <div class="ep-list" id="epList"></div>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <i class="fa-solid fa-house nav-item active"></i>
+        <i class="fa-solid fa-compass nav-item"></i>
+        <i class="fa-solid fa-bookmark nav-item"></i>
+        <i class="fa-solid fa-user nav-item"></i>
+    </nav>
 
     <script>
-        // HiAnime සෙවුම් ශ්‍රිතය (මෙය උදාහරණයක් ලෙස දත්ත පෙන්වයි)
+        const grid = document.getElementById('animeGrid');
+
+        async function fetchPopular() {
+            const query = `query { Page(perPage: 12) { media(type: ANIME, sort: POPULAR_DESC) { 
+                id title { romaji } coverImage { extraLarge } bannerImage description } } }`;
+            
+            const response = await fetch('https://graphql.anilist.co', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query })
+            });
+            const data = await response.json();
+            renderAnime(data.data.Page.media);
+        }
+
         async function searchAnime() {
-            const query = document.getElementById('searchInput').value;
-            if (!query) return;
-
-            document.getElementById('resultTitle').innerText = `Results for: ${query}`;
-            const display = document.getElementById('animeDisplay');
-            display.innerHTML = "<p>Searching...</p>";
-
-            try {
-                // HiAnime API එකක් (Self-hosted) තිබේ නම් මෙතැනින් Fetch කළ හැක
-                // දැනට උදාහරණ දත්ත පෙන්වමු:
-                const results = [
-                    { title: query + " (Sub)", id: "slug-1", img: "https://via.placeholder.com" },
-                    { title: query + " (Dub)", id: "slug-2", img: "https://via.placeholder.com" }
-                ];
-
-                display.innerHTML = "";
-                results.forEach(anime => {
-                    display.innerHTML += `
-                        <div class="anime-card" onclick="showEpisodes('${anime.title}', '${anime.id}')">
-                            <img src="${anime.img}" alt="${anime.title}">
-                            <div class="anime-info"><p>${anime.title}</p></div>
-                        </div>
-                    `;
-                });
-            } catch (error) {
-                display.innerHTML = "<p>Error fetching data from HiAnime.</p>";
-            }
+            const search = document.getElementById('searchInput').value;
+            const query = `query($s: String) { Page(perPage: 12) { media(search: $s, type: ANIME) { 
+                id title { romaji } coverImage { extraLarge } bannerImage description } } }`;
+            
+            const response = await fetch('https://graphql.anilist.co', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ query, variables: { s: search } })
+            });
+            const data = await response.json();
+            renderAnime(data.data.Page.media);
         }
 
-        function handleSearch(e) {
-            if (e.key === 'Enter') searchAnime();
+        function renderAnime(list) {
+            grid.innerHTML = '';
+            list.forEach(anime => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `
+                    <img src="${anime.coverImage.extraLarge}">
+                    <div class="card-title">${anime.title.romaji}</div>
+                `;
+                card.onclick = () => openDetails(anime);
+                grid.appendChild(card);
+            });
         }
 
-        function showEpisodes(title, id) {
-            document.getElementById('modalTitle').innerText = title;
-            const epList = document.getElementById('episodeList');
-            epList.innerHTML = "";
+        function openDetails(anime) {
+            document.getElementById('dTitle').innerText = anime.title.romaji;
+            document.getElementById('dDesc').innerHTML = anime.description || "No description available.";
+            document.getElementById('dBanner').src = anime.bannerImage || anime.coverImage.extraLarge;
+            
+            const epList = document.getElementById('epList');
+            epList.innerHTML = '';
+            const slug = anime.title.romaji.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
 
-            // HiAnime සෘජු ලින්ක් සාදා ගැනීම
             for(let i=1; i<=12; i++) {
-                epList.innerHTML += `<a href="https://hianime.to{id}?ep=${i}" target="_blank" class="ep-link">EP ${i}</a>`;
+                epList.innerHTML += `<a href="https://hianime.to{slug}?ep=${i}" target="_blank" class="ep-item">${i}</a>`;
             }
-            document.getElementById('detailsModal').style.display = "block";
+
+            document.getElementById('detailView').style.display = 'block';
         }
 
-        function closeModal() {
-            document.getElementById('detailsModal').style.display = "none";
+        function closeDetails() {
+            document.getElementById('detailView').style.display = 'none';
         }
+
+        fetchPopular();
     </script>
 </body>
 </html>
