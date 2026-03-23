@@ -3,49 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANIME KINGDOM | Hi-Stream Pro</title>
+    <title>ANIME KINGDOM | 100% Working Stream</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
-        @import url('https://fonts.googleapis.com');
         :root { --accent: #ff0000; --bg: #050505; --card-bg: #111; --text: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 70px; overflow-x: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 70px; overflow-x: hidden; }
         
-        /* Premium Header & Search Bar */
-        header { position: fixed; top: 0; width: 100%; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 12px; z-index: 1000; background: linear-gradient(to bottom, rgba(0,0,0,0.95), transparent); }
-        .logo { font-size: 22px; font-weight: 900; letter-spacing: 2px; color: #fff; text-decoration: none; text-transform: uppercase; }
+        /* Fixed Header & Search */
+        header { position: fixed; top: 0; width: 100%; padding: 15px; background: rgba(0,0,0,0.9); z-index: 1000; border-bottom: 1px solid #222; text-align: center; }
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: white; display: block; margin-bottom: 12px; }
         .logo span { color: var(--accent); }
 
-        .search-area { display: flex; width: 95%; max-width: 450px; background: rgba(255,255,255,0.1); border-radius: 30px; padding: 4px; border: 1px solid rgba(255,255,255,0.2); backdrop-filter: blur(10px); }
-        #searchInput { flex: 1; background: transparent; border: none; padding: 0 15px; color: white; outline: none; font-size: 14px; }
-        .search-btn { background: var(--accent); border: none; color: white; width: 45px; height: 38px; border-radius: 25px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .search-area { display: flex; max-width: 450px; margin: 0 auto; background: rgba(255,255,255,0.1); border-radius: 30px; border: 1px solid var(--accent); height: 45px; overflow: hidden; }
+        #searchInput { flex: 1; background: transparent; border: none; padding: 0 20px; color: white; outline: none; }
+        .search-btn { background: var(--accent); border: none; color: white; width: 55px; cursor: pointer; font-size: 18px; }
 
-        /* Hero Section */
-        .hero { position: relative; width: 100%; height: 75vh; background: linear-gradient(to top, var(--bg), transparent), url('https://images.alphacoders.com'); background-size: cover; background-position: center; display: flex; align-items: center; padding: 0 30px; margin-bottom: 20px; }
-        .hero-content { max-width: 500px; margin-top: 80px; }
-        .hero-content h1 { font-size: 40px; font-weight: 900; line-height: 1.1; margin-bottom: 10px; }
-
-        /* Anime Rows */
-        .row-section { padding: 15px 0 0 20px; }
-        .row-title { font-size: 18px; font-weight: 700; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 10px; }
-        .anime-row { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; scrollbar-width: none; }
+        /* Row Layout */
+        .row-section { padding: 100px 0 0 20px; }
+        .row-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 10px; }
+        .horizontal-row { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; scrollbar-width: none; }
         .card { min-width: 140px; background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s; }
-        .card:hover { border-color: var(--accent); transform: scale(1.05); }
+        .card:hover { transform: scale(1.05); border-color: var(--accent); }
         .card img { width: 100%; height: 200px; object-fit: cover; }
-        .card-title { font-size: 11px; padding: 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-title { font-size: 11px; padding: 8px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* --- PRO PLAYER MODAL (HiAnime Bridge) --- */
+        /* --- SMART PLAYER --- */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; flex-direction: column; }
-        .player-box { flex: 1; position: relative; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; }
-        
-        .hud-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; background: rgba(0,0,0,0.5); }
+        .player-wrapper { flex: 1; position: relative; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; z-index: 10; }
+
+        /* Touch Layer to show HUD */
+        .touch-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; cursor: pointer; }
+
+        .hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; background: rgba(0,0,0,0.6); }
         .hud-hidden { opacity: 0; pointer-events: none; }
+
         .hud-top, .hud-bottom { padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); display: flex; justify-content: space-between; align-items: center; }
-        .hud-bottom { background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); flex-direction: column; gap: 12px; padding-bottom: 40px; }
+        .hud-bottom { background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); flex-direction: column; gap: 15px; padding-bottom: 40px; }
 
         .btn-ui { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
         .btn-sec { background: rgba(255,255,255,0.1); border: 1px solid #444; }
+        
+        .server-row { display: flex; gap: 10px; margin-top: 5px; }
+        .chip { background: #222; font-size: 10px; padding: 5px 12px; border-radius: 4px; border: 1px solid #444; color: #888; cursor: pointer; }
+        .chip.active { border-color: var(--accent); color: white; background: #331111; }
     </style>
 </head>
 <body>
@@ -53,43 +55,42 @@
     <header>
         <div class="logo">ANIME<span>KINGDOM</span></div>
         <div class="search-area">
-            <input type="text" id="searchInput" placeholder="ඇනිමේ නම සොයන්න..." onkeypress="if(event.key==='Enter') searchAnime()">
+            <input type="text" id="searchInput" placeholder="Search anime..." onkeypress="if(event.key==='Enter') searchAnime()">
             <button class="search-btn" onclick="searchAnime()"><i class="fas fa-search"></i></button>
         </div>
     </header>
 
-    <div class="hero">
-        <div class="hero-content">
-            <h1 id="bannerTitle">BLACK CLOVER</h1>
-            <p>Asta and Yuno were abandoned together at the same church and have been inseparable since.</p>
-            <button class="btn-ui" onclick="playAnime('black-clover-bc09', 'Black Clover')"><i class="fas fa-play"></i> WATCH NOW</button>
-        </div>
-    </div>
-
     <div id="homeContent">
-        <div class="row-section"><div class="row-title">TRENDING NOW</div><div id="trendingGrid" class="anime-row"></div></div>
-        <div class="row-section"><div class="row-title">POPULAR SERIES</div><div id="popularGrid" class="anime-row"></div></div>
+        <div class="row-section"><div class="row-title">TRENDING NOW</div><div id="trendingGrid" class="horizontal-row"></div></div>
+        <div class="row-section"><div class="row-title">POPULAR SERIES</div><div id="popularGrid" class="horizontal-row"></div></div>
     </div>
 
-    <!-- The Player Modal -->
+    <!-- Smart Player Modal -->
     <div id="playerModal" class="modal">
-        <div class="player-box" id="pArea" onclick="handleHUD()">
-            <!-- HiAnime / Mega Cloud Server Integration -->
+        <div class="player-wrapper" id="pArea">
             <iframe id="vFrame" allowfullscreen allow="autoplay; fullscreen"></iframe>
             
-            <div style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:50;"></div>
+            <!-- This layer detects touch to show buttons -->
+            <div class="touch-layer" onclick="toggleHUD()"></div>
 
-            <div id="hud" class="hud-overlay">
+            <div id="hud" class="hud">
                 <div class="hud-top">
-                    <button class="btn-ui btn-sec" onclick="closePlayer()">◀ BACK</button>
-                    <span id="pTitle" style="font-size: 14px; font-weight: bold;">Loading...</span>
-                    <button class="btn-ui btn-sec" onclick="toggleFS()"><i class="fas fa-expand"></i></button>
+                    <button class="btn-ui" onclick="closePlayer()">◀ BACK</button>
+                    <div style="text-align:center;">
+                        <span id="pTitle" style="font-size: 13px; font-weight: bold;">Loading...</span>
+                        <div class="server-row">
+                            <div class="chip active" onclick="setServ(1, this)">Server 1</div>
+                            <div class="chip" onclick="setServ(2, this)">Server 2</div>
+                            <div class="chip" onclick="setServ(3, this)">Server 3</div>
+                        </div>
+                    </div>
+                    <button class="btn-ui btn-sec" onclick="toggleFS()"><i class="fas fa-expand"></i> FULL</button>
                 </div>
-
+                
                 <div class="hud-bottom">
-                    <div style="display:flex; gap:15px;">
+                    <div style="display:flex; gap:12px;">
                         <button class="btn-ui btn-sec" onclick="changeEp(-1)">PREV</button>
-                        <button class="btn-ui" onclick="alert('HiAnime Fast Server Active')">HI-SERVER</button>
+                        <button class="btn-ui" onclick="alert('HiAnime Fast Server Mode')">HI-SERVER</button>
                         <button class="btn-ui btn-sec" onclick="changeEp(1)">NEXT</button>
                     </div>
                 </div>
@@ -99,7 +100,7 @@
 
     <script>
         const API = "https://graphql.anilist.co";
-        let curSlug = ""; let curTitle = ""; let curEp = 1; let hT;
+        let curID, curT, curE = 1, curS = 1, hT;
 
         window.onload = () => { 
             fetchData("sort: TRENDING_DESC", "trendingGrid"); 
@@ -107,35 +108,39 @@
         };
 
         async function fetchData(f, gridId) {
-            const query = `query{Page(perPage:15){media(${f},type:ANIME){title{english romaji}coverImage{large}}}}`;
+            const query = `query{Page(perPage:15){media(${f},type:ANIME){id title{english romaji}coverImage{large}}}}`;
             const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
             const d = await res.json();
             document.getElementById(gridId).innerHTML = d.data.Page.media.map(a => {
                 const t = a.title.english || a.title.romaji;
-                const slug = t.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-                return `<div class="card" onclick="playAnime('${slug}', '${t.replace(/'/g,"")}')">
+                return `<div class="card" onclick="playAnime(${a.id}, '${t.replace(/'/g,"")}')">
                     <img src="${a.coverImage.large}">
                     <div class="card-title">${t}</div>
                 </div>`;
             }).join('');
         }
 
-        function playAnime(slug, title) {
-            curSlug = slug; curTitle = title; curEp = 1;
+        function playAnime(id, title) {
+            curID = id; curT = title; curE = 1; curS = 1;
             document.getElementById('playerModal').style.display = 'flex';
-            updateV(); showHUD();
+            updateVideo(); showHUD();
         }
 
-        function updateV() {
-            document.getElementById('pTitle').innerText = `${curTitle} - Episode ${curEp}`;
+        function updateVideo() {
+            document.getElementById('pTitle').innerText = `${curT} - Episode ${curE}`;
             const frame = document.getElementById('vFrame');
             
-            // HiAnime ලින්ක් එකෙන් වීඩියෝ එක ගෙන්නන ප්‍රධාන Logic එක
-            // මෙතනදී HiAnime එකේ තියෙන MegaCloud හෝ ප්ලේයර් එකට පාලනය දෙනවා
-            frame.src = `https://vidsrc.to{curSlug}/ep-${curEp}`;
+            // ලංකාවේ ISPs වලට බ්ලොක් කළ නොහැකි ලෙස සර්වර්ස් මාරු කිරීම
+            // Vidsrc.cc සහ Vidsrc.me ගොඩක් වෙලාවට ලංකාවට වැඩ කරයි
+            let sUrl = "";
+            if(curS === 1) sUrl = `https://vidsrc.cc{curID}/${curE}/1`;
+            else if(curS === 2) sUrl = `https://vidsrc.me{curID}&episode=${curE}`;
+            else sUrl = `https://vidsrc.xyz{curID}&episode=${curE}`;
+
+            frame.src = sUrl;
         }
 
-        function handleHUD() {
+        function toggleHUD() {
             const h = document.getElementById('hud');
             if(h.classList.contains('hud-hidden')) showHUD(); else h.classList.add('hud-hidden');
         }
@@ -146,18 +151,26 @@
             clearTimeout(hT); hT = setTimeout(() => h.classList.add('hud-hidden'), 3500);
         }
 
-        function toggleFS() {
-            const p = document.getElementById('pArea');
-            if(!document.fullscreenElement) p.requestFullscreen().catch(e=>e); else document.exitFullscreen();
+        function setServ(s, el) {
+            curS = s; 
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            updateVideo(); showHUD();
         }
 
-        function changeEp(s) { curEp += s; if(curEp < 1) curEp = 1; updateV(); }
+        function toggleFS() {
+            const p = document.getElementById('pArea');
+            if(!document.fullscreenElement) p.requestFullscreen().then(() => screen.orientation.lock("landscape").catch(e=>e));
+            else document.exitFullscreen();
+        }
+
+        function changeEp(s) { curE += s; if(curE < 1) curE = 1; updateVideo(); showHUD(); }
         function closePlayer() { document.getElementById('playerModal').style.display='none'; document.getElementById('vFrame').src=""; }
         
         function searchAnime() {
             const v = document.getElementById('searchInput').value;
             if(!v) return;
-            document.getElementById('homeContent').innerHTML = `<div class="row-section"><div class="row-title">ප්‍රතිඵල: ${v}</div><div class="anime-row" id="sGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));"></div></div>`;
+            document.getElementById('homeContent').innerHTML = `<div class="row-section" style="padding-top:100px;"><div class="row-title">ප්‍රතිඵල: ${v}</div><div class="horizontal-row" id="sGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));"></div></div>`;
             fetchData(`search:"${v}"`, "sGrid");
         }
     </script>
