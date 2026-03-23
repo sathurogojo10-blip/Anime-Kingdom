@@ -3,129 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANIME KINGDOM | Advanced Stream</title>
+    <title>ANIME KINGDOM | Ultra Dynamic Stream</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
         :root { --accent: #ff0000; --bg: #050505; --card-bg: #121212; --text: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
 
+        /* Header */
         header { position: fixed; top: 0; width: 100%; padding: 20px; background: rgba(0,0,0,0.9); z-index: 1000; text-align: center; border-bottom: 1px solid #222; }
-        .search-area { display: flex; max-width: 500px; margin: 10px auto; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; height: 45px; overflow: hidden; }
+        .logo { font-size: 24px; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 15px; }
+        .logo span { color: var(--accent); }
+        .search-area { display: flex; max-width: 500px; margin: 0 auto; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; height: 45px; overflow: hidden; }
         #searchInput { flex: 1; background: transparent; border: none; padding: 0 15px; color: white; outline: none; }
 
-        .container { padding: 150px 20px 40px; }
+        /* Grid */
+        .container { padding: 160px 20px 40px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
         .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; }
         .card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .card img { width: 100%; height: 210px; object-fit: cover; }
         .card-title { font-size: 12px; padding: 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* --- EPISODE SELECTION MODAL --- */
-        .info-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 20px; }
-        .info-content { background: #111; width: 100%; max-width: 600px; border-radius: 15px; overflow-y: auto; max-height: 90vh; border: 1px solid #333; position: relative; }
-        .banner { width: 100%; height: 150px; object-fit: cover; }
+        /* Modal for Details & Episodes */
+        .info-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 15px; }
+        .info-content { background: #111; width: 100%; max-width: 550px; border-radius: 15px; overflow-y: auto; max-height: 85vh; border: 1px solid #333; position: relative; }
+        .banner { width: 100%; height: 160px; object-fit: cover; }
         .info-body { padding: 20px; }
-        .ep-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-top: 20px; }
-        .ep-btn { background: #222; border: 1px solid #444; color: white; padding: 10px; border-radius: 5px; cursor: pointer; font-size: 12px; text-align: center; }
+        .ep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin-top: 15px; }
+        .ep-btn { background: #222; border: 1px solid #444; color: white; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .ep-btn:hover { background: var(--accent); border-color: var(--accent); }
-        .close-info { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; }
+        .close-info { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 5; }
 
-        /* --- CLEAN PLAYER --- */
+        /* Clean Player Overlay */
         .player-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; }
         iframe { width: 100%; height: 100%; border: none; }
-        .floating-back { position: absolute; top: 20px; left: 20px; z-index: 10000; background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; }
+        .back-player { position: absolute; top: 20px; left: 20px; z-index: 10000; background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div style="font-size: 20px; font-weight: 900; margin-bottom: 10px;">ANIME<span>KINGDOM</span></div>
+        <div class="logo">ANIME<span>KINGDOM</span></div>
         <div class="search-area">
-            <input type="text" id="searchInput" placeholder="AniList එකෙන් ඕනෑම ඇනිමේ එකක් හොයන්න..." onkeypress="if(event.key==='Enter') searchAnime()">
-            <button onclick="searchAnime()" style="background:var(--accent); border:none; width:50px; color:white;"><i class="fas fa-search"></i></button>
+            <input type="text" id="searchInput" placeholder="AniList එකෙන් ඕනෑම ඇනිමේ එකක් සොයන්න..." onkeypress="if(event.key==='Enter') searchAnime()">
+            <button onclick="searchAnime()" style="background:var(--accent); border:none; width:55px; color:white; cursor:pointer;"><i class="fas fa-search"></i></button>
         </div>
     </header>
 
     <div class="container">
-        <h3 id="status" style="margin-bottom: 20px; border-left: 4px solid var(--accent); padding-left: 10px;">TRENDING NOW</h3>
+        <h3 id="listLabel" style="margin-bottom: 20px; border-left: 4px solid var(--accent); padding-left: 12px;">TRENDING LIBRARY</h3>
         <div id="animeGrid" class="grid"></div>
     </div>
 
-    <!-- Episode Selector Modal -->
+    <!-- Episode Selection Modal -->
     <div id="infoModal" class="info-modal">
         <div class="info-content">
             <button class="close-info" onclick="closeInfo()">✕</button>
             <img id="mBanner" class="banner">
             <div class="info-body">
-                <h2 id="mTitle">Anime Title</h2>
-                <p id="mDesc" style="font-size: 13px; color: #aaa; margin: 10px 0; max-height: 100px; overflow-y: auto;"></p>
-                <div style="font-size: 14px; font-weight: bold; margin-top: 20px;">EPISODES SELECT:</div>
+                <h2 id="mTitle" style="font-size: 20px;">Anime Title</h2>
+                <p id="mDesc" style="font-size: 13px; color: #aaa; margin: 12px 0; max-height: 100px; overflow-y: auto; line-height: 1.5;"></p>
+                <div style="font-size: 14px; font-weight: bold; margin-top: 15px; color: var(--accent);">EPISODE තෝරන්න (Select Episode):</div>
                 <div id="epGrid" class="ep-grid"></div>
             </div>
         </div>
     </div>
 
-    <!-- Hidden Video Player -->
+    <!-- Fullscreen Video Player -->
     <div id="playerModal" class="player-modal">
-        <button class="floating-back" onclick="closePlayer()">◀ BACK</button>
+        <button class="back-player" onclick="closePlayer()"><i class="fas fa-arrow-left"></i> BACK</button>
         <iframe id="vFrame" allow="autoplay; fullscreen" allowfullscreen></iframe>
     </div>
 
     <script>
         const API = "https://graphql.anilist.co";
-        let currentAnime = null;
 
-        window.onload = () => searchAnime();
+        // පිටුව පටන් ගන්නා විට Trending Anime පෙන්වීම
+        window.onload = () => searchAnime("");
 
         async function searchAnime() {
             const val = document.getElementById('searchInput').value;
-            // AniList එකෙන් episodes ගණන, banner පවා ලබා ගැනීම
-            const query = `query{Page(perPage:24){media(${val ? `search:"${val}"` : 'sort:TRENDING_DESC'},type:ANIME){id title{english romaji}coverImage{large}bannerImage description episodes}}}`;
+            // AniList එකෙන් Episode Count, Description, Banner, Image ඔක්කොම එකවර ලබා ගැනීම
+            const query = `query{Page(perPage:50){media(${val ? `search:"${val}"` : 'sort:TRENDING_DESC'},type:ANIME){id idMal title{english romaji}coverImage{large}bannerImage description episodes season seasonYear}}}`;
             
-            const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
-            const d = await res.json();
-            renderGrid(d.data.Page.media);
+            try {
+                const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
+                const d = await res.json();
+                if(val) document.getElementById('listLabel').innerText = "SEARCH RESULTS FOR: " + val.toUpperCase();
+                renderGrid(d.data.Page.media);
+            } catch (err) { console.log("AniList API error"); }
         }
 
         function renderGrid(data) {
             document.getElementById('animeGrid').innerHTML = data.map(a => {
                 const t = a.title.english || a.title.romaji;
-                return `<div class="card" onclick="openInfo(${JSON.stringify(a).replace(/"/g, '&quot;')})">
-                    <img src="${a.coverImage.large}">
+                // Object එක String එකක් ලෙස යැවීම (Modal එකේ පාවිච්චි කිරීමට)
+                return `<div class="card" onclick='openInfo(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
+                    <img src="${a.coverImage.large}" loading="lazy">
                     <div class="card-title">${t}</div>
                 </div>`;
             }).join('');
         }
 
         function openInfo(anime) {
-            currentAnime = anime;
             document.getElementById('infoModal').style.display = 'flex';
             document.getElementById('mTitle').innerText = anime.title.english || anime.title.romaji;
             document.getElementById('mBanner').src = anime.bannerImage || anime.coverImage.large;
-            document.getElementById('mDesc').innerHTML = anime.description || "No description available.";
+            document.getElementById('mDesc').innerHTML = anime.description || "විස්තරයක් ලබාගත නොහැක.";
             
-            // Episode Buttons හැදීම
-            const epCount = anime.episodes || 12; // AniList එකෙන් ලැබෙන episode ගණන
-            let epHtml = "";
+            // Episodes ගණන අනුව Buttons සැකසීම
+            const epCount = anime.episodes || 1; 
+            let epButtons = "";
             for(let i=1; i<=epCount; i++) {
-                epHtml += `<button class="ep-btn" onclick="playEpisode(${anime.id}, ${i})">Ep ${i}</button>`;
+                // HiAnime Embed එක සඳහා AniList ID හෝ MyAnimeList ID පාවිච්චි කළ හැක
+                epButtons += `<button class="ep-btn" onclick="playVideo(${anime.id}, ${i})">EP ${i}</button>`;
             }
-            document.getElementById('epGrid').innerHTML = epHtml;
+            document.getElementById('epGrid').innerHTML = epButtons;
         }
 
-        function playEpisode(id, ep) {
+        function playVideo(id, ep) {
             const playerModal = document.getElementById('playerModal');
             const frame = document.getElementById('vFrame');
             
-            // HiAnime source එකෙන් වීඩියෝව පමණක් ලබා ගැනීම
-            // මෙහිදී කිසිදු HiAnime detail එකක් පෙන්වන්නේ නැත
+            // HiAnime (Vidsrc) Clean Player
+            // මෙය ඔබේ සයිට් එක තුළම ප්ලේ වන අතර HiAnime details පෙන්නන්නේ නැත
             frame.src = `https://vidsrc.to{id}/${ep}`; 
             
             playerModal.style.display = 'block';
 
-            // Auto-Rotate සහ Fullscreen (Mobile සඳහා)
+            // Auto-Rotate සහ Fullscreen (Mobile)
             if (playerModal.requestFullscreen) playerModal.requestFullscreen();
+            else if (playerModal.webkitRequestFullscreen) playerModal.webkitRequestFullscreen();
+
             if (screen.orientation && screen.orientation.lock) {
                 screen.orientation.lock('landscape').catch(() => {});
             }
@@ -137,6 +147,7 @@
             document.getElementById('playerModal').style.display = 'none';
             document.getElementById('vFrame').src = "";
             if (document.exitFullscreen) document.exitFullscreen();
+            if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
         }
     </script>
 </body>
