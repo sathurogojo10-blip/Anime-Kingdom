@@ -3,98 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANIME KINGDOM | 100% Working Stream</title>
-    <!-- Font Awesome for Icons -->
+    <title>ANIME KINGDOM | Ultra Stream</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
-        :root { --accent: #ff0000; --bg: #050505; --card-bg: #111; --text: #fff; }
+        :root { --accent: #ff0000; --bg: #050505; --card-bg: #121212; --text: #ffffff; --sub-text: #b3b3b3; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 70px; overflow-x: hidden; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.5; }
         
-        /* Header */
-        header { position: fixed; top: 0; width: 100%; padding: 15px; background: rgba(0,0,0,0.9); z-index: 1000; border-bottom: 1px solid #222; text-align: center; }
-        .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: white; display: block; margin-bottom: 12px; }
+        /* Modern Header & Search */
+        header { position: fixed; top: 0; width: 100%; padding: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.95), transparent); z-index: 1000; text-align: center; }
+        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; color: white; margin-bottom: 15px; cursor: pointer; }
         .logo span { color: var(--accent); }
 
-        .search-area { display: flex; max-width: 450px; margin: 0 auto; background: rgba(255,255,255,0.1); border-radius: 30px; border: 1px solid var(--accent); height: 45px; overflow: hidden; }
-        #searchInput { flex: 1; background: transparent; border: none; padding: 0 20px; color: white; outline: none; }
-        .search-btn { background: var(--accent); border: none; color: white; width: 55px; cursor: pointer; font-size: 18px; }
+        .search-area { display: flex; max-width: 500px; margin: 0 auto; background: rgba(255,255,255,0.08); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); height: 48px; transition: 0.3s; }
+        .search-area:focus-within { border-color: var(--accent); background: rgba(255,255,255,0.12); box-shadow: 0 0 15px rgba(255,0,0,0.2); }
+        #searchInput { flex: 1; background: transparent; border: none; padding: 0 20px; color: white; outline: none; font-size: 15px; }
+        .search-btn { background: transparent; border: none; color: var(--sub-text); width: 55px; cursor: pointer; font-size: 18px; transition: 0.3s; }
+        .search-btn:hover { color: var(--accent); }
 
-        /* Content Rows */
-        .row-section { padding: 110px 0 0 20px; }
-        .row-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 10px; }
-        .horizontal-row { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; scrollbar-width: none; }
-        .card { min-width: 145px; background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s; }
-        .card:hover { transform: scale(1.05); border-color: var(--accent); }
-        .card img { width: 100%; height: 210px; object-fit: cover; }
-        .card-title { font-size: 12px; padding: 8px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ddd; }
-
-        /* Player Modal */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; flex-direction: column; }
-        .player-wrapper { flex: 1; position: relative; background: #000; }
-        iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; z-index: 10; }
-
-        .hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; background: rgba(0,0,0,0.6); pointer-events: none; opacity: 0; }
-        .hud.active { opacity: 1; pointer-events: all; }
-
-        .hud-top, .hud-bottom { padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); display: flex; justify-content: space-between; align-items: center; pointer-events: all; }
-        .hud-bottom { background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); flex-direction: column; gap: 15px; padding-bottom: 40px; }
-
-        .btn-ui { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .btn-sec { background: rgba(255,255,255,0.1); border: 1px solid #444; }
+        /* Row Layout */
+        .row-section { padding: 140px 20px 20px 20px; }
+        .popular-section { padding-top: 40px; }
+        .row-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; letter-spacing: 0.5px; color: #eee; display: flex; align-items: center; gap: 10px; }
+        .row-title::before { content: ''; width: 4px; height: 20px; background: var(--accent); border-radius: 2px; }
         
-        .server-row { display: flex; gap: 8px; margin-top: 8px; justify-content: center; }
-        .chip { background: #222; font-size: 11px; padding: 5px 12px; border-radius: 4px; border: 1px solid #444; color: #888; cursor: pointer; }
-        .chip.active { border-color: var(--accent); color: white; background: #331111; }
+        .horizontal-row { display: flex; overflow-x: auto; gap: 18px; padding-bottom: 25px; scrollbar-width: none; scroll-behavior: smooth; }
+        .horizontal-row::-webkit-scrollbar { display: none; }
+
+        /* Premium Card Style */
+        .card { min-width: 155px; background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .card:hover { transform: translateY(-10px) scale(1.03); box-shadow: 0 15px 30px rgba(255,0,0,0.15); }
+        .card img { width: 100%; height: 230px; object-fit: cover; transition: 0.5s; }
+        .card:hover img { filter: brightness(1.1); }
+        .card-title { font-size: 13px; font-weight: 600; padding: 12px 8px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--sub-text); }
+        .card:hover .card-title { color: white; }
+
+        /* Player Modal UI */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; flex-direction: column; }
+        iframe { width: 100%; height: 100%; border: none; }
+        .player-controls { padding: 20px; background: #111; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #222; }
+        .btn-back { background: var(--accent); color: white; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">ANIME<span>KINGDOM</span></div>
+        <div class="logo" onclick="location.reload()">ANIME<span>KINGDOM</span></div>
         <div class="search-area">
-            <input type="text" id="searchInput" placeholder="Search anime..." onkeypress="if(event.key==='Enter') searchAnime()">
+            <input type="text" id="searchInput" placeholder="සොයන්න (Search)..." onkeypress="if(event.key==='Enter') searchAnime()">
             <button class="search-btn" onclick="searchAnime()"><i class="fas fa-search"></i></button>
         </div>
     </header>
 
     <div id="homeContent">
-        <div class="row-section"><div class="row-title">TRENDING NOW</div><div id="trendingGrid" class="horizontal-row"></div></div>
-        <div class="row-section" style="padding-top: 20px;"><div class="row-title">POPULAR SERIES</div><div id="popularGrid" class="horizontal-row"></div></div>
+        <div class="row-section">
+            <div class="row-title">TRENDING NOW</div>
+            <div id="trendingGrid" class="horizontal-row"></div>
+        </div>
+        <div class="row-section popular-section">
+            <div class="row-title">POPULAR SERIES</div>
+            <div id="popularGrid" class="horizontal-row"></div>
+        </div>
     </div>
 
-    <!-- Smart Player Modal -->
+    <!-- Player Modal -->
     <div id="playerModal" class="modal">
-        <div class="player-wrapper">
-            <iframe id="vFrame" allowfullscreen allow="autoplay; fullscreen"></iframe>
-            <div id="hud" class="hud active" onclick="toggleHUD()">
-                <div class="hud-top">
-                    <button class="btn-ui" onclick="closePlayer()">◀ BACK</button>
-                    <div style="text-align:center;">
-                        <span id="pTitle" style="font-size: 14px; font-weight: bold;">Loading...</span>
-                        <div class="server-row">
-                            <div id="s1" class="chip active" onclick="setServ(1)">Server 1</div>
-                            <div id="s2" class="chip" onclick="setServ(2)">Server 2</div>
-                            <div id="s3" class="chip" onclick="setServ(3)">Server 3</div>
-                        </div>
-                    </div>
-                    <button class="btn-ui btn-sec" onclick="toggleFS()">FULL</button>
-                </div>
-                
-                <div class="hud-bottom">
-                    <div style="display:flex; gap:12px;">
-                        <button class="btn-ui btn-sec" onclick="changeEp(-1)">PREV</button>
-                        <button class="btn-ui" onclick="alert('Switching to High Speed Server...')">HI-SPEED</button>
-                        <button class="btn-ui btn-sec" onclick="changeEp(1)">NEXT</button>
-                    </div>
-                </div>
+        <div style="flex:1; position:relative;">
+            <iframe id="vFrame" allowfullscreen allow="autoplay"></iframe>
+        </div>
+        <div class="player-controls">
+            <button class="btn-back" onclick="closePlayer()">◀ ආපසු (BACK)</button>
+            <span id="pTitle" style="font-weight:bold; font-size:14px;"></span>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-back" style="background:#222;" onclick="changeEp(-1)">PREV</button>
+                <button class="btn-back" style="background:#222;" onclick="changeEp(1)">NEXT</button>
             </div>
         </div>
     </div>
 
     <script>
         const API = "https://graphql.anilist.co";
-        let curID, curT, curE = 1, curS = 1;
+        let curID, curT, curE = 1;
 
         window.onload = () => { 
             fetchData("sort: TRENDING_DESC", "trendingGrid"); 
@@ -105,10 +94,14 @@
             const query = `query{Page(perPage:15){media(${f},type:ANIME){id title{english romaji}coverImage{large}}}}`;
             const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
             const d = await res.json();
-            document.getElementById(gridId).innerHTML = d.data.Page.media.map(a => {
+            renderGrid(d.data.Page.media, gridId);
+        }
+
+        function renderGrid(data, gridId) {
+            document.getElementById(gridId).innerHTML = data.map(a => {
                 const t = a.title.english || a.title.romaji;
                 return `<div class="card" onclick="playAnime(${a.id}, '${t.replace(/'/g,"")}')">
-                    <img src="${a.coverImage.large}">
+                    <img src="${a.coverImage.large}" loading="lazy">
                     <div class="card-title">${t}</div>
                 </div>`;
             }).join('');
@@ -120,60 +113,31 @@
             const query = `query{Page(perPage:15){media(search:"${val}",type:ANIME){id title{english romaji}coverImage{large}}}}`;
             const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
             const d = await res.json();
-            document.getElementById('trendingGrid').parentElement.querySelector('.row-title').innerText = "SEARCH RESULTS";
-            document.getElementById('trendingGrid').innerHTML = d.data.Page.media.map(a => {
-                const t = a.title.english || a.title.romaji;
-                return `<div class="card" onclick="playAnime(${a.id}, '${t.replace(/'/g,"")}')">
-                    <img src="${a.coverImage.large}">
-                    <div class="card-title">${t}</div>
-                </div>`;
-            }).join('');
+            document.querySelector('.row-title').innerText = "සෙවුම් ප්‍රතිඵල (SEARCH RESULTS)";
+            renderGrid(d.data.Page.media, 'trendingGrid');
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function playAnime(id, title) {
-            curID = id; curT = title; curE = 1; curS = 1;
+            curID = id; curT = title; curE = 1;
             document.getElementById('playerModal').style.display = 'flex';
             updateVideo();
         }
 
         function updateVideo() {
-            document.getElementById('pTitle').innerText = `${curT} - Episode ${curE}`;
-            const frame = document.getElementById('vFrame');
-            let sUrl = "";
-
-            // හරිම URL Format එක පහතින්
-            if(curS === 1) sUrl = `https://vidsrc.cc{curID}/${curE}/1`;
-            else if(curS === 2) sUrl = `https://vidsrc.me{curID}&episode=${curE}`;
-            else sUrl = `https://vidsrc.xyz{curID}&episode=${curE}`;
-
-            frame.src = sUrl;
-        }
-
-        function setServ(s) {
-            curS = s;
-            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            document.getElementById('s' + s).classList.add('active');
-            updateVideo();
+            document.getElementById('pTitle').innerText = `${curT} - Ep ${curE}`;
+            // ලංකාවට හොඳින් වැඩ කරන server එකක් මෙතනට දමා ඇත
+            document.getElementById('vFrame').src = `https://vidsrc.cc{curID}/${curE}/1`;
         }
 
         function changeEp(n) {
-            curE += n;
-            if(curE < 1) curE = 1;
+            curE += n; if(curE < 1) curE = 1;
             updateVideo();
         }
 
         function closePlayer() {
             document.getElementById('playerModal').style.display = 'none';
             document.getElementById('vFrame').src = "";
-        }
-
-        function toggleHUD() {
-            document.getElementById('hud').classList.toggle('active');
-        }
-
-        function toggleFS() {
-            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
-            else document.exitFullscreen();
         }
     </script>
 </body>
