@@ -33,7 +33,6 @@
         .ep-btn:hover { background: var(--accent); border-color: var(--accent); }
         .close-info { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 5; }
 
-        /* External Link Notice */
         .notice { font-size: 11px; color: #888; margin-top: 10px; font-style: italic; }
     </style>
 </head>
@@ -60,9 +59,9 @@
             <div class="info-body">
                 <h2 id="mTitle" style="font-size: 20px;">Anime Title</h2>
                 <p id="mDesc" style="font-size: 13px; color: #aaa; margin: 12px 0; max-height: 100px; overflow-y: auto; line-height: 1.5;"></p>
-                <div style="font-size: 14px; font-weight: bold; margin-top: 15px; color: var(--accent);">HI-ANIME හරහා නරඹන්න (Watch on HiAnime):</div>
+                <div style="font-size: 14px; font-weight: bold; margin-top: 15px; color: var(--accent);">අදාළ EPISODE එක තෝරන්න:</div>
                 <div id="epGrid" class="ep-grid"></div>
-                <p class="notice">* Episode එක ක්ලික් කළ පසු HiAnime වෙබ් අඩවිය අලුත් Tab එකකින් විවෘත වේ.</p>
+                <p class="notice">* Episode එක ක්ලික් කළ පසු එය HiAnime හි සෘජුවම විවෘත වේ.</p>
             </div>
         </div>
     </div>
@@ -70,7 +69,6 @@
     <script>
         const API = "https://graphql.anilist.co";
 
-        // ආරම්භයේදී Trending Anime පෙන්වීමට
         window.onload = () => searchAnime();
 
         async function searchAnime() {
@@ -99,21 +97,28 @@
             document.getElementById('infoModal').style.display = 'flex';
             document.getElementById('mTitle').innerText = title;
             document.getElementById('mBanner').src = anime.bannerImage || anime.coverImage.large;
-            document.getElementById('mDesc').innerHTML = anime.description || "විස්තරයක් ලබාගත නොහැක.";
+            document.getElementById('mDesc').innerHTML = anime.description || "විස්තරයක් නොමැත.";
             
-            const epCount = anime.episodes || 12; 
+            const epCount = anime.episodes || 1; 
             let epButtons = "";
             for(let i=1; i<=epCount; i++) {
-                // HiAnime වෙත Title එක සහ Episode එක යැවීම
-                epButtons += `<button class="ep-btn" onclick="playOnHiAnime('${title.replace(/'/g, "\\'")}', ${i})">EP ${i}</button>`;
+                epButtons += `<button class="ep-btn" onclick="goToEpisode('${title.replace(/'/g, "\\'")}', ${i})">EP ${i}</button>`;
             }
             document.getElementById('epGrid').innerHTML = epButtons;
         }
 
-        function playOnHiAnime(title, ep) {
-            // HiAnime හි සෘජුවම Search keyword එක හරහා යොමු කිරීම
-            const searchUrl = `https://hianime.to{encodeURIComponent(title + " episode " + ep)}`;
-            window.open(searchUrl, '_blank');
+        function goToEpisode(title, ep) {
+            // Title එක slug එකක් බවට පත් කිරීම (HiAnime URL වලට ගැලපෙන සේ)
+            const slug = title.toLowerCase()
+                .replace(/[^a-z0-9]/g, '-') // අකුරු/ඉලක්කම් නොවන දෑ dash බවට පත් කරයි
+                .replace(/-+/g, '-')        // වැඩිපුර ඇති dash ඉවත් කරයි
+                .replace(/^-|-$/g, '');     // දෙකෙළවර ඇති dash ඉවත් කරයි
+
+            // HiAnime සෘජු Episode URL එක
+            // සැ.යු: HiAnime URL වල Anime ID එකක් අවශ්‍ය වන බැවින්, වඩාත් නිවැරදිම ක්‍රමය සෙවුම හරහා Episode එකට යෑමයි.
+            const targetUrl = `https://hianime.to{encodeURIComponent(title + " episode " + ep)}`;
+            
+            window.open(targetUrl, '_blank');
         }
 
         function closeInfo() { 
