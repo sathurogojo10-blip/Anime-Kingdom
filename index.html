@@ -68,6 +68,33 @@
       padding: 10px;
       font-size: 16px;
     }
+    .player-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    video {
+      width: 80%;
+      max-width: 900px;
+      border: 2px solid #9b59b6;
+      border-radius: 10px;
+      background: #000;
+    }
+    .episode-list {
+      margin-top: 20px;
+      display: flex;
+      gap: 15px;
+    }
+    .episode {
+      background: #1f1f1f;
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .episode:hover {
+      background: #9b59b6;
+    }
     footer {
       background: #1f1f1f;
       text-align: center;
@@ -91,7 +118,7 @@
   <section class="hero">
     <h2>Featured Anime: Demon Slayer</h2>
     <p>Follow Tanjiro on his journey to save his sister...</p>
-    <button>▶ Play Now</button>
+    <button onclick="playEpisode('episode1.mp4')">▶ Play Now</button>
   </section>
 
   <section class="section">
@@ -112,8 +139,30 @@
     </div>
   </section>
 
+  <div class="player-container">
+    <h2>Demon Slayer - Episode Player</h2>
+    <video id="animePlayer" controls>
+      <source src="episode1.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+
+    <div class="episode-list">
+      <div class="episode" onclick="playEpisode('episode1.mp4')">Episode 1</div>
+      <div class="episode" onclick="playEpisode('episode2.mp4')">Episode 2</div>
+      <div class="episode" onclick="playEpisode('episode3.mp4')">Episode 3</div>
+    </div>
+  </div>
+
   <footer>
     <p>© 2026 Anime Kingdom | All Rights Reserved</p>
   </footer>
+
+  <script>
+    function playEpisode(file) {
+      const player = document.getElementById('animePlayer');
+      player.src = file;
+      player.play();
+    }
+  </script>
 </body>
 </html>
