@@ -2,142 +2,121 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANIME KINGDOM | Ultra Stream</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ANIME KINGDOM | Hi-Stream</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
-        :root { --accent: #ff0000; --bg: #050505; --card-bg: #121212; --text: #ffffff; --sub-text: #b3b3b3; }
+        :root { --accent: #ff0000; --bg: #050505; --card-bg: #121212; --text: #ffffff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; line-height: 1.5; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
         
-        /* Modern Header & Search */
-        header { position: fixed; top: 0; width: 100%; padding: 20px; background: linear-gradient(to bottom, rgba(0,0,0,0.95), transparent); z-index: 1000; text-align: center; }
-        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; color: white; margin-bottom: 15px; cursor: pointer; }
+        /* Modern Header */
+        header { position: fixed; top: 0; width: 100%; padding: 20px; background: rgba(0,0,0,0.9); z-index: 1000; text-align: center; border-bottom: 1px solid #222; }
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; color: white; margin-bottom: 15px; }
         .logo span { color: var(--accent); }
 
-        .search-area { display: flex; max-width: 500px; margin: 0 auto; background: rgba(255,255,255,0.08); border-radius: 12px; border: 1px solid rgba(255,255,255,0.1); height: 48px; transition: 0.3s; }
-        .search-area:focus-within { border-color: var(--accent); background: rgba(255,255,255,0.12); box-shadow: 0 0 15px rgba(255,0,0,0.2); }
-        #searchInput { flex: 1; background: transparent; border: none; padding: 0 20px; color: white; outline: none; font-size: 15px; }
-        .search-btn { background: transparent; border: none; color: var(--sub-text); width: 55px; cursor: pointer; font-size: 18px; transition: 0.3s; }
-        .search-btn:hover { color: var(--accent); }
+        .search-area { display: flex; max-width: 90%; margin: 0 auto; background: #1a1a1a; border-radius: 10px; border: 1px solid #333; height: 45px; overflow: hidden; }
+        #searchInput { flex: 1; background: transparent; border: none; padding: 0 15px; color: white; outline: none; }
+        .search-btn { background: var(--accent); border: none; color: white; width: 50px; cursor: pointer; }
 
-        /* Row Layout */
-        .row-section { padding: 140px 20px 20px 20px; }
-        .popular-section { padding-top: 40px; }
-        .row-title { font-size: 18px; font-weight: 800; margin-bottom: 20px; letter-spacing: 0.5px; color: #eee; display: flex; align-items: center; gap: 10px; }
-        .row-title::before { content: ''; width: 4px; height: 20px; background: var(--accent); border-radius: 2px; }
+        /* Grid Layout */
+        .container { padding: 140px 15px 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; }
+        .card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .card img { width: 100%; height: 190px; object-fit: cover; }
+        .card-title { font-size: 12px; padding: 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* --- FULL SCREEN PLAYER MODAL --- */
+        .player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; }
+        .player-modal iframe { width: 100%; height: 100%; border: none; }
         
-        .horizontal-row { display: flex; overflow-x: auto; gap: 18px; padding-bottom: 25px; scrollbar-width: none; scroll-behavior: smooth; }
-        .horizontal-row::-webkit-scrollbar { display: none; }
-
-        /* Premium Card Style */
-        .card { min-width: 155px; background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .card:hover { transform: translateY(-10px) scale(1.03); box-shadow: 0 15px 30px rgba(255,0,0,0.15); }
-        .card img { width: 100%; height: 230px; object-fit: cover; transition: 0.5s; }
-        .card:hover img { filter: brightness(1.1); }
-        .card-title { font-size: 13px; font-weight: 600; padding: 12px 8px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--sub-text); }
-        .card:hover .card-title { color: white; }
-
-        /* Player Modal UI */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; flex-direction: column; }
-        iframe { width: 100%; height: 100%; border: none; }
-        .player-controls { padding: 20px; background: #111; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #222; }
-        .btn-back { background: var(--accent); color: white; border: none; padding: 10px 25px; border-radius: 8px; font-weight: bold; cursor: pointer; }
+        /* Floating Back Button */
+        .close-player { position: absolute; top: 20px; left: 20px; z-index: 10000; background: rgba(255,0,0,0.7); color: white; border: none; padding: 10px 15px; border-radius: 50px; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo" onclick="location.reload()">ANIME<span>KINGDOM</span></div>
+        <div class="logo">ANIME<span>KINGDOM</span></div>
         <div class="search-area">
-            <input type="text" id="searchInput" placeholder="සොයන්න (Search)..." onkeypress="if(event.key==='Enter') searchAnime()">
+            <input type="text" id="searchInput" placeholder="Anime නම සඳහන් කරන්න..." onkeypress="if(event.key==='Enter') searchAnime()">
             <button class="search-btn" onclick="searchAnime()"><i class="fas fa-search"></i></button>
         </div>
     </header>
 
-    <div id="homeContent">
-        <div class="row-section">
-            <div class="row-title">TRENDING NOW</div>
-            <div id="trendingGrid" class="horizontal-row"></div>
-        </div>
-        <div class="row-section popular-section">
-            <div class="row-title">POPULAR SERIES</div>
-            <div id="popularGrid" class="horizontal-row"></div>
-        </div>
+    <div class="container">
+        <h3 id="listTitle" style="margin-bottom: 20px; border-left: 4px solid red; padding-left: 10px;">TRENDING</h3>
+        <div id="animeGrid" class="grid"></div>
     </div>
 
-    <!-- Player Modal -->
-    <div id="playerModal" class="modal">
-        <div style="flex:1; position:relative;">
-            <iframe id="vFrame" allowfullscreen allow="autoplay"></iframe>
-        </div>
-        <div class="player-controls">
-            <button class="btn-back" onclick="closePlayer()">◀ ආපසු (BACK)</button>
-            <span id="pTitle" style="font-weight:bold; font-size:14px;"></span>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-back" style="background:#222;" onclick="changeEp(-1)">PREV</button>
-                <button class="btn-back" style="background:#222;" onclick="changeEp(1)">NEXT</button>
-            </div>
-        </div>
+    <!-- HiAnime Fullscreen Player -->
+    <div id="playerModal" class="player-modal">
+        <button class="close-player" onclick="closePlayer()">✕ BACK</button>
+        <!-- HiAnime Embed Link හරහා වීඩියෝව පමණක් පෙන්වීම -->
+        <iframe id="vFrame" allow="autoplay; fullscreen" allowfullscreen></iframe>
     </div>
 
     <script>
         const API = "https://graphql.anilist.co";
-        let curID, curT, curE = 1;
 
-        window.onload = () => { 
-            fetchData("sort: TRENDING_DESC", "trendingGrid"); 
-            fetchData("sort: POPULARITY_DESC", "popularGrid"); 
-        };
+        // මුලින්ම trending anime පෙන්වීම
+        window.onload = () => searchAnime(""); 
 
-        async function fetchData(f, gridId) {
-            const query = `query{Page(perPage:15){media(${f},type:ANIME){id title{english romaji}coverImage{large}}}}`;
+        async function searchAnime(term = null) {
+            const searchVal = term !== null ? term : document.getElementById('searchInput').value;
+            const query = `query{Page(perPage:20){media(${searchVal ? `search:"${searchVal}"` : 'sort:TRENDING_DESC'},type:ANIME){id title{english romaji}coverImage{large}}}}`;
+            
             const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
             const d = await res.json();
-            renderGrid(d.data.Page.media, gridId);
-        }
-
-        function renderGrid(data, gridId) {
-            document.getElementById(gridId).innerHTML = data.map(a => {
+            
+            if(searchVal) document.getElementById('listTitle').innerText = "RESULTS FOR: " + searchVal;
+            
+            document.getElementById('animeGrid').innerHTML = d.data.Page.media.map(a => {
                 const t = a.title.english || a.title.romaji;
-                return `<div class="card" onclick="playAnime(${a.id}, '${t.replace(/'/g,"")}')">
-                    <img src="${a.coverImage.large}" loading="lazy">
+                return `<div class="card" onclick="playHiAnime(${a.id})">
+                    <img src="${a.coverImage.large}">
                     <div class="card-title">${t}</div>
                 </div>`;
             }).join('');
         }
 
-        async function searchAnime() {
-            const val = document.getElementById('searchInput').value;
-            if(!val) return;
-            const query = `query{Page(perPage:15){media(search:"${val}",type:ANIME){id title{english romaji}coverImage{large}}}}`;
-            const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
-            const d = await res.json();
-            document.querySelector('.row-title').innerText = "සෙවුම් ප්‍රතිඵල (SEARCH RESULTS)";
-            renderGrid(d.data.Page.media, 'trendingGrid');
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
+        function playHiAnime(id) {
+            const modal = document.getElementById('playerModal');
+            const frame = document.getElementById('vFrame');
+            
+            // HiAnime (Aniwatch) Embed Player එක පාවිච්චි කිරීම
+            // මෙය භාවිතා කරන විට site එකේ අමතර දේවල් පෙන්වන්නේ නැත
+            frame.src = `https://vidsrc.to{id}`; 
+            
+            modal.style.display = 'block';
 
-        function playAnime(id, title) {
-            curID = id; curT = title; curE = 1;
-            document.getElementById('playerModal').style.display = 'flex';
-            updateVideo();
-        }
+            // Fullscreen Request සහ Screen Rotation (Mobile)
+            if (modal.requestFullscreen) {
+                modal.requestFullscreen();
+            } else if (modal.webkitRequestFullscreen) { 
+                modal.webkitRequestFullscreen();
+            }
 
-        function updateVideo() {
-            document.getElementById('pTitle').innerText = `${curT} - Ep ${curE}`;
-            // ලංකාවට හොඳින් වැඩ කරන server එකක් මෙතනට දමා ඇත
-            document.getElementById('vFrame').src = `https://vidsrc.cc{curID}/${curE}/1`;
-        }
-
-        function changeEp(n) {
-            curE += n; if(curE < 1) curE = 1;
-            updateVideo();
+            // Screen එක හරහට (Landscape) කිරීමට උත්සාහ කිරීම
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(err => console.log("Rotation locked by browser"));
+            }
         }
 
         function closePlayer() {
-            document.getElementById('playerModal').style.display = 'none';
+            const modal = document.getElementById('playerModal');
             document.getElementById('vFrame').src = "";
+            modal.style.display = 'none';
+            
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
+            
+            // Orientation එක ආපසු නිදහස් කිරීම
+            if (screen.orientation && screen.orientation.unlock) {
+                screen.orientation.unlock();
+            }
         }
     </script>
 </body>
