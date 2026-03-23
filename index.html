@@ -3,36 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANIME KINGDOM | Hi-Stream</title>
+    <title>ANIME KINGDOM | GitHub Stream</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
-        :root { --accent: #ff0000; --bg: #050505; --card-bg: #121212; --text: #ffffff; }
+        :root { --accent: #ff0000; --bg: #050505; --card-bg: #121212; --text: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
-        
-        /* Modern Header */
-        header { position: fixed; top: 0; width: 100%; padding: 20px; background: rgba(0,0,0,0.9); z-index: 1000; text-align: center; border-bottom: 1px solid #222; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        header { position: fixed; top: 0; width: 100%; padding: 20px; background: rgba(0,0,0,0.95); z-index: 1000; text-align: center; border-bottom: 1px solid #222; }
         .logo { font-size: 24px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; color: white; margin-bottom: 15px; }
         .logo span { color: var(--accent); }
-
-        .search-area { display: flex; max-width: 90%; margin: 0 auto; background: #1a1a1a; border-radius: 10px; border: 1px solid #333; height: 45px; overflow: hidden; }
+        .search-area { display: flex; max-width: 90%; margin: 0 auto; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; height: 48px; }
         #searchInput { flex: 1; background: transparent; border: none; padding: 0 15px; color: white; outline: none; }
-        .search-btn { background: var(--accent); border: none; color: white; width: 50px; cursor: pointer; }
 
-        /* Grid Layout */
-        .container { padding: 140px 15px 20px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; }
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; }
-        .card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .card img { width: 100%; height: 190px; object-fit: cover; }
-        .card-title { font-size: 12px; padding: 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .container { padding: 150px 15px 30px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; text-align: center; }
+        .card:hover { transform: scale(1.05); border-color: var(--accent); }
+        .card img { width: 100%; height: 210px; object-fit: cover; }
+        .card-title { font-size: 13px; padding: 10px; font-weight: 600; color: #ccc; }
 
-        /* --- FULL SCREEN PLAYER MODAL --- */
-        .player-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 9999; display: none; }
-        .player-modal iframe { width: 100%; height: 100%; border: none; }
-        
-        /* Floating Back Button */
-        .close-player { position: absolute; top: 20px; left: 20px; z-index: 10000; background: rgba(255,0,0,0.7); color: white; border: none; padding: 10px 15px; border-radius: 50px; cursor: pointer; font-weight: bold; }
+        /* Fullscreen Player */
+        .player-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; }
+        iframe { width: 100%; height: 100%; border: none; }
+        .back-btn { position: absolute; top: 20px; left: 20px; z-index: 10000; background: rgba(255,0,0,0.85); color: white; border: none; padding: 12px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
     </style>
 </head>
 <body>
@@ -40,84 +34,73 @@
     <header>
         <div class="logo">ANIME<span>KINGDOM</span></div>
         <div class="search-area">
-            <input type="text" id="searchInput" placeholder="Anime නම සඳහන් කරන්න..." onkeypress="if(event.key==='Enter') searchAnime()">
-            <button class="search-btn" onclick="searchAnime()"><i class="fas fa-search"></i></button>
+            <input type="text" id="searchInput" placeholder="සොයන්න (Search)..." oninput="filterAnime()">
         </div>
     </header>
 
     <div class="container">
-        <h3 id="listTitle" style="margin-bottom: 20px; border-left: 4px solid red; padding-left: 10px;">TRENDING</h3>
-        <div id="animeGrid" class="grid"></div>
+        <h3 style="margin-bottom: 20px; border-left: 4px solid var(--accent); padding-left: 10px;">MY ANIME LIST</h3>
+        <div id="animeGrid" class="grid">Loading library...</div>
     </div>
 
-    <!-- HiAnime Fullscreen Player -->
+    <!-- The Player -->
     <div id="playerModal" class="player-modal">
-        <button class="close-player" onclick="closePlayer()">✕ BACK</button>
-        <!-- HiAnime Embed Link හරහා වීඩියෝව පමණක් පෙන්වීම -->
+        <button class="back-btn" onclick="closePlayer()"><i class="fas fa-arrow-left"></i> BACK</button>
         <iframe id="vFrame" allow="autoplay; fullscreen" allowfullscreen></iframe>
     </div>
 
     <script>
-        const API = "https://graphql.anilist.co";
+        // 1. මෙතනට ඔයාගේ GitHub RAW Link එක දාන්න
+        const GITHUB_RAW_URL = "ඔයාගේ_RAW_LINK_එක_මෙතනට"; 
+        
+        let animeList = [];
 
-        // මුලින්ම trending anime පෙන්වීම
-        window.onload = () => searchAnime(""); 
-
-        async function searchAnime(term = null) {
-            const searchVal = term !== null ? term : document.getElementById('searchInput').value;
-            const query = `query{Page(perPage:20){media(${searchVal ? `search:"${searchVal}"` : 'sort:TRENDING_DESC'},type:ANIME){id title{english romaji}coverImage{large}}}}`;
-            
-            const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
-            const d = await res.json();
-            
-            if(searchVal) document.getElementById('listTitle').innerText = "RESULTS FOR: " + searchVal;
-            
-            document.getElementById('animeGrid').innerHTML = d.data.Page.media.map(a => {
-                const t = a.title.english || a.title.romaji;
-                return `<div class="card" onclick="playHiAnime(${a.id})">
-                    <img src="${a.coverImage.large}">
-                    <div class="card-title">${t}</div>
-                </div>`;
-            }).join('');
+        async function loadData() {
+            try {
+                const res = await fetch(GITHUB_RAW_URL);
+                animeList = await res.json();
+                renderGrid(animeList);
+            } catch (e) {
+                document.getElementById('animeGrid').innerText = "Data load error!";
+            }
         }
 
-        function playHiAnime(id) {
+        function renderGrid(data) {
+            document.getElementById('animeGrid').innerHTML = data.map(a => `
+                <div class="card" onclick="playAnime('${a.id}')">
+                    <img src="${a.poster}" alt="${a.title}">
+                    <div class="card-title">${a.title}</div>
+                </div>
+            `).join('');
+        }
+
+        function filterAnime() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            renderGrid(animeList.filter(a => a.title.toLowerCase().includes(term)));
+        }
+
+        function playAnime(id) {
             const modal = document.getElementById('playerModal');
             const frame = document.getElementById('vFrame');
             
-            // HiAnime (Aniwatch) Embed Player එක පාවිච්චි කිරීම
-            // මෙය භාවිතා කරන විට site එකේ අමතර දේවල් පෙන්වන්නේ නැත
+            // HiAnime source එකෙන් වීඩියෝව පමණක් ලබා ගැනීම
             frame.src = `https://vidsrc.to{id}`; 
-            
             modal.style.display = 'block';
 
-            // Fullscreen Request සහ Screen Rotation (Mobile)
-            if (modal.requestFullscreen) {
-                modal.requestFullscreen();
-            } else if (modal.webkitRequestFullscreen) { 
-                modal.webkitRequestFullscreen();
-            }
-
-            // Screen එක හරහට (Landscape) කිරීමට උත්සාහ කිරීම
+            // Fullscreen සහ Auto Rotate
+            if (modal.requestFullscreen) modal.requestFullscreen();
             if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(err => console.log("Rotation locked by browser"));
+                screen.orientation.lock('landscape').catch(() => {});
             }
         }
 
         function closePlayer() {
-            const modal = document.getElementById('playerModal');
+            document.getElementById('playerModal').style.display = 'none';
             document.getElementById('vFrame').src = "";
-            modal.style.display = 'none';
-            
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            }
-            
-            // Orientation එක ආපසු නිදහස් කිරීම
-            if (screen.orientation && screen.orientation.unlock) {
-                screen.orientation.unlock();
-            }
+            if (document.exitFullscreen) document.exitFullscreen();
         }
+
+        window.onload = loadData;
     </script>
 </body>
 </html>
