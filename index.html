@@ -3,43 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANIME KINGDOM | Full Pro</title>
+    <title>ANIME KINGDOM | Final Fix</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
         :root { --accent: #e50914; --bg: #050505; --card-bg: #111; --text: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 70px; overflow-x: hidden; }
         
-        /* Header & Search Bar (Fix) */
+        /* Nav & Search */
         .top-nav { padding: 15px; background: #000; border-bottom: 1px solid #222; text-align: center; }
-        .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: white; display: block; margin-bottom: 15px; }
-        
+        .logo { font-size: 24px; font-weight: 900; color: white; display: block; margin-bottom: 15px; text-transform: uppercase; }
         .search-area { display: flex; max-width: 500px; margin: 0 auto; border-radius: 25px; overflow: hidden; border: 2px solid var(--accent); background: #000; height: 45px; }
-        #searchInput { flex: 1; background: transparent; border: none; padding: 0 20px; color: white; outline: none; font-size: 14px; }
-        .search-btn { background: var(--accent); border: none; color: white; width: 60px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; }
+        #searchInput { flex: 1; background: transparent; border: none; padding: 0 20px; color: white; outline: none; }
+        .search-btn { background: var(--accent); border: none; color: white; width: 60px; cursor: pointer; font-size: 18px; }
 
-        /* Row Content */
+        /* Rows */
         .row-section { padding: 20px 0 0 15px; }
         .row-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 10px; }
-        .anime-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding-right: 15px; }
-        
-        /* horizontal scroll style (Optional - keep previous flex style if you want horizontal scroll) */
         .horizontal-row { display: flex; overflow-x: auto; gap: 12px; padding-bottom: 15px; scrollbar-width: none; }
+        .anime-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding-right: 15px; }
 
         .card { min-width: 140px; background: var(--card-bg); border-radius: 8px; cursor: pointer; border: 1px solid #222; transition: 0.3s; }
         .card img { width: 100%; height: 200px; object-fit: cover; border-radius: 8px 8px 0 0; }
         .card-title { font-size: 11px; padding: 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Player HUD & Auto Hide */
+        /* --- SMART PLAYER --- */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
-        .player-box { flex: 1; position: relative; overflow: hidden; }
-        iframe { width: 100%; height: 100%; border: none; }
+        .player-box { flex: 1; position: relative; overflow: hidden; background: #000; }
+        iframe { width: 100%; height: 100%; border: none; z-index: 5; }
 
-        .hud-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 10; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; background: rgba(0,0,0,0.4); }
-        .hud-hidden { opacity: 0; pointer-events: none; } 
+        .hud-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; display: flex; flex-direction: column; justify-content: space-between; background: rgba(0,0,0,0.5); transition: opacity 0.4s ease; opacity: 1; }
+        .hud-hidden { opacity: 0; pointer-events: none; }
 
         .hud-top, .hud-bottom { padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); display: flex; justify-content: space-between; align-items: center; }
-        .hud-bottom { background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); flex-direction: column; gap: 10px; }
+        .hud-bottom { background: linear-gradient(to top, rgba(0,0,0,0.8), transparent); flex-direction: column; gap: 15px; }
 
         .ui-btn { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
         .ui-sec { background: rgba(255,255,255,0.1); border: 1px solid #444; }
@@ -62,7 +59,10 @@
 
     <!-- Modal Player -->
     <div id="playerModal" class="modal">
-        <div class="player-box" id="pArea" onclick="showHUD()">
+        <div class="player-box" id="pArea">
+            <!-- Iframe එකට යටින් transparent layer එකක් දැම්මා touch එක අහුවෙන්න -->
+            <div style="position:absolute; top:0; left:0; width:100%; height:100%; z-index:10;" onclick="handleTouch()"></div>
+            
             <iframe id="vFrame" allowfullscreen allow="autoplay; fullscreen"></iframe>
             
             <div id="hud" class="hud-overlay">
@@ -74,7 +74,7 @@
                 <div class="hud-bottom">
                     <div style="display:flex; gap:10px; width:100%; justify-content:center;">
                         <button class="ui-btn ui-sec" onclick="changeEp(-1)">PREV</button>
-                        <button class="ui-btn" onclick="alert('Intro Skipped')">SKIP INTRO</button>
+                        <button class="ui-btn" onclick="skipIntro()">SKIP INTRO</button>
                         <button class="ui-btn ui-sec" onclick="changeEp(1)">NEXT</button>
                     </div>
                 </div>
@@ -84,7 +84,7 @@
 
     <script>
         const API = "https://graphql.anilist.co";
-        let curID = ""; let curTitle = ""; let curE = 1; let hTimeout;
+        let curTitle = ""; let curE = 1; let hTimeout;
 
         window.onload = () => { 
             fetchData("sort: TRENDING_DESC", "trendingGrid"); 
@@ -92,7 +92,7 @@
         };
 
         async function fetchData(filter, gridId) {
-            const query = `query{Page(perPage:12){media(${filter},type:ANIME){id title{english romaji}coverImage{large}}}}`;
+            const query = `query{Page(perPage:12){media(${filter},type:ANIME){title{english romaji}coverImage{large}}}}`;
             try {
                 const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
                 const d = await res.json();
@@ -104,7 +104,7 @@
             const grid = document.getElementById(gridId);
             grid.innerHTML = list.map(a => {
                 const t = a.title.english || a.title.romaji;
-                return `<div class="card" onclick="playAnime(${a.id}, '${t.replace(/'/g,"")}')">
+                return `<div class="card" onclick="playAnime('${t.replace(/'/g,"")}')">
                     <img src="${a.coverImage.large}">
                     <div class="card-title">${t}</div>
                 </div>`;
@@ -114,27 +114,41 @@
         function searchAnime() {
             const val = document.getElementById('searchInput').value;
             if(!val) return;
-            document.getElementById('homeContent').innerHTML = `<div class="row-section"><div class="row-title">සෙවුම් ප්‍රතිඵල: ${val}</div><div class="anime-row" id="sGrid"></div></div>`;
+            document.getElementById('homeContent').innerHTML = `<div class="row-section"><div class="row-title">ප්‍රතිඵල: ${val}</div><div class="anime-grid" id="sGrid"></div></div>`;
             fetchData(`search:"${val}"`, "sGrid");
         }
 
-        function playAnime(id, title) {
-            curID = id; curTitle = title; curE = 1;
+        function playAnime(title) {
+            curTitle = title; curE = 1;
             document.getElementById('playerModal').style.display = 'flex';
-            updateV(); showHUD();
+            updateV();
+            triggerHUD(); // මුලින්ම HUD එක පෙන්නනවා
         }
 
         function updateV() {
             document.getElementById('pTitle').innerText = `${curTitle} - Ep ${curE}`;
-            // ID based fast player link
-            document.getElementById('vFrame').src = `https://vidsrc.to{curID}/${curE}`;
+            const slug = curTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            // ලංකාවට ෂුවර්ම සර්වර් එක (Vidsrc.to)
+            document.getElementById('vFrame').src = `https://vidsrc.to{slug}/ep-${curE}`;
         }
 
-        function showHUD() {
-            const h = document.getElementById('hud');
-            h.classList.remove('hud-hidden');
+        // HUD එක පාලනය කරන logic එක
+        function handleTouch() {
+            const hud = document.getElementById('hud');
+            if (hud.classList.contains('hud-hidden')) {
+                triggerHUD();
+            } else {
+                hud.classList.add('hud-hidden');
+            }
+        }
+
+        function triggerHUD() {
+            const hud = document.getElementById('hud');
+            hud.classList.remove('hud-hidden');
             clearTimeout(hTimeout);
-            hTimeout = setTimeout(() => h.classList.add('hud-hidden'), 3500);
+            hTimeout = setTimeout(() => {
+                hud.classList.add('hud-hidden');
+            }, 3000); // තත්පර 3කින් හැංගෙනවා
         }
 
         function toggleFS() {
@@ -145,7 +159,8 @@
             } else { document.exitFullscreen(); }
         }
 
-        function changeEp(s) { curE += s; if(curE<1) curE=1; updateV(); }
+        function changeEp(s) { curE += s; if(curE<1) curE=1; updateV(); triggerHUD(); }
+        function skipIntro() { alert("Intro Skipped!"); triggerHUD(); }
         function closePlayer() { document.getElementById('playerModal').style.display='none'; document.getElementById('vFrame').src=""; }
     </script>
 </body>
