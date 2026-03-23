@@ -115,24 +115,37 @@
         }
 
         function playVideo(id, ep) {
-            const playerModal = document.getElementById('playerModal');
-            const frame = document.getElementById('vFrame');
-            
-            // HiAnime source එකෙන් වීඩියෝව පමණක් පෙන්වීම (Embed)
-            frame.src = `https://vidsrc.to{id}/${ep}`; 
-            
-            playerModal.style.display = 'block';
+    const playerModal = document.getElementById('playerModal');
+    const frame = document.getElementById('vFrame');
+    
+    // Server ලැයිස්තුව: එකක් වැඩ නැතිනම් අනික උත්සාහ කරන්න (Mirroring)
+    // 1. vidsrc.cc - සාමාන්‍යයෙන් ලංකාවට හොඳින් වැඩ කරයි
+    // 2. vidsrc.me - පැරණි වුවත් විශ්වාසදායකයි
+    // 3. vidsrc.to - HiAnime හි මුල් මූලාශ්‍රයයි
+    let servers = [
+        `https://vidsrc.cc{id}/${ep}/1`,
+        `https://vidsrc.me{id}&episode=${ep}`,
+        `https://vidsrc.to{id}/${ep}`
+    ];
 
-            // Fullscreen Request
-            if (playerModal.requestFullscreen) playerModal.requestFullscreen();
-            else if (playerModal.webkitRequestFullscreen) playerModal.webkitRequestFullscreen();
+    // මුලින්ම පළමු සර්වර් එක භාවිතා කරන්න
+    frame.src = servers[0]; 
+    playerModal.style.display = 'block';
 
-            // Auto-Rotate (Landscape) - Mobile සඳහා
-            if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(() => {});
-            }
-        }
+    // 1. Fullscreen Request (ප්ලේයර් එකට පමණක් ඉඩ ලබා දීම)
+    if (playerModal.requestFullscreen) {
+        playerModal.requestFullscreen();
+    } else if (playerModal.webkitRequestFullscreen) { 
+        playerModal.webkitRequestFullscreen();
+    }
 
+    // 2. Auto-Rotate (Mobile Landscape Mode)
+    // දුරකථනයෙන් බලන විට ස්වයංක්‍රීයව තිරය හරහට හරවයි
+    if (screen.orientation && screen.orientation.lock) {
+        screen.orientation.lock('landscape').catch(err => console.log("Orientation lock not supported"));
+    }
+} 
+        
         function closeInfo() { document.getElementById('infoModal').style.display = 'none'; }
 
         function closePlayer() {
