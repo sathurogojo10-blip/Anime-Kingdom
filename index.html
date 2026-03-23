@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANIME KINGDOM | Pro Stream</title>
+    <title>ANIME KINGDOM | HiAnime Direct</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
         :root { --accent: #ff0000; --bg: #050505; --card-bg: #121212; --text: #fff; }
@@ -28,15 +28,13 @@
         .info-content { background: #111; width: 100%; max-width: 550px; border-radius: 15px; overflow-y: auto; max-height: 85vh; border: 1px solid #333; position: relative; }
         .banner { width: 100%; height: 160px; object-fit: cover; }
         .info-body { padding: 20px; }
-        .ep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(60px, 1fr)); gap: 8px; margin-top: 15px; }
-        .ep-btn { background: #222; border: 1px solid #444; color: white; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .ep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 8px; margin-top: 15px; }
+        .ep-btn { background: #222; border: 1px solid #444; color: white; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s; }
         .ep-btn:hover { background: var(--accent); border-color: var(--accent); }
         .close-info { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 5; }
 
-        /* Full Screen Player */
-        .player-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; }
-        iframe { width: 100%; height: 100%; border: none; background: #000; }
-        .back-player { position: absolute; top: 20px; left: 20px; z-index: 10000; background: var(--accent); color: white; border: none; padding: 12px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; }
+        /* External Link Notice */
+        .notice { font-size: 11px; color: #888; margin-top: 10px; font-style: italic; }
     </style>
 </head>
 <body>
@@ -44,7 +42,7 @@
     <header>
         <div class="logo">ANIME<span>KINGDOM</span></div>
         <div class="search-area">
-            <input type="text" id="searchInput" placeholder="AniList එකෙන් ඕනෑම ඇනිමේ එකක් සොයන්න..." onkeypress="if(event.key==='Enter') searchAnime()">
+            <input type="text" id="searchInput" placeholder="AniList එකෙන් Anime සොයන්න..." onkeypress="if(event.key==='Enter') searchAnime()">
             <button onclick="searchAnime()" style="background:var(--accent); border:none; width:55px; color:white; cursor:pointer;"><i class="fas fa-search"></i></button>
         </div>
     </header>
@@ -62,22 +60,18 @@
             <div class="info-body">
                 <h2 id="mTitle" style="font-size: 20px;">Anime Title</h2>
                 <p id="mDesc" style="font-size: 13px; color: #aaa; margin: 12px 0; max-height: 100px; overflow-y: auto; line-height: 1.5;"></p>
-                <div style="font-size: 14px; font-weight: bold; margin-top: 15px; color: var(--accent);">EPISODE තෝරන්න (Select Episode):</div>
+                <div style="font-size: 14px; font-weight: bold; margin-top: 15px; color: var(--accent);">HI-ANIME හරහා නරඹන්න (Watch on HiAnime):</div>
                 <div id="epGrid" class="ep-grid"></div>
+                <p class="notice">* Episode එක ක්ලික් කළ පසු HiAnime වෙබ් අඩවිය අලුත් Tab එකකින් විවෘත වේ.</p>
             </div>
         </div>
-    </div>
-
-    <!-- Hidden Video Player (HiAnime Pure View) -->
-    <div id="playerModal" class="player-modal">
-        <button class="back-player" onclick="closePlayer()"><i class="fas fa-arrow-left"></i> BACK</button>
-        <iframe id="vFrame" allow="autoplay; fullscreen" allowfullscreen></iframe>
     </div>
 
     <script>
         const API = "https://graphql.anilist.co";
 
-        window.onload = () => searchAnime("");
+        // ආරම්භයේදී Trending Anime පෙන්වීමට
+        window.onload = () => searchAnime();
 
         async function searchAnime() {
             const val = document.getElementById('searchInput').value;
@@ -92,7 +86,7 @@
 
         function renderGrid(data) {
             document.getElementById('animeGrid').innerHTML = data.map(a => {
-                const t = a.title.english || a.title.romaji;
+                const t = (a.title.english || a.title.romaji).replace(/'/g, "");
                 return `<div class="card" onclick='openInfo(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
                     <img src="${a.coverImage.large}" loading="lazy">
                     <div class="card-title">${t}</div>
@@ -101,58 +95,29 @@
         }
 
         function openInfo(anime) {
+            const title = anime.title.english || anime.title.romaji;
             document.getElementById('infoModal').style.display = 'flex';
-            document.getElementById('mTitle').innerText = anime.title.english || anime.title.romaji;
+            document.getElementById('mTitle').innerText = title;
             document.getElementById('mBanner').src = anime.bannerImage || anime.coverImage.large;
-            document.getElementById('mDesc').innerHTML = anime.description || "No description available.";
+            document.getElementById('mDesc').innerHTML = anime.description || "විස්තරයක් ලබාගත නොහැක.";
             
             const epCount = anime.episodes || 12; 
             let epButtons = "";
             for(let i=1; i<=epCount; i++) {
-                epButtons += `<button class="ep-btn" onclick="playVideo(${anime.id}, ${i})">EP ${i}</button>`;
+                // HiAnime වෙත Title එක සහ Episode එක යැවීම
+                epButtons += `<button class="ep-btn" onclick="playOnHiAnime('${title.replace(/'/g, "\\'")}', ${i})">EP ${i}</button>`;
             }
             document.getElementById('epGrid').innerHTML = epButtons;
         }
 
-        function playVideo(id, ep) {
-    const playerModal = document.getElementById('playerModal');
-    const frame = document.getElementById('vFrame');
-    
-    // Server ලැයිස්තුව: එකක් වැඩ නැතිනම් අනික උත්සාහ කරන්න (Mirroring)
-    // 1. vidsrc.cc - සාමාන්‍යයෙන් ලංකාවට හොඳින් වැඩ කරයි
-    // 2. vidsrc.me - පැරණි වුවත් විශ්වාසදායකයි
-    // 3. vidsrc.to - HiAnime හි මුල් මූලාශ්‍රයයි
-    let servers = [
-        `https://vidsrc.cc{id}/${ep}/1`,
-        `https://vidsrc.me{id}&episode=${ep}`,
-        `https://vidsrc.to{id}/${ep}`
-    ];
+        function playOnHiAnime(title, ep) {
+            // HiAnime හි සෘජුවම Search keyword එක හරහා යොමු කිරීම
+            const searchUrl = `https://hianime.to{encodeURIComponent(title + " episode " + ep)}`;
+            window.open(searchUrl, '_blank');
+        }
 
-    // මුලින්ම පළමු සර්වර් එක භාවිතා කරන්න
-    frame.src = servers[0]; 
-    playerModal.style.display = 'block';
-
-    // 1. Fullscreen Request (ප්ලේයර් එකට පමණක් ඉඩ ලබා දීම)
-    if (playerModal.requestFullscreen) {
-        playerModal.requestFullscreen();
-    } else if (playerModal.webkitRequestFullscreen) { 
-        playerModal.webkitRequestFullscreen();
-    }
-
-    // 2. Auto-Rotate (Mobile Landscape Mode)
-    // දුරකථනයෙන් බලන විට ස්වයංක්‍රීයව තිරය හරහට හරවයි
-    if (screen.orientation && screen.orientation.lock) {
-        screen.orientation.lock('landscape').catch(err => console.log("Orientation lock not supported"));
-    }
-} 
-        
-        function closeInfo() { document.getElementById('infoModal').style.display = 'none'; }
-
-        function closePlayer() {
-            document.getElementById('playerModal').style.display = 'none';
-            document.getElementById('vFrame').src = "";
-            if (document.exitFullscreen) document.exitFullscreen();
-            if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+        function closeInfo() { 
+            document.getElementById('infoModal').style.display = 'none'; 
         }
     </script>
 </body>
