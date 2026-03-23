@@ -154,9 +154,15 @@
         }
 
         function updateVideo() {
-            document.getElementById('playingTitle').innerText = `${currentAnime} - E${currentEpNum}`;
-            document.getElementById('mainVFrame').src = `https://vidsrc.me{encodeURIComponent(currentAnime)}&episode=${currentEpNum}`;
-        }
+    const frame = document.getElementById('mainVFrame');
+    document.getElementById('playingTitle').innerText = `${currentAnime} - Episode ${currentEpNum}`;
+    
+    // මේ ලින්ක් එක පාවිච්චි කරන්න, මේක ගොඩක් වෙලාවට වැඩ කරනවා
+    // vidsrc.to හෝ vidsrc.xyz කියන සර්වර් දෙකම මාරුවෙන් මාරුවට ටෙස්ට් කරන්න පුළුවන්
+    const vUrl = `https://vidsrc.to{encodeURIComponent(currentAnime.toLowerCase().replace(/\s+/g, '-'))}/ep-${currentEpNum}`;
+    
+    frame.src = vUrl;
+}
 
         function generateEpList() {
             const list = document.getElementById('epList');
