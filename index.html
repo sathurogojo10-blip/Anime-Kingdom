@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ANIME KINGDOM | 100% Working Stream</title>
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
         :root { --accent: #ff0000; --bg: #050505; --card-bg: #111; --text: #fff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); padding-bottom: 70px; overflow-x: hidden; }
         
-        /* Fixed Header & Search */
+        /* Header */
         header { position: fixed; top: 0; width: 100%; padding: 15px; background: rgba(0,0,0,0.9); z-index: 1000; border-bottom: 1px solid #222; text-align: center; }
         .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: white; display: block; margin-bottom: 12px; }
         .logo span { color: var(--accent); }
@@ -19,34 +20,31 @@
         #searchInput { flex: 1; background: transparent; border: none; padding: 0 20px; color: white; outline: none; }
         .search-btn { background: var(--accent); border: none; color: white; width: 55px; cursor: pointer; font-size: 18px; }
 
-        /* Row Layout */
-        .row-section { padding: 100px 0 0 20px; }
+        /* Content Rows */
+        .row-section { padding: 110px 0 0 20px; }
         .row-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 10px; }
         .horizontal-row { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 20px; scrollbar-width: none; }
-        .card { min-width: 140px; background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s; }
+        .card { min-width: 145px; background: var(--card-bg); border-radius: 10px; overflow: hidden; border: 1px solid #222; cursor: pointer; transition: 0.3s; }
         .card:hover { transform: scale(1.05); border-color: var(--accent); }
-        .card img { width: 100%; height: 200px; object-fit: cover; }
-        .card-title { font-size: 11px; padding: 8px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card img { width: 100%; height: 210px; object-fit: cover; }
+        .card-title { font-size: 12px; padding: 8px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: #ddd; }
 
-        /* --- SMART PLAYER --- */
+        /* Player Modal */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 5000; display: none; flex-direction: column; }
         .player-wrapper { flex: 1; position: relative; background: #000; }
         iframe { width: 100%; height: 100%; border: none; position: absolute; top: 0; left: 0; z-index: 10; }
 
-        /* Touch Layer to show HUD */
-        .touch-layer { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 100; cursor: pointer; }
+        .hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; background: rgba(0,0,0,0.6); pointer-events: none; opacity: 0; }
+        .hud.active { opacity: 1; pointer-events: all; }
 
-        .hud { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 200; display: flex; flex-direction: column; justify-content: space-between; transition: 0.4s; background: rgba(0,0,0,0.6); }
-        .hud-hidden { opacity: 0; pointer-events: none; }
-
-        .hud-top, .hud-bottom { padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); display: flex; justify-content: space-between; align-items: center; }
+        .hud-top, .hud-bottom { padding: 15px; background: linear-gradient(to bottom, rgba(0,0,0,0.9), transparent); display: flex; justify-content: space-between; align-items: center; pointer-events: all; }
         .hud-bottom { background: linear-gradient(to top, rgba(0,0,0,0.9), transparent); flex-direction: column; gap: 15px; padding-bottom: 40px; }
 
         .btn-ui { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; }
         .btn-sec { background: rgba(255,255,255,0.1); border: 1px solid #444; }
         
-        .server-row { display: flex; gap: 10px; margin-top: 5px; }
-        .chip { background: #222; font-size: 10px; padding: 5px 12px; border-radius: 4px; border: 1px solid #444; color: #888; cursor: pointer; }
+        .server-row { display: flex; gap: 8px; margin-top: 8px; justify-content: center; }
+        .chip { background: #222; font-size: 11px; padding: 5px 12px; border-radius: 4px; border: 1px solid #444; color: #888; cursor: pointer; }
         .chip.active { border-color: var(--accent); color: white; background: #331111; }
     </style>
 </head>
@@ -62,35 +60,31 @@
 
     <div id="homeContent">
         <div class="row-section"><div class="row-title">TRENDING NOW</div><div id="trendingGrid" class="horizontal-row"></div></div>
-        <div class="row-section"><div class="row-title">POPULAR SERIES</div><div id="popularGrid" class="horizontal-row"></div></div>
+        <div class="row-section" style="padding-top: 20px;"><div class="row-title">POPULAR SERIES</div><div id="popularGrid" class="horizontal-row"></div></div>
     </div>
 
     <!-- Smart Player Modal -->
     <div id="playerModal" class="modal">
-        <div class="player-wrapper" id="pArea">
+        <div class="player-wrapper">
             <iframe id="vFrame" allowfullscreen allow="autoplay; fullscreen"></iframe>
-            
-            <!-- This layer detects touch to show buttons -->
-            <div class="touch-layer" onclick="toggleHUD()"></div>
-
-            <div id="hud" class="hud">
+            <div id="hud" class="hud active" onclick="toggleHUD()">
                 <div class="hud-top">
                     <button class="btn-ui" onclick="closePlayer()">◀ BACK</button>
                     <div style="text-align:center;">
-                        <span id="pTitle" style="font-size: 13px; font-weight: bold;">Loading...</span>
+                        <span id="pTitle" style="font-size: 14px; font-weight: bold;">Loading...</span>
                         <div class="server-row">
-                            <div class="chip active" onclick="setServ(1, this)">Server 1</div>
-                            <div class="chip" onclick="setServ(2, this)">Server 2</div>
-                            <div class="chip" onclick="setServ(3, this)">Server 3</div>
+                            <div id="s1" class="chip active" onclick="setServ(1)">Server 1</div>
+                            <div id="s2" class="chip" onclick="setServ(2)">Server 2</div>
+                            <div id="s3" class="chip" onclick="setServ(3)">Server 3</div>
                         </div>
                     </div>
-                    <button class="btn-ui btn-sec" onclick="toggleFS()"><i class="fas fa-expand"></i> FULL</button>
+                    <button class="btn-ui btn-sec" onclick="toggleFS()">FULL</button>
                 </div>
                 
                 <div class="hud-bottom">
                     <div style="display:flex; gap:12px;">
                         <button class="btn-ui btn-sec" onclick="changeEp(-1)">PREV</button>
-                        <button class="btn-ui" onclick="alert('HiAnime Fast Server Mode')">HI-SERVER</button>
+                        <button class="btn-ui" onclick="alert('Switching to High Speed Server...')">HI-SPEED</button>
                         <button class="btn-ui btn-sec" onclick="changeEp(1)">NEXT</button>
                     </div>
                 </div>
@@ -100,7 +94,7 @@
 
     <script>
         const API = "https://graphql.anilist.co";
-        let curID, curT, curE = 1, curS = 1, hT;
+        let curID, curT, curE = 1, curS = 1;
 
         window.onload = () => { 
             fetchData("sort: TRENDING_DESC", "trendingGrid"); 
@@ -120,19 +114,34 @@
             }).join('');
         }
 
+        async function searchAnime() {
+            const val = document.getElementById('searchInput').value;
+            if(!val) return;
+            const query = `query{Page(perPage:15){media(search:"${val}",type:ANIME){id title{english romaji}coverImage{large}}}}`;
+            const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
+            const d = await res.json();
+            document.getElementById('trendingGrid').parentElement.querySelector('.row-title').innerText = "SEARCH RESULTS";
+            document.getElementById('trendingGrid').innerHTML = d.data.Page.media.map(a => {
+                const t = a.title.english || a.title.romaji;
+                return `<div class="card" onclick="playAnime(${a.id}, '${t.replace(/'/g,"")}')">
+                    <img src="${a.coverImage.large}">
+                    <div class="card-title">${t}</div>
+                </div>`;
+            }).join('');
+        }
+
         function playAnime(id, title) {
             curID = id; curT = title; curE = 1; curS = 1;
             document.getElementById('playerModal').style.display = 'flex';
-            updateVideo(); showHUD();
+            updateVideo();
         }
 
         function updateVideo() {
             document.getElementById('pTitle').innerText = `${curT} - Episode ${curE}`;
             const frame = document.getElementById('vFrame');
-            
-            // ලංකාවේ ISPs වලට බ්ලොක් කළ නොහැකි ලෙස සර්වර්ස් මාරු කිරීම
-            // Vidsrc.cc සහ Vidsrc.me ගොඩක් වෙලාවට ලංකාවට වැඩ කරයි
             let sUrl = "";
+
+            // හරිම URL Format එක පහතින්
             if(curS === 1) sUrl = `https://vidsrc.cc{curID}/${curE}/1`;
             else if(curS === 2) sUrl = `https://vidsrc.me{curID}&episode=${curE}`;
             else sUrl = `https://vidsrc.xyz{curID}&episode=${curE}`;
@@ -140,38 +149,31 @@
             frame.src = sUrl;
         }
 
-        function toggleHUD() {
-            const h = document.getElementById('hud');
-            if(h.classList.contains('hud-hidden')) showHUD(); else h.classList.add('hud-hidden');
-        }
-
-        function showHUD() {
-            const h = document.getElementById('hud');
-            h.classList.remove('hud-hidden');
-            clearTimeout(hT); hT = setTimeout(() => h.classList.add('hud-hidden'), 3500);
-        }
-
-        function setServ(s, el) {
-            curS = s; 
+        function setServ(s) {
+            curS = s;
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            el.classList.add('active');
-            updateVideo(); showHUD();
+            document.getElementById('s' + s).classList.add('active');
+            updateVideo();
+        }
+
+        function changeEp(n) {
+            curE += n;
+            if(curE < 1) curE = 1;
+            updateVideo();
+        }
+
+        function closePlayer() {
+            document.getElementById('playerModal').style.display = 'none';
+            document.getElementById('vFrame').src = "";
+        }
+
+        function toggleHUD() {
+            document.getElementById('hud').classList.toggle('active');
         }
 
         function toggleFS() {
-            const p = document.getElementById('pArea');
-            if(!document.fullscreenElement) p.requestFullscreen().then(() => screen.orientation.lock("landscape").catch(e=>e));
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
             else document.exitFullscreen();
-        }
-
-        function changeEp(s) { curE += s; if(curE < 1) curE = 1; updateVideo(); showHUD(); }
-        function closePlayer() { document.getElementById('playerModal').style.display='none'; document.getElementById('vFrame').src=""; }
-        
-        function searchAnime() {
-            const v = document.getElementById('searchInput').value;
-            if(!v) return;
-            document.getElementById('homeContent').innerHTML = `<div class="row-section" style="padding-top:100px;"><div class="row-title">ප්‍රතිඵල: ${v}</div><div class="horizontal-row" id="sGrid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));"></div></div>`;
-            fetchData(`search:"${v}"`, "sGrid");
         }
     </script>
 </body>
