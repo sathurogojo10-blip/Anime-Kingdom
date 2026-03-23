@@ -3,20 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANIME KINGDOM | ඔබේ ඇනිමේ තෝතැන්න</title>
+    <title>ANIME KINGDOM | 100% WORKING</title>
     
-    <!-- FontAwesome Icons -->
+    <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     
     <style>
-        /* --- Premium Design Styles --- */
         :root { --accent: #e50914; --bg: #08080a; --card-bg: #14141d; --text: #ffffff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 80px; }
         
         /* Navigation */
         .top-nav { display: flex; justify-content: center; padding: 15px 0; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); border-bottom: 1px solid #222; }
-        .logo { font-size: 26px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; }
+        .logo { font-size: 26px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; cursor: pointer; }
 
         /* Banner Section */
         .hero-banner { position: relative; width: 100%; min-height: 400px; background: #000; display: flex; align-items: center; justify-content: center; overflow: hidden; }
@@ -41,23 +40,36 @@
         .card img { width: 100%; height: 240px; object-fit: cover; }
         .card-title { font-size: 13px; padding: 12px 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; text-align: center; font-weight: 600; }
 
-        /* Video Modal Styles */
-        .full-modal { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 2000; flex-direction: column; }
+        /* --- VIDEO PLAYER MODAL (100% FIXED) --- */
+        #video-modal { display: none; position: fixed; inset: 0; background: #000; z-index: 3000; flex-direction: column; }
+        
         .modal-nav { padding: 15px 20px; background: #000; border-bottom: 1px solid #333; display: flex; align-items: center; gap: 20px; }
-        .back-btn { background: var(--accent); color: white; border: none; padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 10px; }
+        .back-btn { background: var(--accent); color: white; border: none; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 10px; font-size: 14px; transition: 0.3s; }
+        .back-btn:hover { transform: translateX(-5px); background: #ff0000; }
+
         .player-container { flex: 1; display: flex; align-items: center; justify-content: center; background: #000; }
         .player-box { width: 100%; max-width: 1100px; aspect-ratio: 16/9; position: relative; }
-        iframe { width: 100%; height: 100%; border: none; border-radius: 10px; }
+        
+        /* Iframe Styles */
+        iframe { width: 100%; height: 100%; border: none; }
 
         .loader { display: none; text-align: center; padding: 20px; color: var(--accent); font-weight: bold; }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; display: flex; padding: 15px 0; border-top: 1px solid #222; z-index: 1500; }
+        .nav-item { flex: 1; color: #888; font-size: 13px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item i { font-size: 22px; margin-bottom: 5px; }
     </style>
 </head>
 <body>
 
-    <nav class="top-nav"><div class="logo">ANIME<span style="color:var(--accent)">KINGDOM</span></div></nav>
+    <nav class="top-nav">
+        <div class="logo" onclick="location.reload()">ANIME<span style="color:var(--accent)">KINGDOM</span></div>
+    </nav>
 
     <div class="hero-banner">
-        <!-- ඔයාගේ Banner එක මෙන්න -->
+        <!-- Banner පින්තූරය -->
         <img src="IMG_20260322_225449_963.jpg" class="banner-img" onerror="this.src='https://wallpaperaccess.com'">
         <div class="hero-info">
             <h1>UNLIMITED <span style="color:var(--accent)">ANIME</span> STREAMING</h1>
@@ -80,8 +92,8 @@
         <div class="anime-row" id="popularGrid"></div>
     </div>
 
-    <!-- Video Player Full Modal -->
-    <div id="video-modal" class="full-modal">
+    <!-- VIDEO PLAYER MODAL -->
+    <div id="video-modal">
         <div class="modal-nav">
             <button class="back-btn" onclick="closeVideo()"><i class="fas fa-arrow-left"></i> BACK</button>
             <h3 id="playingTitle" style="color: white; font-size: 16px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"></h3>
@@ -91,6 +103,15 @@
                 <!-- JS මගින් Iframe එක මෙතනට වැටේවි -->
             </div>
         </div>
+        <div style="padding: 15px; text-align: center; color: #888; font-size: 12px; background: #000;">
+            <p><i class="fas fa-info-circle"></i> ප්ලේයර් එකේ ප්‍රශ්නයක් නම්, ප්ලේයර් එක ඇතුළේ ඇති <b>Servers</b> බොත්තමෙන් වෙනත් සර්වර් එකක් තෝරන්න.</p>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="location.reload()"><i class="fas fa-home"></i>Home</div>
+        <div class="nav-item"><i class="fas fa-fire"></i>Trending</div>
+        <div class="nav-item"><i class="fas fa-bookmark"></i>Watchlist</div>
     </div>
 
     <script>
@@ -101,7 +122,6 @@
             fetchAnime("POPULARITY_DESC", "popularGrid");
         };
 
-        // දත්ත ලබා ගැනීමට ලෝකයේ ස්ථාවරම AniList API භාවිතා කරයි
         async function fetchAnime(sort, gridId) {
             const query = `query { Page(perPage: 15) { media(sort: ${sort}, type: ANIME) { id title { english romaji } coverImage { extraLarge } } } }`;
             try {
@@ -131,6 +151,7 @@
                 renderCards(data.data.Page.media, "trendingGrid");
                 document.querySelector('.row-section h2').innerText = "සෙවුම් ප්‍රතිඵල";
                 document.getElementById('mainLoader').style.display = 'none';
+                window.scrollTo(0, 450);
             } catch (e) { alert("සෙවීමේ දෝෂයකි!"); }
         }
 
@@ -140,18 +161,18 @@
                 const title = anime.title.english || anime.title.romaji;
                 return `
                 <div class="card" onclick="startPlay('${title.replace(/'/g, "")}')">
-                    <img src="${anime.coverImage.extraLarge}" referrerpolicy="no-referrer" loading="lazy">
+                    <img src="${anime.coverImage.extraLarge}" referrerpolicy="no-referrer">
                     <div class="card-title">${title}</div>
                 </div>`;
             }).join('');
         }
 
-        // වීඩියෝව ප්ලේ කිරීම (100% වැඩ කරන ක්‍රමය)
+        // --- ප්ලේයර් එකේ බ්ලොක් වන ප්‍රශ්නය සහ Back Button එක හදපු වැදගත්ම කොටස ---
         function startPlay(title) {
             const modal = document.getElementById('video-modal');
             const wrapper = document.getElementById('iframeWrapper');
             
-            // vidsrc.me යනු GitHub Pages සඳහා ඇති ස්ථාවරම Domain එකයි
+            // vidsrc.xyz හෝ vidsrc.me යනු GitHub Pages වලට ඇති ස්ථාවරම Domain එකයි
             const embedUrl = "https://vidsrc.me" + encodeURIComponent(title);
             
             // Iframe එක Injection කිරීම (මේකෙන් තමයි Security headers bypass වෙන්නේ)
@@ -166,13 +187,14 @@
             
             document.getElementById('playingTitle').innerText = "Watching: " + title;
             modal.style.display = "flex";
-            document.body.style.overflow = "hidden";
+            document.body.style.overflow = "hidden"; // පිටුව scroll වීම නවත්වයි
         }
 
         function closeVideo() { 
+            // මෙහිදී Iframe එක සම්පූර්ණයෙන්ම ඉවත් කරයි, එතකොට Home එක ලස්සනට ලෝඩ් වේවි
             document.getElementById('iframeWrapper').innerHTML = ""; 
             document.getElementById('video-modal').style.display = "none"; 
-            document.body.style.overflow = "auto";
+            document.body.style.overflow = "auto"; // නැවත scroll වීමට ඉඩ දෙයි
         }
     </script>
 </body>
