@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANIME KINGDOM | Instant Stream</title>
+    <title>ANIME KINGDOM | ඔබේ ඇනිමේ තෝතැන්න</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
         :root { --accent: #e50914; --bg: #08080a; --card-bg: #14141d; --text: #ffffff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); overflow-x: hidden; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); overflow-x: hidden; padding-bottom: 80px; }
         
         .top-nav { display: flex; justify-content: center; padding: 15px 0; background: rgba(0,0,0,0.9); position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #222; }
         .logo { font-size: 26px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; }
@@ -22,6 +22,7 @@
         .search-btn { height: 50px; padding: 0 30px; background: var(--accent); color: white; border: none; border-radius: 0 30px 30px 0; font-weight: bold; cursor: pointer; }
 
         .row-section { padding: 25px 0 0 20px; }
+        .row-header h2 { font-size: 20px; border-left: 4px solid var(--accent); padding-left: 12px; margin-bottom: 15px; }
         .anime-row { display: flex; overflow-x: auto; gap: 15px; padding: 15px 5px; scrollbar-width: none; }
         .anime-row::-webkit-scrollbar { display: none; }
 
@@ -29,6 +30,12 @@
         .card:hover { transform: scale(1.1); border-color: var(--accent); }
         .card img { width: 100%; height: 230px; object-fit: cover; }
         .card-title { font-size: 13px; padding: 10px 5px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* Bottom Nav */
+        .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; display: flex; padding: 15px 0; border-top: 1px solid #222; z-index: 1500; }
+        .nav-item { flex: 1; color: #888; font-size: 13px; display: flex; flex-direction: column; align-items: center; cursor: pointer; }
+        .nav-item.active { color: var(--accent); }
+        .nav-item i { font-size: 22px; margin-bottom: 5px; }
 
         .loader { text-align: center; padding: 20px; color: var(--accent); font-weight: bold; }
     </style>
@@ -38,9 +45,10 @@
     <nav class="top-nav"><div class="logo" onclick="location.reload()">ANIME<span style="color:var(--accent)">KINGDOM</span></div></nav>
 
     <div class="hero-banner">
+        <!-- ඔයාගේ පින්තූරය -->
         <img src="IMG_20260322_225449_963.jpg" class="banner-img" onerror="this.src='https://wallpaperaccess.com'">
         <div class="hero-info">
-            <h1 style="font-size: 32px;">UNLIMITED STREAMING</h1>
+            <h1 style="font-size: clamp(24px, 5vw, 36px); font-weight: 800;">UNLIMITED STREAMING</h1>
             <div class="search-container">
                 <input type="text" id="searchInput" placeholder="Search Anime..." onkeypress="if(event.key === 'Enter') searchAnime()">
                 <button class="search-btn" onclick="searchAnime()">සොයන්න</button>
@@ -51,14 +59,21 @@
     <div id="loader" class="loader">පූරණය වෙමින්...</div>
 
     <div class="row-section">
-        <h2 id="gridTitle" style="font-size: 20px; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 10px;">Trending Now</h2>
+        <h2 id="gridTitle">Trending Now</h2>
         <div class="anime-row" id="animeGrid"></div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="location.reload()"><i class="fas fa-home"></i>Home</div>
+        <div class="nav-item"><i class="fas fa-fire"></i>Trending</div>
+        <div class="nav-item"><i class="fas fa-bookmark"></i>Watchlist</div>
     </div>
 
     <script>
         const API_URL = "https://graphql.anilist.co";
 
-        window.onload = () => fetchAnime(`query { Page(perPage: 20) { media(sort: TRENDING_DESC, type: ANIME) { title { english romaji } coverImage { large } } } }`);
+        // පිටුව පූරණය වන විට Trending ඇනිමේ පෙන්වීම
+        window.onload = () => fetchAnime("query { Page(perPage: 20) { media(sort: TRENDING_DESC, type: ANIME) { title { english romaji } coverImage { large } } } }");
 
         async function fetchAnime(query) {
             try {
@@ -73,28 +88,32 @@
             const q = document.getElementById('searchInput').value;
             if(!q) return;
             document.getElementById('loader').style.display = 'block';
-            document.getElementById('gridTitle').innerText = "Search Results";
-            fetchAnime(`query { Page(perPage: 20) { media(search: "${q}", type: ANIME) { title { english romaji } coverImage { large } } } }`);
+            document.getElementById('gridTitle').innerText = "සෙවුම් ප්‍රතිඵල: " + q;
+            fetchAnime("query { Page(perPage: 20) { media(search: \"" + q + "\", type: ANIME) { title { english romaji } coverImage { large } } } }");
         }
 
         function renderCards(list) {
             const grid = document.getElementById('animeGrid');
             grid.innerHTML = list.map(anime => {
                 const title = anime.title.english || anime.title.romaji;
+                // වැරදීමක් වෙන්න බැරි විදියට නම පිරිසිදු කිරීම
+                const safeTitle = title.replace(/'/g, "").replace(/"/g, "");
                 return `
-                <div class="card" onclick="watchNow('${title.replace(/'/g, "")}')">
-                    <img src="${anime.coverImage.large}" referrerpolicy="no-referrer">
-                    <div class="card-title">${title}</div>
+                <div class="card" onclick="watchNow('` + safeTitle + `')">
+                    <img src="` + anime.coverImage.large + `" referrerpolicy="no-referrer">
+                    <div class="card-title">` + title + `</div>
                 </div>`;
             }).join('');
         }
 
-        // --- ලේසිම සහ ස්ථාවරම ක්‍රමය ---
+        // --- 100% වැඩ කරන සරලම ප්ලේයර් එක (No Syntax Errors) ---
         function watchNow(title) {
-            // සයිට් එක ඇතුළෙ කරදර නොවී අලුත් ටැබ් එකක ප්ලේයර් එක විවෘත වේ.
-            // මෙහිදී Seasons/Episodes ඔක්කොම ප්ලේයර් එක ඇතුළෙම තියෙනවා.
-            const url = `https://vidsrc.me{encodeURIComponent(title)}`;
-            window.open(url, '_blank');
+            // වැරදීමක් වෙන්න බැරි විදියට ලින්ක් එක මෙහෙම හදමු
+            var baseUrl = "https://vidsrc.me";
+            var finalUrl = baseUrl + encodeURIComponent(title);
+            
+            // නව ටැබ් එකක වීඩියෝ එක ප්ලේ වේ
+            window.open(finalUrl, '_blank');
         }
     </script>
 </body>
