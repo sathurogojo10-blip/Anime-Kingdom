@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANIME KINGDOM | Ultra Stream</title>
+    <title>ANIME KINGDOM | Direct Stream</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
         :root { --accent: #ff0000; --bg: #050505; --card-bg: #121212; --text: #fff; }
@@ -14,30 +14,24 @@
         .logo { font-size: 26px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; color: white; margin-bottom: 15px; cursor: pointer; }
         .logo span { color: var(--accent); }
         
-        .search-area { display: flex; max-width: 500px; margin: 0 auto; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; height: 48px; overflow: hidden; transition: 0.3s; }
-        .search-area:focus-within { border-color: var(--accent); }
+        .search-area { display: flex; max-width: 500px; margin: 0 auto; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; height: 48px; overflow: hidden; }
         #searchInput { flex: 1; background: transparent; border: none; padding: 0 15px; color: white; outline: none; font-size: 15px; }
 
         .container { padding: 160px 20px 40px; max-width: 1200px; margin: 0 auto; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
         
-        /* Premium Card Style */
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.4s; cursor: pointer; border: 1px solid #222; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-        .card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 15px 30px rgba(255,0,0,0.15); }
-        .card img { width: 100%; height: 220px; object-fit: cover; transition: 0.3s; }
-        .card:hover img { filter: brightness(1.1); }
-        .card-title { font-size: 13px; padding: 12px 8px; text-align: center; font-weight: 600; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .card:hover .card-title { color: #fff; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; position: relative; }
+        .card:hover { transform: translateY(-8px); border-color: var(--accent); box-shadow: 0 10px 20px rgba(255,0,0,0.1); }
+        .card img { width: 100%; height: 210px; object-fit: cover; }
+        .card-title { font-size: 12px; padding: 10px; text-align: center; font-weight: 600; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* Fullscreen Player Modal */
-        .player-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; flex-direction: column; }
+        /* Fullscreen Player */
+        .player-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; }
         iframe { width: 100%; height: 100%; border: none; background: #000; }
+        .btn-back { position: absolute; top: 20px; left: 20px; z-index: 10000; background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         
-        .player-hud { position: absolute; top: 20px; left: 20px; z-index: 10000; display: flex; gap: 15px; }
-        .btn-back { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 8px; }
-        
-        /* Loading Animation */
-        #loader { text-align: center; padding: 50px; font-size: 18px; color: var(--accent); }
+        #errorMsg { color: #ff4d4d; text-align: center; padding: 50px; width: 100%; font-weight: bold; line-height: 1.6; }
+        #loader { text-align: center; padding: 50px; color: var(--accent); width: 100%; }
     </style>
 </head>
 <body>
@@ -45,96 +39,93 @@
     <header>
         <div class="logo" onclick="location.reload()">ANIME<span>KINGDOM</span></div>
         <div class="search-area">
-            <input type="text" id="searchInput" placeholder="ඔබට අවශ්‍ය ඇනිමේ එක සොයන්න..." oninput="filterAnime()">
+            <input type="text" id="searchInput" placeholder="Search anime library..." oninput="filterAnime()">
         </div>
     </header>
 
     <div class="container">
-        <h3 id="listTitle" style="margin-bottom: 25px; border-left: 5px solid var(--accent); padding-left: 15px; letter-spacing: 1px;">TRENDING LIBRARY</h3>
+        <h3 id="listTitle" style="margin-bottom: 25px; border-left: 5px solid var(--accent); padding-left: 15px;">MY ANIME COLLECTION</h3>
         <div id="animeGrid" class="grid">
-            <div id="loader"><i class="fas fa-spinner fa-spin"></i> Loading Library...</div>
+            <div id="loader"><i class="fas fa-spinner fa-spin"></i> Loading Data...</div>
         </div>
     </div>
 
     <!-- Fullscreen Player -->
     <div id="playerModal" class="player-modal">
-        <div class="player-hud">
-            <button class="btn-back" onclick="closePlayer()"><i class="fas fa-arrow-left"></i> BACK</button>
-        </div>
+        <button class="btn-back" onclick="closePlayer()"><i class="fas fa-arrow-left"></i> BACK</button>
         <iframe id="vFrame" allow="autoplay; fullscreen" allowfullscreen></iframe>
     </div>
 
     <script>
-        // ඔයාගේ නිවැරදි RAW Link එක මෙන්න
-        const GITHUB_RAW_URL = "https://raw.githubusercontent.com"; 
+        // ඔයාගේ නිවැරදි RAW Link එක
+        const RAW_URL = "https://raw.githubusercontent.com"; 
+        // CORS Error එක මගහරින්න Proxy එකක් පාවිච්චි කිරීම
+        const PROXY_URL = "https://api.allorigins.win";
         
         let animeList = [];
 
-        // GitHub දත්ත කියවීම
-        async function loadAnimeData() {
+        async function fetchAnime() {
             try {
-                const response = await fetch(GITHUB_RAW_URL);
-                if (!response.ok) throw new Error('Data not found');
-                animeList = await response.json();
-                renderAnime(animeList);
-            } catch (error) {
-                document.getElementById('animeGrid').innerHTML = `<p style="color:red; text-align:center;">Error: ඇනිමේ දත්ත ලබා ගැනීමට නොහැකි විය. (JSON file එක පරීක්ෂා කරන්න)</p>`;
+                const response = await fetch(PROXY_URL + encodeURIComponent(RAW_URL));
+                if (!response.ok) throw new Error('Data Fetching Failed');
+                
+                const data = await response.json();
+                animeList = data;
+                renderItems(animeList);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('animeGrid').innerHTML = `
+                    <div id="errorMsg">
+                        Error: ඇනිමේ දත්ත ලබා ගැනීමට නොහැකි විය.<br>
+                        <small>(ඔබේ JSON file එකේ Format එක නිවැරදි දැයි බලන්න)</small><br><br>
+                        <button onclick="location.reload()" style="background:#444; color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer;">Refresh Page</button>
+                    </div>`;
             }
         }
 
-        // ඇනිමේ කාඩ් පෙන්වීම
-        function renderAnime(data) {
+        function renderItems(items) {
             const grid = document.getElementById('animeGrid');
-            if (data.length === 0) {
-                grid.innerHTML = "<p style='text-align:center; width:100%;'>සෙවුමට ගැළපෙන ඇනිමේ කිසිවක් නැත.</p>";
+            if (items.length === 0) {
+                grid.innerHTML = "<p style='text-align:center; width:100%;'>No anime found.</p>";
                 return;
             }
-            grid.innerHTML = data.map(anime => `
-                <div class="card" onclick="playAnime('${anime.id}', '${anime.title}')">
-                    <img src="${anime.poster}" alt="${anime.title}" loading="lazy">
-                    <div class="card-title">${anime.title}</div>
+            grid.innerHTML = items.map(a => `
+                <div class="card" onclick="playAnime('${a.id}')">
+                    <img src="${a.poster}" alt="${a.title}" loading="lazy">
+                    <div class="card-title">${a.title}</div>
                 </div>
             `).join('');
         }
 
-        // සෙවුම් පහසුකම (Search)
         function filterAnime() {
             const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = animeList.filter(a => a.title.toLowerCase().includes(query));
-            renderAnime(filtered);
+            const filtered = animeList.filter(x => x.title.toLowerCase().includes(query));
+            renderItems(filtered);
         }
 
-        // වීඩියෝව ප්ලේ කිරීම (HiAnime/Vidsrc Source)
-        function playAnime(id, title) {
+        function playAnime(id) {
             const modal = document.getElementById('playerModal');
             const frame = document.getElementById('vFrame');
             
-            // වීඩියෝ ලින්ක් එක සැකසීම
             frame.src = `https://vidsrc.to{id}`; 
-            modal.style.display = 'flex';
+            modal.style.display = 'block';
 
-            // Fullscreen කිරීම
             if (modal.requestFullscreen) modal.requestFullscreen();
             else if (modal.webkitRequestFullscreen) modal.webkitRequestFullscreen();
 
-            // Mobile එකේදී ස්ක්‍රීන් එක rotate කිරීම
             if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(e => console.log("Orientation lock not supported"));
+                screen.orientation.lock('landscape').catch(e => {});
             }
         }
 
-        // ප්ලේයර් එක වැසීම
         function closePlayer() {
-            const modal = document.getElementById('playerModal');
-            document.getElementById('vFrame').src = ""; // වීඩියෝව නවත්වන්න
-            modal.style.display = 'none';
-
+            document.getElementById('playerModal').style.display = 'none';
+            document.getElementById('vFrame').src = "";
             if (document.exitFullscreen) document.exitFullscreen();
             if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
         }
 
-        // පිටුව ලෝඩ් වූ විට දත්ත කියවන්න
-        window.onload = loadAnimeData;
+        window.onload = fetchAnime;
     </script>
 </body>
 </html>
