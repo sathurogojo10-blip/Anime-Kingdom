@@ -4,9 +4,298 @@
     "title": "One Piece",
     "poster": "https://s4.anilist.co"
   },
+
   {
     "id": "naruto-shippuden",
     "title": "Naruto Shippuden",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "attack-on-titan",
+    "title": "Attack on Titan",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "demon-slayer-kimetsu-no-yaiba",
+    "title": "Demon Slayer",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "solo-leveling",
+    "title": "Solo Leveling",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "jujutsu-kaisen",
+    "title": "Jujutsu Kaisen",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "death-note",
+    "title": "Death Note",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "hunter-x-hunter-2011",
+    "title": "Hunter x Hunter",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "my-hero-academia",
+    "title": "My Hero Academia",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "fullmetal-alchemist-brotherhood",
+    "title": "FMAB",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "dragon-ball-z",
+    "title": "Dragon Ball Z",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "bleach",
+    "title": "Bleach",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "spy-x-family",
+    "title": "Spy x Family",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "chainsaw-man",
+    "title": "Chainsaw Man",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "black-clover",
+    "title": "Black Clover",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "tokyo-ghoul",
+    "title": "Tokyo Ghoul",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "vinland-saga",
+    "title": "Vinland Saga",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "haikyuu",
+    "title": "Haikyuu!!",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "blue-lock",
+    "title": "Blue Lock",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "dr-stone",
+    "title": "Dr. Stone",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "the-rising-of-the-shield-hero",
+    "title": "Shield Hero",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "fire-force",
+    "title": "Fire Force",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "sword-art-online",
+    "title": "Sword Art Online",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "one-punch-man",
+    "title": "One Punch Man",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "mob-psycho-100",
+    "title": "Mob Psycho 100",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "fairy-tail",
+    "title": "Fairy Tail",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "the-seven-deadly-sins",
+    "title": "7 Deadly Sins",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "re-zero-starting-life-in-another-world",
+    "title": "Re:Zero",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "mushoku-tensei-jobless-reincarnation",
+    "title": "Mushoku Tensei",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "boruto-naruto-next-generations",
+    "title": "Boruto",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "bungou-stray-dogs",
+    "title": "Bungou Stray Dogs",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "akame-ga-kill",
+    "title": "Akame ga Kill!",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "no-game-no-life",
+    "title": "No Game No Life",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "parasyte-the-maxim",
+    "title": "Parasyte",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "cowboy-bebop",
+    "title": "Cowboy Bebop",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "neon-genesis-evangelion",
+    "title": "Evangelion",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "blue-exorcist",
+    "title": "Blue Exorcist",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "kaguya-sama-love-is-war",
+    "title": "Kaguya-sama",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "fruits-basket-2019",
+    "title": "Fruits Basket",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "the-eminence-in-shadow",
+    "title": "Eminence in Shadow",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "hells-paradise",
+    "title": "Hell's Paradise",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "overlord",
+    "title": "Overlord",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "konosuba-gods-blessing-on-this-wonderful-world",
+    "title": "Konosuba",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "darling-in-the-franxx",
+    "title": "Darling in the Franxx",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "high-school-dxd",
+    "title": "High School DxD",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "your-lie-in-april",
+    "title": "Your Lie in April",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "clannad",
+    "title": "Clannad",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "angel-beats",
+    "title": "Angel Beats!",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "violet-evergarden",
+    "title": "Violet Evergarden",
+    "poster": "https://s4.anilist.co"
+  },
+
+  {
+    "id": "demon-slayer-entertainment-district-arc",
+    "title": "DS: Entertainment Arc",
     "poster": "https://s4.anilist.co"
   }
 ]
