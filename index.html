@@ -2,127 +2,99 @@
 <html lang="si">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANIME KINGDOM | HiAnime Direct</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANIME KINGDOM | Drive Player</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
-        :root { --accent: #ff0000; --bg: #050505; --card-bg: #121212; --text: #fff; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
-
-        header { position: fixed; top: 0; width: 100%; padding: 20px; background: rgba(0,0,0,0.9); z-index: 1000; text-align: center; border-bottom: 1px solid #222; }
-        .logo { font-size: 24px; font-weight: 900; color: white; text-transform: uppercase; margin-bottom: 15px; }
+        :root { --accent: #ff0000; --bg: #050505; --card: #121212; --text: #fff; }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); margin: 0; text-align: center; }
+        
+        header { padding: 20px; background: #000; border-bottom: 2px solid var(--accent); }
+        .logo { font-size: 24px; font-weight: 900; }
         .logo span { color: var(--accent); }
-        .search-area { display: flex; max-width: 500px; margin: 0 auto; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; height: 45px; overflow: hidden; }
-        #searchInput { flex: 1; background: transparent; border: none; padding: 0 15px; color: white; outline: none; }
 
-        .container { padding: 160px 20px 40px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; }
-        .card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .card img { width: 100%; height: 210px; object-fit: cover; }
-        .card-title { font-size: 12px; padding: 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .container { padding: 40px 20px; max-width: 800px; margin: auto; }
+        .upload-box { background: var(--card); padding: 30px; border-radius: 15px; border: 2px dashed #333; margin-bottom: 30px; }
+        
+        input { width: 80%; padding: 12px; border-radius: 8px; border: 1px solid #444; background: #1a1a1a; color: white; margin-bottom: 15px; }
+        .btn { background: var(--accent); color: white; padding: 12px 25px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; }
 
-        /* Episode Modal */
-        .info-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; justify-content: center; align-items: center; padding: 15px; }
-        .info-content { background: #111; width: 100%; max-width: 550px; border-radius: 15px; overflow-y: auto; max-height: 85vh; border: 1px solid #333; position: relative; }
-        .banner { width: 100%; height: 160px; object-fit: cover; }
-        .info-body { padding: 20px; }
-        .ep-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(65px, 1fr)); gap: 8px; margin-top: 15px; }
-        .ep-btn { background: #222; border: 1px solid #444; color: white; padding: 10px; border-radius: 6px; cursor: pointer; font-size: 11px; font-weight: bold; transition: 0.2s; }
-        .ep-btn:hover { background: var(--accent); border-color: var(--accent); }
-        .close-info { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,0.6); color: white; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-weight: bold; z-index: 5; }
-
-        .notice { font-size: 11px; color: #888; margin-top: 10px; font-style: italic; }
+        #playerContainer { display: none; margin-top: 20px; background: #000; border-radius: 12px; overflow: hidden; }
+        video { width: 100%; height: auto; border: 1px solid #222; }
     </style>
 </head>
 <body>
 
     <header>
         <div class="logo">ANIME<span>KINGDOM</span></div>
-        <div class="search-area">
-            <input type="text" id="searchInput" placeholder="AniList එකෙන් Anime සොයන්න..." onkeypress="if(event.key==='Enter') searchAnime()">
-            <button onclick="searchAnime()" style="background:var(--accent); border:none; width:55px; color:white; cursor:pointer;"><i class="fas fa-search"></i></button>
-        </div>
     </header>
 
     <div class="container">
-        <h3 id="listLabel" style="margin-bottom: 20px; border-left: 4px solid var(--accent); padding-left: 12px;">TRENDING LIBRARY</h3>
-        <div id="animeGrid" class="grid"></div>
-    </div>
+        <!-- Google Drive Section -->
+        <div class="upload-box">
+            <i class="fab fa-google-drive" style="font-size: 40px; color: #34A853; margin-bottom: 10px;"></i>
+            <h3>Google Drive වීඩියෝව ප්ලේ කරන්න</h3>
+            <p style="font-size: 13px; color: #888;">Drive ලින්ක් එක (Share Link) මෙතැනට paste කරන්න</p>
+            
+            <input type="text" id="driveUrl" placeholder="https://drive.google.com...">
+            <br>
+            <button class="btn" onclick="playDriveVideo()">PLAY VIDEO</button>
+        </div>
 
-    <!-- Episode Selection Modal -->
-    <div id="infoModal" class="info-modal">
-        <div class="info-content">
-            <button class="close-info" onclick="closeInfo()">✕</button>
-            <img id="mBanner" class="banner">
-            <div class="info-body">
-                <h2 id="mTitle" style="font-size: 20px;">Anime Title</h2>
-                <p id="mDesc" style="font-size: 13px; color: #aaa; margin: 12px 0; max-height: 100px; overflow-y: auto; line-height: 1.5;"></p>
-                <div style="font-size: 14px; font-weight: bold; margin-top: 15px; color: var(--accent);">අදාළ EPISODE එක තෝරන්න:</div>
-                <div id="epGrid" class="ep-grid"></div>
-                <p class="notice">* Episode එක ක්ලික් කළ පසු එය HiAnime හි සෘජුවම විවෘත වේ.</p>
+        <!-- Video Player -->
+        <div id="playerContainer">
+            <video id="myPlayer" controls autoplay>
+                ඔබේ Browser එක මෙයට සහය නොදක්වයි.
+            </video>
+            <div style="padding: 15px; background: #111; text-align: left;">
+                <h4 id="vidTitle">Now Playing from Drive</h4>
             </div>
         </div>
     </div>
 
     <script>
-        const API = "https://graphql.anilist.co";
+        // 1. HiAnime සඳහා නිවැරදි URL එක සෑදීමේ ක්‍රමය (ඔබේ කලින් වැරදුණු කොටස)
+        function goToHiAnime(title, ep) {
+            // නිවැරදි සංකේතය backtick (`) මිස තනි උද්ධෘත පාඨ (') නොවේ
+            const searchUrl = `https://hianime.to{encodeURIComponent(title + " episode " + ep)}`;
+            window.open(searchUrl, '_blank');
+        }
 
-        window.onload = () => searchAnime();
+        // 2. Google Drive වීඩියෝව ප්ලේ කිරීම
+        function playDriveVideo() {
+            const rawUrl = document.getElementById('driveUrl').value;
+            const playerContainer = document.getElementById('playerContainer');
+            const videoElement = document.getElementById('myPlayer');
 
-        async function searchAnime() {
-            const val = document.getElementById('searchInput').value;
-            const query = `query{Page(perPage:50){media(${val ? `search:"${val}"` : 'sort:TRENDING_DESC'},type:ANIME){id title{english romaji}coverImage{large}bannerImage description episodes}}}`;
-            
+            if (!rawUrl) return alert("කරුණාකර ලින්ක් එකක් ඇතුළත් කරන්න!");
+
+            // Drive Link එක Direct Player Link එකක් බවට පත් කිරීම
+            let fileId = "";
             try {
-                const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
-                const d = await res.json();
-                renderGrid(d.data.Page.media);
-            } catch (err) { console.log("AniList API error"); }
-        }
+                if (rawUrl.includes("file/d/")) {
+                    fileId = rawUrl.split("file/d/")[1].split("/")[0];
+                } else if (rawUrl.includes("id=")) {
+                    fileId = rawUrl.split("id=")[1].split("&")[0];
+                }
 
-        function renderGrid(data) {
-            document.getElementById('animeGrid').innerHTML = data.map(a => {
-                const t = (a.title.english || a.title.romaji).replace(/'/g, "");
-                return `<div class="card" onclick='openInfo(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
-                    <img src="${a.coverImage.large}" loading="lazy">
-                    <div class="card-title">${t}</div>
-                </div>`;
-            }).join('');
-        }
-
-        function openInfo(anime) {
-            const title = anime.title.english || anime.title.romaji;
-            document.getElementById('infoModal').style.display = 'flex';
-            document.getElementById('mTitle').innerText = title;
-            document.getElementById('mBanner').src = anime.bannerImage || anime.coverImage.large;
-            document.getElementById('mDesc').innerHTML = anime.description || "විස්තරයක් නොමැත.";
-            
-            const epCount = anime.episodes || 1; 
-            let epButtons = "";
-            for(let i=1; i<=epCount; i++) {
-                epButtons += `<button class="ep-btn" onclick="goToEpisode('${title.replace(/'/g, "\\'")}', ${i})">EP ${i}</button>`;
+                if (fileId) {
+                    // Drive direct link format
+                    const directLink = `https://www.googleapis.com{fileId}?alt=media&key=ඔබේ_API_KEY_එක_මෙහි_යොදන්න`;
+                    
+                    // සරල ක්‍රමය: බොහෝවිට Drive preview embed එක භාවිතා වේ
+                    // නමුත් මෙහිදී සෘජුවම Video Tag එකට දැමීමට නම් Google API අවශ්‍යයි.
+                    // සරලවම ප්ලේ කිරීමට පහත URL එක උත්සාහ කරන්න:
+                    const proxyUrl = `https://drive.google.com{fileId}`;
+                    
+                    videoElement.src = proxyUrl;
+                    playerContainer.style.display = 'block';
+                    videoElement.play();
+                } else {
+                    alert("වලංගු Google Drive ලින්ක් එකක් ලබා දෙන්න.");
+                }
+            } catch (e) {
+                alert("ලින්ක් එකේ දෝෂයක් ඇත.");
             }
-            document.getElementById('epGrid').innerHTML = epButtons;
-        }
-
-        function goToEpisode(title, ep) {
-            // Title එක slug එකක් බවට පත් කිරීම (HiAnime URL වලට ගැලපෙන සේ)
-            const slug = title.toLowerCase()
-                .replace(/[^a-z0-9]/g, '-') // අකුරු/ඉලක්කම් නොවන දෑ dash බවට පත් කරයි
-                .replace(/-+/g, '-')        // වැඩිපුර ඇති dash ඉවත් කරයි
-                .replace(/^-|-$/g, '');     // දෙකෙළවර ඇති dash ඉවත් කරයි
-
-            // HiAnime සෘජු Episode URL එක
-            // සැ.යු: HiAnime URL වල Anime ID එකක් අවශ්‍ය වන බැවින්, වඩාත් නිවැරදිම ක්‍රමය සෙවුම හරහා Episode එකට යෑමයි.
-            const targetUrl = `https://hianime.to{encodeURIComponent(title + " episode " + ep)}`;
-            
-            window.open(targetUrl, '_blank');
-        }
-
-        function closeInfo() { 
-            document.getElementById('infoModal').style.display = 'none'; 
         }
     </script>
 </body>
