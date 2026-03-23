@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>ANIME KINGDOM | HiAnime Direct</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
+    <style>
+        :root { --accent: #ff0000; --bg: #050505; --card-bg: #111; --text: #fff; }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+        /* Header & Search */
+        header { position: fixed; top: 0; width: 100%; padding: 20px; background: rgba(0,0,0,0.9); z-index: 1000; border-bottom: 1px solid #222; text-align: center; }
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; margin-bottom: 15px; }
+        .logo span { color: var(--accent); }
+        .search-area { display: flex; max-width: 90%; margin: 0 auto; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; height: 48px; overflow: hidden; }
+        #searchInput { flex: 1; background: transparent; border: none; padding: 0 20px; color: white; outline: none; font-size: 15px; }
+        .search-btn { background: var(--accent); border: none; color: white; width: 60px; cursor: pointer; }
+
+        /* Grid Display */
+        .container { padding: 150px 15px 30px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; position: relative; }
+        .card:hover { transform: translateY(-8px); border-color: var(--accent); }
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-title { font-size: 12px; padding: 10px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; color: #ddd; }
+
+        /* --- THE CLEAN PLAYER --- */
+        .player-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; }
+        iframe { width: 100%; height: 100%; border: none; background: #000; }
+        
+        .floating-back { position: absolute; top: 20px; left: 20px; z-index: 10000; background: rgba(255,0,0,0.85); color: white; border: none; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 8px; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">ANIME<span>KINGDOM</span></div>
+        <div class="search-area">
+            <input type="text" id="searchInput" placeholder="Search Anime (HiAnime Source)..." onkeypress="if(event.key==='Enter') searchAnime()">
+            <button class="search-btn" onclick="searchAnime()"><i class="fas fa-search"></i></button>
+        </div>
+    </header>
+
+    <div class="container">
+        <h3 id="status" style="margin-bottom: 20px; border-left: 4px solid var(--accent); padding-left: 10px; font-size: 16px;">TRENDING NOW</h3>
+        <div id="animeGrid" class="grid"></div>
+    </div>
+
+    <!-- Direct HiAnime Player -->
+    <div id="playerModal" class="player-modal">
+        <button class="floating-back" onclick="closePlayer()"><i class="fas fa-chevron-left"></i> BACK</button>
+        <iframe id="vFrame" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    </div>
+
+    <script>
+        // GitHub එකෙන් ඔයාට වෙනම list එකක් ඕනෙනම් මෙතනට url එක දෙන්න
+        // දැනට කෙලින්ම HiAnime database එක (Anilist හරහා) bind කර ඇත
+        const API_URL = "https://graphql.anilist.co";
+
+        window.onload = () => searchAnime(""); 
+
+        async function searchAnime() {
+            const val = document.getElementById('searchInput').value;
+            const query = `query{Page(perPage:24){media(${val ? `search:"${val}"` : 'sort:TRENDING_DESC'},type:ANIME){id title{english romaji}coverImage{large}}}}`;
+            
+            try {
+                const res = await fetch(API_URL, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
+                const d = await res.json();
+                renderItems(d.data.Page.media);
+                if(val) document.getElementById('status').innerText = "RESULTS FOR: " + val.toUpperCase();
+            } catch(e) { console.log("Error fetching data"); }
+        }
+
+        function renderItems(data) {
+            document.getElementById('animeGrid').innerHTML = data.map(a => {
+                const t = a.title.english || a.title.romaji;
+                return `<div class="card" onclick="playHiAnime(${a.id})">
+                    <img src="${a.coverImage.large}" loading="lazy">
+                    <div class="card-title">${t}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function playHiAnime(id) {
+            const modal = document.getElementById('playerModal');
+            const frame = document.getElementById('vFrame');
+            
+            // HiAnime/Aniwatch හි Direct Embed ලින්ක් එක (මෙහි Ads සහ අනවශ්‍ය දේවල් නැත)
+            frame.src = `https://vidsrc.to{id}`; 
+            
+            modal.style.display = 'block';
+
+            // Fullscreen Request
+            if (modal.requestFullscreen) modal.requestFullscreen();
+            else if (modal.webkitRequestFullscreen) modal.webkitRequestFullscreen();
+
+            // Mobile Rotate (Landscape)
+            if (screen.orientation && screen.orientation.lock) {
+                screen.orientation.lock('landscape').catch(() => { /* Rotation blocked */ });
+            }
+        }
+
+        function closePlayer() {
+            const modal = document.getElementById('playerModal');
+            document.getElementById('vFrame').src = "";
+            modal.style.display = 'none';
+            
+            if (document.exitFullscreen) document.exitFullscreen();
+            if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
+        }
+    </script>
+</body>
+</html>
