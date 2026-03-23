@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Kingdom | HiAnime Edition</title>
+    <title>Anime Kingdom | HiAnime Search</title>
+    <!-- Font Awesome for Search Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
         :root {
-            --primary: #ffdd95; /* HiAnime Yellow */
+            --primary: #ffdd95; 
             --bg: #0f1113;
             --card-bg: #1a1c1e;
         }
@@ -14,183 +16,208 @@
         body {
             background-color: var(--bg);
             color: white;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
             padding: 0;
         }
 
-        /* Hero Banner */
+        /* Hero & Search Bar Section */
         .hero {
-            height: 400px;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3), var(--bg)),
-                        url('https://images.alphacoders.com'); /* Banner Image */
+            height: 450px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.5), var(--bg)),
+                        url('https://images.alphacoders.com');
             background-size: cover;
             background-position: center;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            text-align: center;
         }
 
         .hero h1 {
             font-size: 3.5rem;
             color: var(--primary);
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
-            margin: 0;
-        }
-
-        /* Category Section */
-        .container { padding: 20px 5%; }
-        
-        .category-title {
-            border-left: 4px solid var(--primary);
-            padding-left: 10px;
             margin-bottom: 20px;
         }
 
+        .search-container {
+            position: relative;
+            width: 80%;
+            max-width: 600px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 15px 50px 15px 20px;
+            border-radius: 30px;
+            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            font-size: 1.1rem;
+            outline: none;
+            border: 2px solid transparent;
+            transition: 0.3s;
+        }
+
+        .search-container input:focus {
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .search-container i {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+
+        /* Results Grid */
+        .container { padding: 40px 5%; }
+        
         .anime-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 25px;
         }
 
         .anime-card {
             background: var(--card-bg);
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
             cursor: pointer;
-            transition: transform 0.3s;
+            transition: 0.3s;
+            position: relative;
         }
 
-        .anime-card:hover { transform: scale(1.05); }
+        .anime-card:hover { transform: translateY(-10px); }
 
-        .anime-card img { width: 100%; height: 250px; object-fit: cover; }
+        .anime-card img { width: 100%; height: 280px; object-fit: cover; }
 
-        .anime-card p { padding: 10px; font-size: 0.9rem; text-align: center; }
+        .anime-info { padding: 15px; text-align: center; }
 
-        /* Modal / Details Section */
+        /* Modal Settings */
         .modal {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            overflow-y: auto;
+            background: rgba(0,0,0,0.95);
             z-index: 1000;
+            overflow-y: auto;
         }
 
         .modal-content {
             background: var(--card-bg);
-            margin: 5% auto;
-            width: 80%;
-            padding: 20px;
-            border-radius: 10px;
+            margin: 50px auto;
+            width: 90%;
+            max-width: 800px;
+            padding: 30px;
+            border-radius: 15px;
         }
 
-        .season-btn {
+        .ep-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .ep-link {
             background: #333;
             color: white;
-            padding: 10px 20px;
-            border: none;
-            margin-right: 10px;
-            cursor: pointer;
-            border-radius: 5px;
-        }
-
-        .season-btn.active { background: var(--primary); color: black; }
-
-        .episode-list {
-            margin-top: 20px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
-        }
-
-        .episode-btn {
-            background: #2a2c2f;
-            border: 1px solid #444;
-            color: white;
-            padding: 8px;
-            text-align: center;
             text-decoration: none;
-            border-radius: 4px;
-            font-size: 0.8rem;
+            padding: 10px;
+            text-align: center;
+            border-radius: 5px;
+            font-size: 0.9rem;
         }
 
-        .episode-btn:hover { background: var(--primary); color: black; }
-        
-        .close-btn { float: right; cursor: pointer; font-size: 1.5rem; }
+        .ep-link:hover { background: var(--primary); color: black; }
     </style>
 </head>
 <body>
 
     <section class="hero">
         <h1>ANIME KINGDOM</h1>
-        <p>Watch High Quality Anime for Free</p>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search Anime from HiAnime..." onkeypress="handleSearch(event)">
+            <i class="fas fa-search" onclick="searchAnime()"></i>
+        </div>
     </section>
 
     <div class="container">
-        <h2 class="category-title">Trending Now</h2>
-        <div class="anime-grid">
-            <!-- Sample Card -->
-            <div class="anime-card" onclick="openDetails('Solo Leveling', 'solo-leveling-18718')">
-                <img src="https://artworks.thetvdb.com" alt="Solo Leveling">
-                <p>Solo Leveling</p>
-            </div>
-            <!-- Add more cards here -->
+        <h2 id="resultTitle">Trending on HiAnime</h2>
+        <div class="anime-grid" id="animeDisplay">
+            <!-- සෙවුම් ප්‍රතිඵල මෙහි පෙන්වයි -->
         </div>
     </div>
 
-    <!-- Modal for Seasons and Episodes -->
+    <!-- Details Modal -->
     <div id="detailsModal" class="modal">
         <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <h2 id="animeTitle" style="color: var(--primary);"></h2>
-            <hr>
-            
-            <h3>Seasons</h3>
-            <div id="seasonTabs">
-                <button class="season-btn active">Season 1</button>
-                <button class="season-btn">Season 2</button>
-            </div>
-
-            <h3>Episodes</h3>
-            <div class="episode-list" id="episodeContainer">
-                <!-- Episodes will be generated here -->
+            <span style="float:right; cursor:pointer;" onclick="closeModal()"><i class="fas fa-times"></i></span>
+            <h2 id="modalTitle" style="color: var(--primary);"></h2>
+            <div id="seasonSection">
+                <h4>Seasons & Episodes</h4>
+                <div class="ep-grid" id="episodeList"></div>
             </div>
         </div>
     </div>
 
     <script>
-        function openDetails(name, slug) {
-            document.getElementById('animeTitle').innerText = name;
-            const episodeContainer = document.getElementById('episodeContainer');
-            episodeContainer.innerHTML = '';
+        // HiAnime සෙවුම් ශ්‍රිතය (මෙය උදාහරණයක් ලෙස දත්ත පෙන්වයි)
+        async function searchAnime() {
+            const query = document.getElementById('searchInput').value;
+            if (!query) return;
 
-            // උදාහරණයක් ලෙස Episode 12ක් ජනනය කිරීම
-            for (let i = 1; i <= 12; i++) {
-                const ep = document.createElement('a');
-                ep.href = `https://hianime.to{slug}?ep=${i}`;
-                ep.target = "_blank";
-                ep.className = 'episode-btn';
-                ep.innerText = 'Ep ' + i;
-                episodeContainer.appendChild(ep);
+            document.getElementById('resultTitle').innerText = `Results for: ${query}`;
+            const display = document.getElementById('animeDisplay');
+            display.innerHTML = "<p>Searching...</p>";
+
+            try {
+                // HiAnime API එකක් (Self-hosted) තිබේ නම් මෙතැනින් Fetch කළ හැක
+                // දැනට උදාහරණ දත්ත පෙන්වමු:
+                const results = [
+                    { title: query + " (Sub)", id: "slug-1", img: "https://via.placeholder.com" },
+                    { title: query + " (Dub)", id: "slug-2", img: "https://via.placeholder.com" }
+                ];
+
+                display.innerHTML = "";
+                results.forEach(anime => {
+                    display.innerHTML += `
+                        <div class="anime-card" onclick="showEpisodes('${anime.title}', '${anime.id}')">
+                            <img src="${anime.img}" alt="${anime.title}">
+                            <div class="anime-info"><p>${anime.title}</p></div>
+                        </div>
+                    `;
+                });
+            } catch (error) {
+                display.innerHTML = "<p>Error fetching data from HiAnime.</p>";
             }
+        }
 
+        function handleSearch(e) {
+            if (e.key === 'Enter') searchAnime();
+        }
+
+        function showEpisodes(title, id) {
+            document.getElementById('modalTitle').innerText = title;
+            const epList = document.getElementById('episodeList');
+            epList.innerHTML = "";
+
+            // HiAnime සෘජු ලින්ක් සාදා ගැනීම
+            for(let i=1; i<=12; i++) {
+                epList.innerHTML += `<a href="https://hianime.to{id}?ep=${i}" target="_blank" class="ep-link">EP ${i}</a>`;
+            }
             document.getElementById('detailsModal').style.display = "block";
         }
 
         function closeModal() {
             document.getElementById('detailsModal').style.display = "none";
         }
-
-        // Close modal when clicking outside
-        window.onclick = function(event) {
-            if (event.target == document.getElementById('detailsModal')) {
-                closeModal();
-            }
-        }
     </script>
-
 </body>
 </html>
