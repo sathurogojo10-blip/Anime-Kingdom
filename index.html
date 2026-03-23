@@ -3,30 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ANIME KINGDOM | Home</title>
+    <title>ANIME KINGDOM</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
         :root { --accent: #e50914; --bg: #08080a; --card-bg: #14141d; --text: #ffffff; }
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); padding-bottom: 80px; overflow-x: hidden; }
         
-        /* Nav */
         .top-nav { display: flex; justify-content: center; padding: 15px 0; background: #000; position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid #222; }
         .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; color: white; }
 
-        /* Hero */
-        .hero { position: relative; width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; background: linear-gradient(to bottom, rgba(0,0,0,0.5), var(--bg)), url('https://wallpaperaccess.com'); background-size: cover; background-position: center; }
-        .search-box { display: flex; width: 90%; max-width: 500px; }
-        #searchInput { flex: 1; height: 45px; background: rgba(0,0,0,0.7); border: 2px solid var(--accent); border-right: none; padding: 0 15px; color: white; border-radius: 25px 0 0 25px; outline: none; }
+        /* Search Section */
+        .hero { padding: 40px 20px; text-align: center; background: linear-gradient(rgba(0,0,0,0.6), var(--bg)), url('https://wallpaperaccess.com'); background-size: cover; }
+        .search-box { display: flex; max-width: 500px; margin: 20px auto; }
+        #searchInput { flex: 1; height: 45px; background: rgba(0,0,0,0.8); border: 2px solid var(--accent); border-right: none; padding: 0 15px; color: white; border-radius: 25px 0 0 25px; outline: none; }
         .search-btn { height: 45px; padding: 0 20px; background: var(--accent); color: white; border: none; border-radius: 0 25px 25px 0; cursor: pointer; font-weight: bold; }
 
-        /* Sections */
+        /* Home Categories */
         .row-section { padding: 20px 0 0 15px; }
-        .row-title { font-size: 18px; font-weight: bold; margin-bottom: 15px; border-left: 4px solid var(--accent); padding-left: 10px; }
+        .row-title { font-size: 18px; font-weight: bold; margin-bottom: 12px; border-left: 4px solid var(--accent); padding-left: 10px; }
         .anime-row { display: flex; overflow-x: auto; gap: 15px; padding-bottom: 15px; scrollbar-width: none; }
         .anime-row::-webkit-scrollbar { display: none; }
 
-        /* Card */
         .card { min-width: 140px; max-width: 140px; background: var(--card-bg); border-radius: 8px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; }
         .card:hover { transform: scale(1.05); border-color: var(--accent); }
         .card img { width: 100%; height: 200px; object-fit: cover; }
@@ -34,19 +32,18 @@
 
         /* Player Modal */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 3000; display: none; flex-direction: column; }
-        .modal-header { padding: 15px; background: #111; display: flex; align-items: center; border-bottom: 1px solid #222; }
-        .back-btn { background: var(--accent); color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; margin-right: 10px; }
+        .modal-header { padding: 12px; background: #111; display: flex; align-items: center; border-bottom: 1px solid #222; }
+        .back-btn { background: var(--accent); color: white; border: none; padding: 6px 15px; border-radius: 4px; cursor: pointer; margin-right: 12px; font-weight: bold; }
         .video-box { flex: 1; background: #000; }
         iframe { width: 100%; height: 100%; border: none; }
         .modal-footer { padding: 15px; background: #0a0a0a; text-align: center; }
-        .btn-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 15px; }
-        .f-btn { background: #222; color: white; border: 1px solid #444; padding: 10px 15px; border-radius: 5px; cursor: pointer; flex: 1; max-width: 150px; }
+        .btn-row { display: flex; justify-content: center; gap: 10px; margin-bottom: 12px; }
+        .f-btn { background: #222; color: white; border: 1px solid #444; padding: 10px; border-radius: 5px; cursor: pointer; flex: 1; max-width: 150px; font-size: 12px; }
         .f-btn:hover { background: var(--accent); }
+        .sub-ui { font-size: 12px; color: #777; background: #111; padding: 8px; border-radius: 5px; display: inline-block; }
 
-        /* Bottom Nav */
         .bottom-nav { position: fixed; bottom: 0; left: 0; width: 100%; background: #000; display: flex; padding: 10px 0; border-top: 1px solid #222; }
-        .nav-item { flex: 1; text-align: center; font-size: 10px; color: #888; cursor: pointer; }
-        .nav-item i { font-size: 18px; margin-bottom: 3px; }
+        .nav-item { flex: 1; text-align: center; font-size: 10px; color: #888; }
         .active { color: var(--accent); }
     </style>
 </head>
@@ -55,37 +52,42 @@
     <nav class="top-nav"><div class="logo">ANIME<span style="color:var(--accent)">KINGDOM</span></div></nav>
 
     <div class="hero">
+        <h2 style="font-size: 22px;">Unlimited Anime Streaming</h2>
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Search anime..." onkeypress="if(event.key === 'Enter') searchAnime()">
+            <input type="text" id="searchInput" placeholder="ඇනිමේ නම සර්ච් කරන්න..." onkeypress="if(event.key === 'Enter') searchAnime()">
             <button class="search-btn" onclick="searchAnime()">සොයන්න</button>
         </div>
     </div>
 
-    <div id="mainContent">
+    <div id="homeContent">
         <div class="row-section">
             <div class="row-title">TRENDING NOW</div>
-            <div class="anime-row" id="trendingGrid"></div>
+            <div id="trendingGrid" class="anime-row">Loading...</div>
         </div>
         <div class="row-section">
-            <div class="row-title">POPULAR SERIES</div>
-            <div class="anime-row" id="popularGrid"></div>
+            <div class="row-title">MOST POPULAR</div>
+            <div id="popularGrid" class="anime-row">Loading...</div>
+        </div>
+        <div class="row-section">
+            <div class="row-title">TOP RATED</div>
+            <div id="topGrid" class="anime-row">Loading...</div>
         </div>
     </div>
 
-    <!-- Player Modal -->
+    <!-- Player -->
     <div id="playerModal" class="modal">
         <div class="modal-header">
-            <button class="back-btn" onclick="closePlayer()">◀ BACK</button>
-            <span id="pTitle" style="font-size: 14px;">Loading...</span>
+            <button class="back-btn" onclick="closePlayer()">BACK</button>
+            <span id="pTitle" style="font-size: 14px; font-weight: bold;"></span>
         </div>
         <div class="video-box"><iframe id="vFrame" allowfullscreen></iframe></div>
         <div class="modal-footer">
             <div class="btn-row">
                 <button class="f-btn" onclick="moveEp(-1)">PREVIOUS</button>
-                <button class="f-btn" onclick="moveEp(1)">NEXT</button>
+                <button class="f-btn" onclick="moveEp(1)">NEXT EPISODE</button>
             </div>
-            <div style="font-size: 12px; color: #666;">
-                Subtitle: <input type="file" id="subInput" accept=".vtt,.srt">
+            <div class="sub-ui">
+                External Subtitle: <input type="file" id="subIn" accept=".srt,.vtt">
             </div>
         </div>
     </div>
@@ -98,31 +100,26 @@
 
     <script>
         const API = "https://graphql.anilist.co";
-        let curTitle = ""; let curEp = 1;
+        let curT = ""; let curE = 1;
 
         window.onload = () => {
-            fetchRow("TRENDING_DESC", "trendingGrid");
-            fetchRow("POPULARITY_DESC", "popularGrid");
+            fetchCat("TRENDING_DESC", "trendingGrid");
+            fetchCat("POPULARITY_DESC", "popularGrid");
+            fetchCat("SCORE_DESC", "topGrid");
         };
 
-        async function fetchRow(sort, id) {
-            const query = `query { Page(perPage: 15) { media(sort: ${sort}, type: ANIME) { title { english romaji } coverImage { large } } } }`;
+        async function fetchCat(sort, id) {
+            const query = `query { Page(perPage: 12) { media(sort: ${sort}, type: ANIME) { title { english romaji } coverImage { large } } } }`;
             try {
                 const res = await fetch(API, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({query}) });
                 const json = await res.json();
                 renderCards(json.data.Page.media, id);
-            } catch (e) {
-                // API fail වුණොත් පෙන්වන Backup Cards
-                renderCards([
-                    {title:{english:"Solo Leveling"}, coverImage:{large:"https://artworks.thetvdb.com"}},
-                    {title:{english:"One Piece"}, coverImage:{large:"https://s4.anilist.co"}}
-                ], id);
-            }
+            } catch (e) { document.getElementById(id).innerText = "Error Loading."; }
         }
 
         function renderCards(data, id) {
-            const container = document.getElementById(id);
-            container.innerHTML = data.map(i => {
+            const grid = document.getElementById(id);
+            grid.innerHTML = data.map(i => {
                 const t = i.title.english || i.title.romaji;
                 return `<div class="card" onclick="play('${t.replace(/'/g,"")}')">
                     <img src="${i.coverImage.large}">
@@ -134,23 +131,34 @@
         function searchAnime() {
             const q = document.getElementById('searchInput').value;
             if(!q) return;
-            document.getElementById('mainContent').innerHTML = `<div class="row-section"><div class="row-title">Results: ${q}</div><div class="anime-row" id="searchGrid"></div></div>`;
-            fetchRow(`SEARCH, TYPE: ANIME, SEARCH: "${q}"`, "searchGrid"); // Simple search logic
+            document.getElementById('homeContent').innerHTML = `<div class="row-section"><div class="row-title">Search: ${q}</div><div class="anime-row" id="searchGrid">Loading...</div></div>`;
+            fetchCat(`SEARCH, SEARCH: "${q}"`, "searchGrid");
         }
 
         function play(title) {
-            curTitle = title; curEp = 1;
+            curT = title; curE = 1;
             document.getElementById('playerModal').style.display = 'flex';
-            updateV();
+            document.body.style.overflow = 'hidden';
+            updatePlayer();
         }
 
-        function updateV() {
-            document.getElementById('pTitle').innerText = curTitle + " - Ep " + curEp;
-            document.getElementById('vFrame').src = `https://vidsrc.me{encodeURIComponent(curTitle)}&episode=${curEp}`;
+        function updatePlayer() {
+            document.getElementById('pTitle').innerText = `${curT} - Episode ${curE}`;
+            // මෙතන තමයි කලින් වැරදිලා තිබුණු ලින්ක් එක හැදුවේ:
+            document.getElementById('vFrame').src = `https://vidsrc.me{encodeURIComponent(curT)}&episode=${curE}`;
         }
 
-        function closePlayer() { document.getElementById('playerModal').style.display = 'none'; document.getElementById('vFrame').src = ""; }
-        function moveEp(s) { curEp += s; if(curEp < 1) curEp = 1; updateV(); }
+        function closePlayer() {
+            document.getElementById('playerModal').style.display = 'none';
+            document.getElementById('vFrame').src = "";
+            document.body.style.overflow = 'auto';
+        }
+
+        function moveEp(s) {
+            curE += s;
+            if(curE < 1) curE = 1;
+            updatePlayer();
+        }
     </script>
 </body>
 </html>
