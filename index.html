@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ANIME KINGDOM | GitHub Stream</title>
+    <title>ANIME KINGDOM | Ultra Stream</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com">
     <style>
         :root { --accent: #ff0000; --bg: #050505; --card-bg: #121212; --text: #fff; }
@@ -11,96 +11,130 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
 
         header { position: fixed; top: 0; width: 100%; padding: 20px; background: rgba(0,0,0,0.95); z-index: 1000; text-align: center; border-bottom: 1px solid #222; }
-        .logo { font-size: 24px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; color: white; margin-bottom: 15px; }
+        .logo { font-size: 26px; font-weight: 900; letter-spacing: -1px; text-transform: uppercase; color: white; margin-bottom: 15px; cursor: pointer; }
         .logo span { color: var(--accent); }
-        .search-area { display: flex; max-width: 90%; margin: 0 auto; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; height: 48px; }
-        #searchInput { flex: 1; background: transparent; border: none; padding: 0 15px; color: white; outline: none; }
+        
+        .search-area { display: flex; max-width: 500px; margin: 0 auto; background: #1a1a1a; border-radius: 12px; border: 1px solid #333; height: 48px; overflow: hidden; transition: 0.3s; }
+        .search-area:focus-within { border-color: var(--accent); }
+        #searchInput { flex: 1; background: transparent; border: none; padding: 0 15px; color: white; outline: none; font-size: 15px; }
 
-        .container { padding: 150px 15px 30px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; text-align: center; }
-        .card:hover { transform: scale(1.05); border-color: var(--accent); }
-        .card img { width: 100%; height: 210px; object-fit: cover; }
-        .card-title { font-size: 13px; padding: 10px; font-weight: 600; color: #ccc; }
+        .container { padding: 160px 20px 40px; max-width: 1200px; margin: 0 auto; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        
+        /* Premium Card Style */
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; transition: 0.4s; cursor: pointer; border: 1px solid #222; position: relative; box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        .card:hover { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 15px 30px rgba(255,0,0,0.15); }
+        .card img { width: 100%; height: 220px; object-fit: cover; transition: 0.3s; }
+        .card:hover img { filter: brightness(1.1); }
+        .card-title { font-size: 13px; padding: 12px 8px; text-align: center; font-weight: 600; color: #bbb; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card:hover .card-title { color: #fff; }
 
-        /* Fullscreen Player */
-        .player-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; }
-        iframe { width: 100%; height: 100%; border: none; }
-        .back-btn { position: absolute; top: 20px; left: 20px; z-index: 10000; background: rgba(255,0,0,0.85); color: white; border: none; padding: 12px 20px; border-radius: 30px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        /* Fullscreen Player Modal */
+        .player-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999; display: none; flex-direction: column; }
+        iframe { width: 100%; height: 100%; border: none; background: #000; }
+        
+        .player-hud { position: absolute; top: 20px; left: 20px; z-index: 10000; display: flex; gap: 15px; }
+        .btn-back { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 50px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 8px; }
+        
+        /* Loading Animation */
+        #loader { text-align: center; padding: 50px; font-size: 18px; color: var(--accent); }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">ANIME<span>KINGDOM</span></div>
+        <div class="logo" onclick="location.reload()">ANIME<span>KINGDOM</span></div>
         <div class="search-area">
-            <input type="text" id="searchInput" placeholder="සොයන්න (Search)..." oninput="filterAnime()">
+            <input type="text" id="searchInput" placeholder="ඔබට අවශ්‍ය ඇනිමේ එක සොයන්න..." oninput="filterAnime()">
         </div>
     </header>
 
     <div class="container">
-        <h3 style="margin-bottom: 20px; border-left: 4px solid var(--accent); padding-left: 10px;">MY ANIME LIST</h3>
-        <div id="animeGrid" class="grid">Loading library...</div>
+        <h3 id="listTitle" style="margin-bottom: 25px; border-left: 5px solid var(--accent); padding-left: 15px; letter-spacing: 1px;">TRENDING LIBRARY</h3>
+        <div id="animeGrid" class="grid">
+            <div id="loader"><i class="fas fa-spinner fa-spin"></i> Loading Library...</div>
+        </div>
     </div>
 
-    <!-- The Player -->
+    <!-- Fullscreen Player -->
     <div id="playerModal" class="player-modal">
-        <button class="back-btn" onclick="closePlayer()"><i class="fas fa-arrow-left"></i> BACK</button>
+        <div class="player-hud">
+            <button class="btn-back" onclick="closePlayer()"><i class="fas fa-arrow-left"></i> BACK</button>
+        </div>
         <iframe id="vFrame" allow="autoplay; fullscreen" allowfullscreen></iframe>
     </div>
 
     <script>
-        // 1. මෙතනට ඔයාගේ GitHub RAW Link එක දාන්න
-        const GITHUB_RAW_URL = "ඔයාගේ_RAW_LINK_එක_මෙතනට"; 
+        // ඔයාගේ නිවැරදි RAW Link එක මෙන්න
+        const GITHUB_RAW_URL = "https://raw.githubusercontent.com"; 
         
         let animeList = [];
 
-        async function loadData() {
+        // GitHub දත්ත කියවීම
+        async function loadAnimeData() {
             try {
-                const res = await fetch(GITHUB_RAW_URL);
-                animeList = await res.json();
-                renderGrid(animeList);
-            } catch (e) {
-                document.getElementById('animeGrid').innerText = "Data load error!";
+                const response = await fetch(GITHUB_RAW_URL);
+                if (!response.ok) throw new Error('Data not found');
+                animeList = await response.json();
+                renderAnime(animeList);
+            } catch (error) {
+                document.getElementById('animeGrid').innerHTML = `<p style="color:red; text-align:center;">Error: ඇනිමේ දත්ත ලබා ගැනීමට නොහැකි විය. (JSON file එක පරීක්ෂා කරන්න)</p>`;
             }
         }
 
-        function renderGrid(data) {
-            document.getElementById('animeGrid').innerHTML = data.map(a => `
-                <div class="card" onclick="playAnime('${a.id}')">
-                    <img src="${a.poster}" alt="${a.title}">
-                    <div class="card-title">${a.title}</div>
+        // ඇනිමේ කාඩ් පෙන්වීම
+        function renderAnime(data) {
+            const grid = document.getElementById('animeGrid');
+            if (data.length === 0) {
+                grid.innerHTML = "<p style='text-align:center; width:100%;'>සෙවුමට ගැළපෙන ඇනිමේ කිසිවක් නැත.</p>";
+                return;
+            }
+            grid.innerHTML = data.map(anime => `
+                <div class="card" onclick="playAnime('${anime.id}', '${anime.title}')">
+                    <img src="${anime.poster}" alt="${anime.title}" loading="lazy">
+                    <div class="card-title">${anime.title}</div>
                 </div>
             `).join('');
         }
 
+        // සෙවුම් පහසුකම (Search)
         function filterAnime() {
-            const term = document.getElementById('searchInput').value.toLowerCase();
-            renderGrid(animeList.filter(a => a.title.toLowerCase().includes(term)));
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = animeList.filter(a => a.title.toLowerCase().includes(query));
+            renderAnime(filtered);
         }
 
-        function playAnime(id) {
+        // වීඩියෝව ප්ලේ කිරීම (HiAnime/Vidsrc Source)
+        function playAnime(id, title) {
             const modal = document.getElementById('playerModal');
             const frame = document.getElementById('vFrame');
             
-            // HiAnime source එකෙන් වීඩියෝව පමණක් ලබා ගැනීම
+            // වීඩියෝ ලින්ක් එක සැකසීම
             frame.src = `https://vidsrc.to{id}`; 
-            modal.style.display = 'block';
+            modal.style.display = 'flex';
 
-            // Fullscreen සහ Auto Rotate
+            // Fullscreen කිරීම
             if (modal.requestFullscreen) modal.requestFullscreen();
+            else if (modal.webkitRequestFullscreen) modal.webkitRequestFullscreen();
+
+            // Mobile එකේදී ස්ක්‍රීන් එක rotate කිරීම
             if (screen.orientation && screen.orientation.lock) {
-                screen.orientation.lock('landscape').catch(() => {});
+                screen.orientation.lock('landscape').catch(e => console.log("Orientation lock not supported"));
             }
         }
 
+        // ප්ලේයර් එක වැසීම
         function closePlayer() {
-            document.getElementById('playerModal').style.display = 'none';
-            document.getElementById('vFrame').src = "";
+            const modal = document.getElementById('playerModal');
+            document.getElementById('vFrame').src = ""; // වීඩියෝව නවත්වන්න
+            modal.style.display = 'none';
+
             if (document.exitFullscreen) document.exitFullscreen();
+            if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock();
         }
 
-        window.onload = loadData;
+        // පිටුව ලෝඩ් වූ විට දත්ත කියවන්න
+        window.onload = loadAnimeData;
     </script>
 </body>
 </html>
