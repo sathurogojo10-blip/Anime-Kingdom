@@ -3,18 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Anime Kingdom | Final Elite</title>
+  <title>Anime Kingdom | Manga & Anime v5</title>
   <script src="https://unpkg.com"></script>
   <style>
     :root { --red: #ff3e3e; --bg: #050505; --glass: rgba(255, 255, 255, 0.08); }
     
-    /* උඩ පහළ යාමට ඉඩ ලබා දීම (Scroll Fix) */
     html, body { 
       margin: 0; padding: 0; background: var(--bg); color: white; 
-      font-family: 'Inter', sans-serif; 
-      overflow-x: hidden; 
-      overflow-y: auto; /* මෙතැනින් තමයි උඩ පහල යාම පාලනය වෙන්නේ */
-      overscroll-behavior-y: contain;
+      font-family: 'Inter', sans-serif; overflow-x: hidden; 
+      overflow-y: auto; overscroll-behavior-y: contain;
     }
 
     #hero-bg {
@@ -25,7 +22,7 @@
     
     .overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-      background: linear-gradient(0deg, var(--bg) 20%, transparent 100%);
+      background: linear-gradient(0deg, var(--bg) 25%, transparent 100%);
       z-index: -1;
     }
 
@@ -44,17 +41,14 @@
       padding: 12px; color: white !important; outline: none !important; font-size: 16px;
     }
 
-    .hero-info { padding: 20px 25px; min-height: 140px; display: flex; flex-direction: column; justify-content: flex-end; }
-    .meta { font-size: 10px; font-weight: 800; color: var(--red); text-transform: uppercase; margin-bottom: 5px; }
-    .title { font-size: 32px; font-weight: 900; margin: 0; line-height: 1.1; }
+    .hero-info { padding: 15px 25px; min-height: 140px; display: flex; flex-direction: column; justify-content: flex-end; }
+    .title { font-size: 30px; font-weight: 900; margin: 0; line-height: 1.1; }
 
-    /* සුදු බොත්තම (Watch Now) */
     .btn-action {
-      background: white; color: black; border: none; padding: 15px 45px; border-radius: 50px;
-      font-weight: 900; font-size: 15px; display: inline-flex; align-items: center; gap: 10px;
-      cursor: pointer; margin-top: 20px; transition: 0.3s;
+      background: white; color: black; border: none; padding: 14px 40px; border-radius: 50px;
+      font-weight: 900; font-size: 14px; display: inline-flex; align-items: center; gap: 10px;
+      cursor: pointer; margin-top: 15px;
     }
-    .btn-action:active { transform: scale(0.95); }
 
     .category-section { margin-top: 30px; }
     .category-title { padding: 0 25px; font-size: 15px; font-weight: 800; text-transform: uppercase; color: #ccc; display: flex; align-items: center; gap: 8px; }
@@ -63,19 +57,24 @@
     .menu-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 15px 25px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
     .menu-scroll::-webkit-scrollbar { display: none; }
     
-    .card { min-width: 105px; transition: 0.4s; cursor: pointer; text-align: center; }
-    .card img { width: 100px; height: 140px; border-radius: 12px; object-fit: cover; border: 2px solid transparent; transition: 0.3s; }
-    .card.active img { border-color: white; transform: scale(1.08); box-shadow: 0 0 15px rgba(255,255,255,0.2); }
-    .card p { font-size: 10px; margin-top: 10px; opacity: 0.6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+    .card { min-width: 100px; text-align: center; cursor: pointer; transition: 0.3s; }
+    .card img { width: 100px; height: 140px; border-radius: 12px; object-fit: cover; border: 2px solid transparent; }
+    .card.active img { border-color: white; transform: scale(1.05); }
+    .card p { font-size: 10px; margin-top: 8px; opacity: 0.6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
 
-    /* Modal Styling */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 4000; display: none; backdrop-filter: blur(10px); }
-    .bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background: #111; border-radius: 30px 30px 0 0; padding: 30px 25px; box-sizing: border-box; border-top: 3px solid var(--red); animation: slideUp 0.3s ease-out; }
+    /* Modals */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 4000; display: none; backdrop-filter: blur(10px); }
+    .bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background: #111; border-radius: 30px 30px 0 0; padding: 30px 25px; border-top: 3px solid var(--red); animation: slideUp 0.3s ease-out; }
     @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
 
-    .option-card { display: flex; align-items: center; gap: 15px; padding: 18px; background: #1c1c1c; margin-bottom: 12px; border-radius: 15px; cursor: pointer; border: 1px solid #333; }
-    .option-card b { font-size: 16px; }
+    .option-box { display: flex; align-items: center; gap: 15px; padding: 18px; background: #1c1c1c; margin-bottom: 12px; border-radius: 15px; cursor: pointer; border: 1px solid #333; }
+    .option-box i { color: var(--red); }
 
+    /* Video/Manga Player View */
+    #content-view {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: black; z-index: 5000; display: none; flex-direction: column;
+    }
   </style>
 </head>
 <body>
@@ -85,63 +84,61 @@
 
   <header>
     <div class="brand">ANIME<span>KINGDOM</span></div>
-    <div id="clock" style="font-size: 13px; opacity: 0.8; font-weight: bold;"></div>
+    <div id="clock" style="font-size: 13px; font-weight: bold; opacity: 0.8;"></div>
   </header>
 
   <div class="search-wrapper">
     <div class="search-container">
       <i data-lucide="search" size="18" color="#ff3e3e"></i>
-      <input type="text" id="searchInput" class="search-input" placeholder="Search anime title..." oninput="handleSearch()">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search title..." oninput="handleSearch()">
     </div>
   </div>
 
   <div class="hero-info">
-    <div class="meta" id="h-genres">ACTION • ADVENTURE</div>
-    <h1 class="title" id="h-title">Anime Kingdom</h1>
-    <!-- සුදු බොත්තම දැන් තෝරාගත් ඇනිමේ එකට අදාළව වැඩ කරයි -->
-    <button class="btn-action" onclick="openChoiceModal()">
-      <i data-lucide="play" fill="black" size="18"></i> WATCH NOW
+    <div id="h-meta" style="font-size: 10px; font-weight: 800; color: var(--red); margin-bottom: 5px;">SELECTED TITLE</div>
+    <h1 class="title" id="h-title">Loading...</h1>
+    <button class="btn-action" onclick="showChoiceMenu()">
+      <i data-lucide="play-circle" fill="black" size="18"></i> START EXPLORING
     </button>
   </div>
 
-  <!-- Categories -->
-  <div class="category-section"><div class="category-title">Trending Now</div><div class="menu-scroll" id="trending-list"></div></div>
-  <div class="category-section"><div class="category-title">Popular Series</div><div class="menu-scroll" id="popular-list"></div></div>
-  <div class="category-section" style="margin-bottom: 80px;"><div class="category-title">Top Rated</div><div class="menu-scroll" id="top-list"></div></div>
+  <div class="category-section"><div class="category-title">Trending Now</div><div class="menu-scroll" id="trend-list"></div></div>
+  <div class="category-section"><div class="category-title">Popular Series</div><div class="menu-scroll" id="pop-list"></div></div>
+  <div class="category-section" style="margin-bottom: 60px;"><div class="category-title">Top Rated</div><div class="menu-scroll" id="top-list"></div></div>
 
-  <!-- Selection Modal (Watch or Read) -->
-  <div id="choice-modal" class="modal-overlay" onclick="closeModals()">
+  <!-- Step 1: Choice Menu -->
+  <div id="choice-modal" class="modal-overlay" onclick="closeAll()">
     <div class="bottom-sheet" onclick="event.stopPropagation()">
-      <h3 style="text-align:center; margin-bottom:20px; font-size: 18px;">CHOOSE ACTION</h3>
+      <h3 style="text-align:center; margin-bottom:25px;">CHOOSE ACTION</h3>
       
-      <div class="option-card" onclick="openPlayerMenu()">
-        <div style="background:var(--red); padding:10px; border-radius:10px;"><i data-lucide="play" fill="white" size="20"></i></div>
-        <b>WATCH ANIME</b>
+      <div class="option-box" onclick="showPlayerMenu()">
+        <i data-lucide="play" fill="var(--red)"></i>
+        <div><b>WATCH ANIME</b><br><small style="color:#777;">Stream episodes via external apps</small></div>
       </div>
 
-      <div class="option-card" onclick="openMangaMenu()">
-        <div style="background:#2ecc71; padding:10px; border-radius:10px;"><i data-lucide="book-open" fill="white" size="20"></i></div>
-        <b>READ MANGA / MANHWA</b>
+      <div class="option-box" onclick="showMangaLangMenu()">
+        <i data-lucide="book-open" fill="#2ecc71" style="color:#2ecc71;"></i>
+        <div><b>READ MANGA / MANHWA</b><br><small style="color:#777;">Full chapters in EN or SI</small></div>
       </div>
     </div>
   </div>
 
-  <!-- Player Selector Modal -->
-  <div id="player-modal" class="modal-overlay" onclick="closeModals()">
-    <div class="bottom-sheet" onclick="event.stopPropagation()">
-      <h3 style="margin-bottom:20px; color:var(--red);">SELECT PLAYER</h3>
-      <div class="option-card" onclick="launchApp('splayer')"><b>SPlayer</b></div>
-      <div class="option-card" onclick="launchApp('vlc')"><b>VLC Player</b></div>
-      <div class="option-card" onclick="launchApp('mx')"><b>MX Player</b></div>
-    </div>
-  </div>
-
-  <!-- Manga Language Modal -->
-  <div id="manga-modal" class="modal-overlay" onclick="closeModals()">
+  <!-- Step 2: Language Selector -->
+  <div id="lang-modal" class="modal-overlay" onclick="closeAll()">
     <div class="bottom-sheet" onclick="event.stopPropagation()">
       <h3 style="margin-bottom:20px;">READING LANGUAGE</h3>
-      <div class="option-card" onclick="goToManga('en')"><b>ENGLISH</b></div>
-      <div class="option-card" onclick="goToManga('si')"><b>සිංහල (SINHALA)</b></div>
+      <div class="option-box" onclick="launchManga('en')"><b>🇺🇸 ENGLISH</b></div>
+      <div class="option-box" onclick="launchManga('si')"><b>🇱🇰 සිංහල (SINHALA)</b></div>
+    </div>
+  </div>
+
+  <!-- Step 3: Player Selector -->
+  <div id="player-modal" class="modal-overlay" onclick="closeAll()">
+    <div class="bottom-sheet" onclick="event.stopPropagation()">
+      <h3 style="margin-bottom:20px; color:var(--red);">SELECT PLAYER</h3>
+      <div class="option-box" onclick="launchAnime('splayer')"><b>SPlayer</b></div>
+      <div class="option-box" onclick="launchAnime('vlc')"><b>VLC Player</b></div>
+      <div class="option-box" onclick="launchAnime('mx')"><b>MX Player</b></div>
     </div>
   </div>
 
@@ -150,52 +147,57 @@
     let cur = null;
     let timer;
 
-    async function loadAll() {
-      fetchData(`{Page(perPage:12){media(sort:TRENDING_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, "trending-list");
-      fetchData(`{Page(perPage:12){media(sort:POPULARITY_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, "popular-list");
+    async function load() {
+      fetchData(`{Page(perPage:12){media(sort:TRENDING_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, "trend-list");
+      fetchData(`{Page(perPage:12){media(sort:POPULARITY_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, "pop-list");
       fetchData(`{Page(perPage:12){media(sort:SCORE_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, "top-list");
     }
 
     async function fetchData(q, id, vars={}) {
       const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query:q, variables:vars})});
-      const data = await res.json();
-      const list = data.data.Page.media;
+      const d = await res.json();
+      const list = d.data.Page.media;
       document.getElementById(id).innerHTML = list.map((a, i) => `
         <div class="card" onclick="sel(${JSON.stringify(a).replace(/"/g, '&quot;')}, this)">
           <img src="${a.coverImage.large}">
           <p>${(a.title.english || a.title.romaji).substring(0,15)}</p>
         </div>`).join('');
-      if(id === "trending-list" && list.length > 0) sel(list);
+      if(id === "trend-list" && list.length > 0) sel(list);
     }
 
     function sel(a, el) {
       cur = a;
       document.getElementById('hero-bg').style.backgroundImage = `url('${a.bannerImage || a.coverImage.extraLarge}')`;
       document.getElementById('h-title').innerText = a.title.english || a.title.romaji;
-      document.getElementById('h-genres').innerText = a.genres.join(" • ");
-
       if(el) {
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
-        el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        el.scrollIntoView({ behavior: 'smooth', inline: 'center' });
       }
     }
 
     // Modal Controls
-    function openChoiceModal() { if(cur) document.getElementById('choice-modal').style.display='block'; }
-    function openMangaMenu() { closeModals(); document.getElementById('manga-modal').style.display='block'; }
-    function openPlayerMenu() { closeModals(); document.getElementById('player-modal').style.display='block'; }
-    function closeModals() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none'); }
+    function showChoiceMenu() { if(cur) document.getElementById('choice-modal').style.display='block'; }
+    function showMangaLangMenu() { closeAll(); document.getElementById('lang-modal').style.display='block'; }
+    function showPlayerMenu() { closeAll(); document.getElementById('player-modal').style.display='block'; }
+    function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none'); }
 
-    function goToManga(lang) {
+    // --- Manga Function (Working Fix) ---
+    function launchManga(lang) {
       const name = cur.title.english || cur.title.romaji;
+      // MangaDex API සෙවුමකට වඩා සාර්ථක කෙළින්ම සෙවුම් පිටුවකට යොමු කිරීමයි
       let url = `https://mangadex.org{encodeURIComponent(name)}`;
-      if(lang === 'si') url = `https://translate.google.com{encodeURIComponent(url)}`;
+      
+      if(lang === 'si') {
+        // සිංහලෙන් කියවීමට Google Translate Bridge එකක් පාවිච්චි කරනවා
+        url = `https://translate.google.com{encodeURIComponent(url)}`;
+      }
+      
       window.open(url, '_blank');
-      closeModals();
+      closeAll();
     }
 
-    function launchApp(type) {
+    function launchAnime(type) {
       const stream = `https://www.2embed.cc{cur.id}/1`;
       const title = cur.title.english || cur.title.romaji;
       let appUrl = "";
@@ -203,7 +205,7 @@
       else if(type === 'vlc') appUrl = `intent:${stream}#Intent;package=org.videolan.vlc;S.title=${encodeURIComponent(title)};end`;
       else if(type === 'mx') appUrl = `intent:${stream}#Intent;package=com.mxtech.videoplayer.ad;S.title=${encodeURIComponent(title)};end`;
       window.location.href = appUrl;
-      closeModals();
+      closeAll();
     }
 
     function handleSearch() {
@@ -211,11 +213,11 @@
       clearTimeout(timer);
       if(v.length < 2) return;
       timer = setTimeout(() => {
-        fetchData(`query($s:String){Page(perPage:12){media(search:$s,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, "trending-list", {s:v});
+        fetchData(`query($s:String){Page(perPage:12){media(search:$s,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, "trend-list", {s:v});
       }, 600);
     }
 
-    loadAll();
+    load();
     lucide.createIcons();
     setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }, 1000);
   </script>
