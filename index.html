@@ -3,201 +3,188 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Anime Kingdom | PS5 Pro</title>
-  <!-- Lucide Icons පාවිච්චි කරමු (ගොඩක් Advance අයිකන් සඳහා) -->
+  <title>Anime Kingdom | PS5 Elite Edition</title>
   <script src="https://unpkg.com"></script>
   <style>
-    :root { --primary-red: #ff3e3e; --bg-dark: #080808; --glass: rgba(255, 255, 255, 0.08); }
+    :root { --red: #ff3e3e; --bg: #050505; --glass: rgba(255, 255, 255, 0.1); }
     
-    body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg-dark); color: white; overflow-x: hidden; }
+    body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow: hidden; }
 
-    .hero-bg {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-      background-size: cover; background-position: center; 
-      transition: background 0.8s ease; z-index: -2; filter: brightness(0.3);
+    /* Dynamic Immersive Background */
+    #hero-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-size: cover; background-position: center 20%;
+      transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: -2; transform: scale(1.1); /* පොඩි Zoom එකක් ලස්සනට */
     }
     
-    .hero-overlay {
+    .overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(to bottom, transparent 0%, var(--bg-dark) 95%);
+      background: radial-gradient(circle at top right, transparent, var(--bg) 90%),
+                  linear-gradient(0deg, var(--bg) 10%, transparent 100%);
       z-index: -1;
     }
 
-    /* --- Advanced Search Bar UI --- */
-    .search-wrapper {
-      padding: 10px 20px;
-      position: sticky; top: 50px; z-index: 100;
+    /* Modern Header */
+    header { padding: 25px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 20px; font-weight: 900; letter-spacing: 2px; }
+    .brand span { color: var(--red); }
+
+    /* Floating Search */
+    .search-area { padding: 0 25px; margin-bottom: 20px; }
+    .search-bar {
+      background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 18px;
+      display: flex; align-items: center; padding: 5px 15px; transition: 0.4s;
     }
-    
-    .search-container {
-      position: relative;
-      display: flex; align-items: center;
-      background: var(--glass);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 15px;
-      padding: 5px 15px;
-      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-    }
+    .search-bar:focus-within { border-color: var(--red); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+    .search-input { width: 100%; background: none; border: none; padding: 12px; color: white; outline: none; font-size: 15px; }
 
-    /* සර්ච් බාර් එක උඩට ක්ලික් කළාම වෙනස් වන ආකාරය */
-    .search-container:focus-within {
-      border-color: var(--primary-red);
-      box-shadow: 0 0 20px rgba(255, 62, 62, 0.3);
-      transform: scale(1.02);
-      background: rgba(255, 255, 255, 0.12);
-    }
+    /* Anime Info */
+    .info-box { padding: 20px 25px; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-end; }
+    .meta { font-size: 11px; font-weight: 800; color: var(--red); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1.5px; }
+    .title { font-size: 38px; font-weight: 900; margin: 0; line-height: 1; text-shadow: 0 5px 20px rgba(0,0,0,0.8); }
+    .desc { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6; margin: 15px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 
-    .search-input {
-      width: 100%; background: none; border: none;
-      padding: 12px 10px; color: white; font-size: 16px;
-      outline: none; font-weight: 500;
-    }
-
-    .search-input::placeholder { color: rgba(255, 255, 255, 0.4); font-weight: 400; }
-
-    /* Search Icon & Animation */
-    .search-icon-box {
-      display: flex; align-items: center; justify-content: center;
-      color: var(--primary-red); transition: 0.3s;
-    }
-
-    /* සර්ච් කරන විට කැරකෙන ඇනිමේෂන් එක */
-    @keyframes spin { 100% { transform: rotate(360deg); } }
-    .loading-spinner { animation: spin 1s linear infinite; color: white !important; }
-
-    /* --- Menu & Content --- */
-    .menu-scroll { display: flex; overflow-x: auto; padding: 20px; gap: 12px; scrollbar-width: none; }
+    /* Horizontal Menu - PS5 Style */
+    .menu-container { padding: 20px 0 40px 25px; }
+    .menu-scroll { display: flex; overflow-x: auto; gap: 18px; scrollbar-width: none; padding-right: 25px; }
     .menu-scroll::-webkit-scrollbar { display: none; }
     
-    .anime-item { min-width: 85px; text-align: center; cursor: pointer; transition: 0.3s; }
-    .anime-item img { width: 80px; height: 110px; border-radius: 10px; object-fit: cover; border: 2px solid transparent; }
-    .anime-item.active img { border-color: white; transform: scale(1.05); }
-    .anime-item p { font-size: 10px; margin-top: 5px; opacity: 0.7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .card { min-width: 100px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
+    .card img { width: 100px; height: 140px; border-radius: 15px; object-fit: cover; border: 3px solid transparent; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
+    .card.active { transform: scale(1.15) translateY(-10px); }
+    .card.active img { border-color: white; box-shadow: 0 0 25px rgba(255,255,255,0.3); }
+    .card p { font-size: 10px; margin-top: 10px; text-align: center; opacity: 0; transition: 0.3s; font-weight: bold; }
+    .card.active p { opacity: 1; }
 
-    .main-info { padding: 0 25px 100px 25px; }
-    .title { font-size: 34px; font-weight: 800; margin: 5px 0; }
-    .genres { color: var(--primary-red); font-size: 12px; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px;}
-    .desc { color: #ccc; font-size: 14px; line-height: 1.5; margin-bottom: 20px; max-height: 100px; overflow-y: auto; }
-    
-    .btn-play {
-      background: white; color: black; border: none; padding: 14px 40px;
-      border-radius: 50px; font-weight: bold; font-size: 16px;
-      display: inline-flex; align-items: center; gap: 10px;
+    /* Watch Button */
+    .btn-row { display: flex; gap: 15px; }
+    .play-btn {
+      background: white; color: black; border: none; padding: 15px 35px; border-radius: 40px;
+      font-weight: 900; font-size: 15px; display: flex; align-items: center; gap: 10px;
+      cursor: pointer; transition: 0.3s;
     }
+    .play-btn:active { transform: scale(0.95); }
+
+    /* Multi-Server Player Overlay */
+    #player-view {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black;
+      z-index: 2000; display: none; flex-direction: column;
+    }
+    .player-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #0a0a0a; }
   </style>
 </head>
 <body>
 
-  <div id="hero-bg" class="hero-bg"></div>
-  <div class="hero-overlay"></div>
+  <div id="hero-bg"></div>
+  <div class="overlay"></div>
 
-  <header style="padding: 20px; display: flex; justify-content: space-between; align-items: center;">
-    <div style="font-weight: 900; font-size: 18px;">ANIME<span style="color:var(--primary-red)">KINGDOM</span></div>
-    <div id="clock" style="font-size: 14px; opacity: 0.8;"></div>
+  <header>
+    <div class="brand">ANIME<span>KINGDOM</span></div>
+    <div id="time" style="font-size: 13px; font-weight: 600;"></div>
   </header>
 
-  <!-- Advance Search Bar Wrapper -->
-  <div class="search-wrapper">
-    <div class="search-container">
-      <input type="text" id="searchInput" class="search-input" placeholder="Search for anime..." oninput="handleSearch()">
-      <div class="search-icon-box" id="searchIcon">
-        <i data-lucide="search" size="20"></i>
-      </div>
+  <div class="search-area">
+    <div class="search-bar">
+      <i data-lucide="search" size="18" color="#ff3e3e"></i>
+      <input type="text" id="q" class="search-input" placeholder="Search titles, genres..." oninput="search()">
     </div>
   </div>
 
-  <div class="menu-scroll" id="anime-list"></div>
+  <div class="info-box">
+    <div class="meta" id="m-genres">Action • Fantasy</div>
+    <h1 class="title" id="m-title">Loading...</h1>
+    <p class="desc" id="m-desc">Fetching the best anime for you.</p>
+    <div class="btn-row">
+      <button class="play-btn" onclick="play()">
+        <i data-lucide="play" fill="black" size="20"></i> WATCH NOW
+      </button>
+    </div>
+  </div>
 
-  <div class="main-info">
-    <div class="genres" id="genre-box">DRAMA • FANTASY</div>
-    <h1 class="title" id="main-title">Select Anime</h1>
-    <p class="desc" id="main-desc">The most immersive anime experience in your pocket.</p>
-    <button class="btn-play">
-      <i data-lucide="play" fill="black"></i> WATCH NOW
-    </button>
+  <div class="menu-container">
+    <div class="menu-scroll" id="list"></div>
+  </div>
+
+  <!-- Video Player -->
+  <div id="player-view">
+    <div class="player-header">
+      <div id="p-name" style="font-weight: bold; font-size: 14px;"></div>
+      <button onclick="closeP()" style="background:var(--red); color:white; border:none; padding:8px 15px; border-radius:8px; font-weight:bold;">EXIT ×</button>
+    </div>
+    <iframe id="venom-player" src="" style="width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
   </div>
 
   <script>
     const API = "https://graphql.anilist.co";
-    let debounceTimer;
+    let cur = null;
 
-    // Search Handle with Advance Loader Icon
-    async function handleSearch() {
-      const term = document.getElementById('searchInput').value;
-      const iconBox = document.getElementById('searchIcon');
-      
-      if (term.length < 2) { loadTrending(); return; }
-
-      // Change icon to Loading Spinner
-      iconBox.innerHTML = '<i data-lucide="loader-2" class="loading-spinner"></i>';
-      lucide.createIcons();
-
-      clearTimeout(debounceTimer);
-      debounceTimer = setTimeout(async () => {
-        const query = `query ($s: String) { Page(perPage: 12) { media(search: $s, type: ANIME) { 
-          title { english romaji } coverImage { extraLarge large } bannerImage description genres 
-        }}}`;
-        
-        try {
-          const res = await fetch(API, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ query, variables: { s: term } })
-          });
-          const data = await res.json();
-          renderList(data.data.Page.media);
-          
-          // Change back to Search icon
-          iconBox.innerHTML = '<i data-lucide="search"></i>';
-          lucide.createIcons();
-        } catch(e) { console.error(e); }
-      }, 600);
+    async function load(query, vars = {}) {
+      const res = await fetch(API, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query, variables: vars })
+      });
+      const json = await res.json();
+      const items = json.data.Page.media;
+      render(items);
     }
 
-    async function loadTrending() {
-      const query = `{ Page(perPage: 12) { media(sort: TRENDING_DESC, type: ANIME) { 
-        title { english romaji } coverImage { extraLarge large } bannerImage description genres 
-      }}}`;
-      const res = await fetch(API, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ query }) });
-      const data = await res.json();
-      renderList(data.data.Page.media);
-    }
-
-    function renderList(list) {
-      const container = document.getElementById('anime-list');
-      container.innerHTML = list.map((anime, i) => `
-        <div class="anime-item ${i === 0 ? 'active' : ''}" onclick="updateUI(${JSON.stringify(anime).replace(/"/g, '&quot;')}, this)">
-          <img src="${anime.coverImage.large}">
-          <p>${anime.title.english || anime.title.romaji}</p>
+    function render(list) {
+      const container = document.getElementById('list');
+      container.innerHTML = list.map((a, i) => `
+        <div class="card ${i===0?'active':''}" onclick="sel(${JSON.stringify(a).replace(/"/g, '&quot;')}, this)">
+          <img src="${a.coverImage.large}">
+          <p>${(a.title.english || a.title.romaji).substring(0,15)}...</p>
         </div>
       `).join('');
-      if(list[0]) updateUI(list[0]);
+      if(list[0]) sel(list[0]);
     }
 
-    function updateUI(anime, el) {
-      const bg = anime.bannerImage || anime.coverImage.extraLarge;
-      document.getElementById('hero-bg').style.backgroundImage = `url('${bg}')`;
-      document.getElementById('main-title').innerText = anime.title.english || anime.title.romaji;
-      document.getElementById('main-desc').innerHTML = anime.description;
-      document.getElementById('genre-box').innerText = anime.genres.join(" • ");
+    function sel(a, el) {
+      cur = a;
+      document.getElementById('hero-bg').style.backgroundImage = `url('${a.bannerImage || a.coverImage.extraLarge}')`;
+      document.getElementById('m-title').innerText = a.title.english || a.title.romaji;
+      document.getElementById('m-desc').innerHTML = a.description;
+      document.getElementById('m-genres').innerText = a.genres.join(" • ");
 
       if(el) {
-        document.querySelectorAll('.anime-item').forEach(item => item.classList.remove('active'));
+        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
-        el.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
       }
     }
 
-    // Initialize Icons and Clock
+    function search() {
+      const val = document.getElementById('q').value;
+      if(val.length < 2) return;
+      load(`query($s:String){Page(perPage:10){media(search:$s,type:ANIME){title{english romaji}description bannerImage genres coverImage{extraLarge large}id}}}`, {s:val});
+    }
+
+    function play() {
+      if(!cur) return;
+      const player = document.getElementById('player-view');
+      const frame = document.getElementById('venom-player');
+      // Advance Multi-server link (2Embed is reliable for most titles)
+      frame.src = `https://www.2embed.cc{cur.id}/1`;
+      document.getElementById('p-name').innerText = cur.title.english || cur.title.romaji;
+      player.style.display = 'flex';
+    }
+
+    function closeP() {
+      document.getElementById('player-view').style.display = 'none';
+      document.getElementById('venom-player').src = '';
+    }
+
+    // Trending on start
+    load(`{Page(perPage:15){media(sort:TRENDING_DESC,type:ANIME){title{english romaji}description bannerImage genres coverImage{extraLarge large}id}}}`);
+
+    // Clock & Icons
     lucide.createIcons();
     setInterval(() => {
-      document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      document.getElementById('time').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
     }, 1000);
-
-    loadTrending();
   </script>
 </body>
 </html>
