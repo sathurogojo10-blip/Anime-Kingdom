@@ -2,16 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Anime Kingdom | Manga & Anime v5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Anime Kingdom | Season & Subs</title>
   <script src="https://unpkg.com"></script>
   <style>
     :root { --red: #ff3e3e; --bg: #050505; --glass: rgba(255, 255, 255, 0.08); }
     
+    /* උඩ පහළ යාම පහසු කිරීමට (Scrolling Fix) */
     html, body { 
       margin: 0; padding: 0; background: var(--bg); color: white; 
       font-family: 'Inter', sans-serif; overflow-x: hidden; 
-      overflow-y: auto; overscroll-behavior-y: contain;
+      overflow-y: auto; scroll-behavior: smooth;
     }
 
     #hero-bg {
@@ -22,59 +23,51 @@
     
     .overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-      background: linear-gradient(0deg, var(--bg) 25%, transparent 100%);
+      background: linear-gradient(0deg, var(--bg) 15%, transparent 100%);
       z-index: -1;
     }
 
-    header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; }
-    .brand { font-size: 20px; font-weight: 900; letter-spacing: 2px; }
+    header { padding: 25px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 22px; font-weight: 900; letter-spacing: 2px; }
     .brand span { color: var(--red); }
 
-    .search-wrapper { padding: 0 25px; margin-bottom: 10px; }
+    .search-wrapper { padding: 0 25px; margin-bottom: 20px; }
     .search-container {
       display: flex; align-items: center; background: var(--glass);
-      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 15px;
-      padding: 5px 15px; backdrop-filter: blur(15px);
+      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 15px; padding: 5px 15px;
     }
-    .search-input {
-      width: 100%; background: transparent !important; border: none !important;
-      padding: 12px; color: white !important; outline: none !important; font-size: 16px;
-    }
+    .search-input { width: 100%; background: transparent; border: none; padding: 12px; color: white; outline: none; }
 
-    .hero-info { padding: 15px 25px; min-height: 140px; display: flex; flex-direction: column; justify-content: flex-end; }
-    .title { font-size: 30px; font-weight: 900; margin: 0; line-height: 1.1; }
-
-    .btn-action {
-      background: white; color: black; border: none; padding: 14px 40px; border-radius: 50px;
-      font-weight: 900; font-size: 14px; display: inline-flex; align-items: center; gap: 10px;
-      cursor: pointer; margin-top: 15px;
-    }
-
-    .category-section { margin-top: 30px; }
-    .category-title { padding: 0 25px; font-size: 15px; font-weight: 800; text-transform: uppercase; color: #ccc; display: flex; align-items: center; gap: 8px; }
-    .category-title::before { content: ''; width: 4px; height: 14px; background: var(--red); border-radius: 2px; }
-
-    .menu-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 15px 25px; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    /* Category Layouts */
+    .section-title { padding: 20px 25px 0; font-size: 16px; font-weight: 800; color: #ccc; text-transform: uppercase; }
+    .menu-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 15px 25px; scrollbar-width: none; }
     .menu-scroll::-webkit-scrollbar { display: none; }
     
-    .card { min-width: 100px; text-align: center; cursor: pointer; transition: 0.3s; }
-    .card img { width: 100px; height: 140px; border-radius: 12px; object-fit: cover; border: 2px solid transparent; }
+    .card { min-width: 100px; cursor: pointer; transition: 0.3s; text-align: center; }
+    .card img { width: 100px; height: 145px; border-radius: 12px; object-fit: cover; border: 2px solid transparent; }
     .card.active img { border-color: white; transform: scale(1.05); }
-    .card p { font-size: 10px; margin-top: 8px; opacity: 0.6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 600; }
+    .card p { font-size: 10px; margin-top: 8px; opacity: 0.7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-    /* Modals */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 4000; display: none; backdrop-filter: blur(10px); }
-    .bottom-sheet { position: fixed; bottom: 0; left: 0; width: 100%; background: #111; border-radius: 30px 30px 0 0; padding: 30px 25px; border-top: 3px solid var(--red); animation: slideUp 0.3s ease-out; }
-    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    /* --- Season & Episode Modal --- */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 4000; display: none; backdrop-filter: blur(10px); overflow-y: auto; }
+    .modal-content { padding: 30px 20px; max-width: 600px; margin: 0 auto; }
+    .close-btn { float: right; cursor: pointer; color: var(--red); }
 
-    .option-box { display: flex; align-items: center; gap: 15px; padding: 18px; background: #1c1c1c; margin-bottom: 12px; border-radius: 15px; cursor: pointer; border: 1px solid #333; }
-    .option-box i { color: var(--red); }
+    .season-tabs { display: flex; gap: 10px; margin: 20px 0; overflow-x: auto; padding-bottom: 10px; }
+    .tab { background: #222; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: bold; cursor: pointer; white-space: nowrap; border: 1px solid #333; }
+    .tab.active { background: var(--red); border-color: var(--red); }
 
-    /* Video/Manga Player View */
-    #content-view {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: black; z-index: 5000; display: none; flex-direction: column;
+    .episode-list { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; }
+    .ep-item { 
+      background: #151515; padding: 15px; border-radius: 12px; 
+      display: flex; justify-content: space-between; align-items: center;
+      border: 1px solid #222; transition: 0.3s;
     }
+    .ep-item:active { background: #222; border-color: var(--red); }
+    .ep-info b { font-size: 14px; color: #eee; }
+    .sub-btn { background: #333; color: white; border: none; padding: 8px 15px; border-radius: 8px; font-size: 11px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+    .sub-btn:hover { background: var(--red); }
+
   </style>
 </head>
 <body>
@@ -84,142 +77,124 @@
 
   <header>
     <div class="brand">ANIME<span>KINGDOM</span></div>
-    <div id="clock" style="font-size: 13px; font-weight: bold; opacity: 0.8;"></div>
+    <div id="time" style="font-size: 13px; font-weight: bold;"></div>
   </header>
 
   <div class="search-wrapper">
     <div class="search-container">
       <i data-lucide="search" size="18" color="#ff3e3e"></i>
-      <input type="text" id="searchInput" class="search-input" placeholder="Search title..." oninput="handleSearch()">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search anime..." oninput="handleSearch()">
     </div>
   </div>
 
-  <div class="hero-info">
-    <div id="h-meta" style="font-size: 10px; font-weight: 800; color: var(--red); margin-bottom: 5px;">SELECTED TITLE</div>
-    <h1 class="title" id="h-title">Loading...</h1>
-    <button class="btn-action" onclick="showChoiceMenu()">
-      <i data-lucide="play-circle" fill="black" size="18"></i> START EXPLORING
-    </button>
-  </div>
+  <!-- Categories පින්තූරයේ විදියට -->
+  <div class="section-title">Trending Now</div>
+  <div class="menu-scroll" id="trend-list"></div>
 
-  <div class="category-section"><div class="category-title">Trending Now</div><div class="menu-scroll" id="trend-list"></div></div>
-  <div class="category-section"><div class="category-title">Popular Series</div><div class="menu-scroll" id="pop-list"></div></div>
-  <div class="category-section" style="margin-bottom: 60px;"><div class="category-title">Top Rated</div><div class="menu-scroll" id="top-list"></div></div>
+  <div class="section-title">Popular Collection</div>
+  <div class="menu-scroll" id="pop-list"></div>
 
-  <!-- Step 1: Choice Menu -->
-  <div id="choice-modal" class="modal-overlay" onclick="closeAll()">
-    <div class="bottom-sheet" onclick="event.stopPropagation()">
-      <h3 style="text-align:center; margin-bottom:25px;">CHOOSE ACTION</h3>
-      
-      <div class="option-box" onclick="showPlayerMenu()">
-        <i data-lucide="play" fill="var(--red)"></i>
-        <div><b>WATCH ANIME</b><br><small style="color:#777;">Stream episodes via external apps</small></div>
+  <div class="section-title" style="padding-bottom: 50px;">Top Rated</div>
+  <div class="menu-scroll" id="top-list"></div>
+
+  <!-- Anime Details Modal -->
+  <div id="detail-modal" class="modal-overlay">
+    <div class="modal-content">
+      <i data-lucide="x-circle" class="close-btn" size="30" onclick="closeModal()"></i>
+      <h1 id="m-title" style="font-size: 26px; margin: 10px 0;">Title</h1>
+      <p id="m-desc" style="font-size: 13px; color: #aaa; line-height: 1.5;"></p>
+
+      <div class="section-title" style="padding: 20px 0 10px;">Select Season</div>
+      <div class="season-tabs" id="season-container">
+        <!-- Seasons මෙතනට එනවා -->
       </div>
 
-      <div class="option-box" onclick="showMangaLangMenu()">
-        <i data-lucide="book-open" fill="#2ecc71" style="color:#2ecc71;"></i>
-        <div><b>READ MANGA / MANHWA</b><br><small style="color:#777;">Full chapters in EN or SI</small></div>
+      <div class="section-title" style="padding: 10px 0;">Episodes</div>
+      <div class="episode-list" id="ep-container">
+        <!-- Episodes මෙතනට එනවා -->
       </div>
-    </div>
-  </div>
-
-  <!-- Step 2: Language Selector -->
-  <div id="lang-modal" class="modal-overlay" onclick="closeAll()">
-    <div class="bottom-sheet" onclick="event.stopPropagation()">
-      <h3 style="margin-bottom:20px;">READING LANGUAGE</h3>
-      <div class="option-box" onclick="launchManga('en')"><b>🇺🇸 ENGLISH</b></div>
-      <div class="option-box" onclick="launchManga('si')"><b>🇱🇰 සිංහල (SINHALA)</b></div>
-    </div>
-  </div>
-
-  <!-- Step 3: Player Selector -->
-  <div id="player-modal" class="modal-overlay" onclick="closeAll()">
-    <div class="bottom-sheet" onclick="event.stopPropagation()">
-      <h3 style="margin-bottom:20px; color:var(--red);">SELECT PLAYER</h3>
-      <div class="option-box" onclick="launchAnime('splayer')"><b>SPlayer</b></div>
-      <div class="option-box" onclick="launchAnime('vlc')"><b>VLC Player</b></div>
-      <div class="option-box" onclick="launchAnime('mx')"><b>MX Player</b></div>
     </div>
   </div>
 
   <script>
     const API = "https://graphql.anilist.co";
     let cur = null;
-    let timer;
 
-    async function load() {
-      fetchData(`{Page(perPage:12){media(sort:TRENDING_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, "trend-list");
-      fetchData(`{Page(perPage:12){media(sort:POPULARITY_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, "pop-list");
-      fetchData(`{Page(perPage:12){media(sort:SCORE_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, "top-list");
+    async function init() {
+      fetchData(`{Page(perPage:12){media(sort:TRENDING_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large} episodes nextAiringEpisode{episode}}}}`, "trend-list");
+      fetchData(`{Page(perPage:12){media(sort:POPULARITY_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large} episodes}}}}`, "pop-list");
+      fetchData(`{Page(perPage:12){media(sort:SCORE_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large} episodes}}}}`, "top-list");
     }
 
     async function fetchData(q, id, vars={}) {
       const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query:q, variables:vars})});
       const d = await res.json();
       const list = d.data.Page.media;
-      document.getElementById(id).innerHTML = list.map((a, i) => `
-        <div class="card" onclick="sel(${JSON.stringify(a).replace(/"/g, '&quot;')}, this)">
+      document.getElementById(id).innerHTML = list.map(a => `
+        <div class="card" onclick="openDetails(${JSON.stringify(a).replace(/"/g, '&quot;')}, this)">
           <img src="${a.coverImage.large}">
-          <p>${(a.title.english || a.title.romaji).substring(0,15)}</p>
+          <p>${(a.title.english || a.title.romaji).substring(0,12)}</p>
         </div>`).join('');
-      if(id === "trend-list" && list.length > 0) sel(list);
     }
 
-    function sel(a, el) {
+    function openDetails(a, el) {
       cur = a;
       document.getElementById('hero-bg').style.backgroundImage = `url('${a.bannerImage || a.coverImage.extraLarge}')`;
-      document.getElementById('h-title').innerText = a.title.english || a.title.romaji;
+      document.getElementById('detail-modal').style.display = 'block';
+      document.getElementById('m-title').innerText = a.title.english || a.title.romaji;
+      document.getElementById('m-desc').innerHTML = a.description;
+      
+      // Seasons පෙන්වීම (AniList හි කෙළින්ම Seasons නැති නිසා අපි Episode ගණන අනුව බෙදා ගනිමු)
+      let seasonCount = Math.ceil((a.episodes || 12) / 12);
+      let sHtml = "";
+      for(let i=1; i<=seasonCount; i++) {
+        sHtml += `<div class="tab ${i===1?'active':''}" onclick="loadEpisodes(${i}, this)">Season ${i}</div>`;
+      }
+      document.getElementById('season-container').innerHTML = sHtml;
+      loadEpisodes(1); // Default Season 1
+    }
+
+    function loadEpisodes(seasonNum, el) {
       if(el) {
-        document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
-        el.scrollIntoView({ behavior: 'smooth', inline: 'center' });
       }
-    }
 
-    // Modal Controls
-    function showChoiceMenu() { if(cur) document.getElementById('choice-modal').style.display='block'; }
-    function showMangaLangMenu() { closeAll(); document.getElementById('lang-modal').style.display='block'; }
-    function showPlayerMenu() { closeAll(); document.getElementById('player-modal').style.display='block'; }
-    function closeAll() { document.querySelectorAll('.modal-overlay').forEach(m => m.style.display='none'); }
-
-    // --- Manga Function (Working Fix) ---
-    function launchManga(lang) {
-      const name = cur.title.english || cur.title.romaji;
-      // MangaDex API සෙවුමකට වඩා සාර්ථක කෙළින්ම සෙවුම් පිටුවකට යොමු කිරීමයි
-      let url = `https://mangadex.org{encodeURIComponent(name)}`;
-      
-      if(lang === 'si') {
-        // සිංහලෙන් කියවීමට Google Translate Bridge එකක් පාවිච්චි කරනවා
-        url = `https://translate.google.com{encodeURIComponent(url)}`;
+      let epCount = cur.episodes || 12;
+      let html = "";
+      for(let i=1; i<=12 && i<=epCount; i++) {
+        let epReal = ((seasonNum - 1) * 12) + i;
+        if(epReal > epCount) break;
+        html += `
+          <div class="ep-item">
+            <div class="ep-info"><b>Episode ${epReal}</b></div>
+            <button class="sub-btn" onclick="downloadSub(${epReal})">
+              <i data-lucide="download" size="14"></i> SUBTITLE
+            </button>
+          </div>`;
       }
-      
-      window.open(url, '_blank');
-      closeAll();
+      document.getElementById('ep-container').innerHTML = html;
+      lucide.createIcons();
     }
 
-    function launchAnime(type) {
-      const stream = `https://www.2embed.cc{cur.id}/1`;
-      const title = cur.title.english || cur.title.romaji;
-      let appUrl = "";
-      if(type === 'splayer') appUrl = `intent:${stream}#Intent;package=com.sentis.splayer;S.title=${encodeURIComponent(title)};end`;
-      else if(type === 'vlc') appUrl = `intent:${stream}#Intent;package=org.videolan.vlc;S.title=${encodeURIComponent(title)};end`;
-      else if(type === 'mx') appUrl = `intent:${stream}#Intent;package=com.mxtech.videoplayer.ad;S.title=${encodeURIComponent(title)};end`;
-      window.location.href = appUrl;
-      closeAll();
+    function downloadSub(epNum) {
+      // මෙතැනට ඔයාගේ Subtitle file එකේ URL එක දාන්න. 
+      // උදා: `https://mysite.com{cur.id}_ep${epNum}.srt`
+      alert(`Episode ${epNum} සඳහා Subtitle බාගත කිරීම ආරම්භ වේ...`);
+      // window.location.href = "ඔබේ_ලින්ක්_එක_මෙතැනට";
     }
+
+    function closeModal() { document.getElementById('detail-modal').style.display = 'none'; }
 
     function handleSearch() {
       const v = document.getElementById('searchInput').value;
-      clearTimeout(timer);
       if(v.length < 2) return;
-      timer = setTimeout(() => {
-        fetchData(`query($s:String){Page(perPage:12){media(search:$s,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, "trend-list", {s:v});
-      }, 600);
+      fetchData(`query($s:String){Page(perPage:12){media(search:$s,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large} episodes}}}`, "trend-list", {s:v});
     }
 
-    load();
+    init();
     lucide.createIcons();
-    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }, 1000);
+    setInterval(() => { document.getElementById('time').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }, 1000);
   </script>
 </body>
 </html>
