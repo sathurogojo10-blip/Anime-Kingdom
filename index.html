@@ -3,40 +3,80 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anime Kingdom | Search & Admin</title>
+  <title>Anime Kingdom | Pro Edition</title>
   <script src="https://unpkg.com"></script>
+  <link href="https://fonts.googleapis.com" rel="stylesheet">
   <style>
     :root { --red: #ff3e3e; --bg: #050505; --glass: rgba(255, 255, 255, 0.08); }
-    body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; }
-    #hero-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-size: cover; background-position: center; transition: 0.8s; z-index: -2; filter: brightness(0.3); }
-    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(0deg, var(--bg) 15%, transparent 100%); z-index: -1; }
-    header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; }
+    
+    body { 
+      margin: 0; background: var(--bg); color: white; 
+      font-family: 'Inter', sans-serif; overflow-x: hidden; 
+    }
+
+    #hero-bg {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+      background-size: cover; background-position: center;
+      transition: 0.8s; z-index: -2; filter: brightness(0.2);
+    }
+    
+    .overlay {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+      background: linear-gradient(0deg, var(--bg) 10%, transparent 100%);
+      z-index: -1;
+    }
+
+    header { padding: 25px; display: flex; justify-content: space-between; align-items: center; }
     .brand { font-size: 22px; font-weight: 900; letter-spacing: 2px; }
     .brand span { color: var(--red); }
-    
-    /* Search Section */
-    .search-wrapper { padding: 0 25px; margin-bottom: 10px; }
-    .search-container { display: flex; align-items: center; background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 15px; padding: 5px 15px; }
+
+    .search-wrapper { padding: 0 25px; margin-bottom: 20px; }
+    .search-container {
+      display: flex; align-items: center; background: var(--glass);
+      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 15px; padding: 5px 15px;
+    }
     .search-input { width: 100%; background: transparent; border: none; padding: 12px; color: white; outline: none; font-size: 16px; }
 
-    /* Anime Display */
-    .section-title { padding: 20px 25px 0; font-size: 14px; font-weight: 800; color: #888; text-transform: uppercase; }
-    #search-results { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; padding: 20px 25px; }
+    /* Layouts */
+    .section-title { padding: 20px 25px 0; font-size: 13px; font-weight: 800; color: #777; text-transform: uppercase; letter-spacing: 1px; }
     .menu-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 15px 25px; scrollbar-width: none; }
-    .card { min-width: 110px; cursor: pointer; transition: 0.3s; text-align: center; }
+    .menu-scroll::-webkit-scrollbar { display: none; }
+    
+    .card { min-width: 110px; cursor: pointer; transition: 0.3s; position: relative; }
     .card img { width: 110px; height: 160px; border-radius: 12px; object-fit: cover; border: 2px solid transparent; }
-    .card:hover img { border-color: var(--red); transform: scale(1.05); }
-    .card p { font-size: 11px; margin-top: 8px; opacity: 0.8; height: 30px; overflow: hidden; }
+    .card:hover img { border-color: var(--red); transform: translateY(-5px); }
+    .card p { font-size: 11px; margin-top: 8px; text-align: center; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-    /* Modals */
-    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; backdrop-filter: blur(10px); overflow-y: auto; }
-    .modal-content { padding: 40px 20px; max-width: 600px; margin: 0 auto; }
-    .admin-box { background: #0f0f0f; padding: 30px; border-radius: 25px; border: 1px solid var(--red); margin-top: 20vh; }
-    .admin-box input { width: 100%; padding: 14px; margin: 10px 0; background: #1a1a1a; border: 1px solid #333; color: white; border-radius: 12px; box-sizing: border-box; }
-    .upload-btn { background: var(--red); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer; }
-    .tab { background: #1a1a1a; padding: 8px 20px; border-radius: 8px; cursor: pointer; border: 1px solid #333; font-size: 12px; }
-    .tab.active { background: var(--red); border-color: var(--red); }
-    .ep-item { background: #111; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border: 1px solid #222; }
+    /* Modal Styling */
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; backdrop-filter: blur(15px); overflow-y: auto; }
+    .modal-content { padding: 40px 20px; max-width: 700px; margin: 0 auto; }
+    .close-modal { color: var(--red); cursor: pointer; margin-bottom: 20px; display: inline-block; }
+
+    /* Season Tabs */
+    .season-tabs { display: flex; gap: 10px; margin: 20px 0; overflow-x: auto; padding-bottom: 10px; scrollbar-width: none; }
+    .tab { background: #111; padding: 10px 20px; border-radius: 10px; font-size: 12px; cursor: pointer; white-space: nowrap; border: 1px solid #222; }
+    .tab.active { background: var(--red); border-color: var(--red); font-weight: bold; }
+
+    /* Episode List */
+    .ep-grid { display: grid; grid-template-columns: 1fr; gap: 10px; }
+    .ep-item { 
+      background: #0f0f0f; padding: 15px; border-radius: 15px; 
+      display: flex; justify-content: space-between; align-items: center;
+      border: 1px solid #1a1a1a; transition: 0.2s;
+    }
+    .ep-item:hover { border-color: #333; background: #151515; }
+    .sub-btn { background: var(--red); color: white; border: none; padding: 8px 15px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 5px; }
+
+    /* Admin Panel */
+    .admin-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 5000; display: none; align-items: center; justify-content: center; }
+    .admin-box { background: #0a0a0a; padding: 30px; border-radius: 25px; width: 85%; max-width: 400px; border: 1px solid var(--red); }
+    .admin-box h2 { color: var(--red); text-align: center; margin-bottom: 20px; }
+    .admin-box input { width: 100%; padding: 14px; margin: 8px 0; background: #111; border: 1px solid #222; color: white; border-radius: 12px; box-sizing: border-box; outline: none; }
+    .admin-box input:focus { border-color: var(--red); }
+    .upload-btn { background: var(--red); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 15px; }
+
+    /* Search Result Grid */
+    #search-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 15px; padding: 20px 25px; }
   </style>
 </head>
 <body>
@@ -46,20 +86,19 @@
 
   <header>
     <div class="brand">ANIME<span>KINGDOM</span></div>
-    <div style="font-size: 12px; color: #888;">MARCH 2026</div>
+    <div style="font-size: 11px; color: #555; font-weight: bold;">VERSION 4.0</div>
   </header>
 
   <div class="search-wrapper">
     <div class="search-container">
       <i data-lucide="search" size="18" color="#ff3e3e"></i>
-      <input type="text" id="searchInput" class="search-input" placeholder="Search Anime Name..." oninput="handleLogic(this.value)">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search Anime or Code..." oninput="handleLogic(this.value)">
     </div>
   </div>
 
-  <!-- මෙතන තමයි සර්ච් රිසල්ට් පේන්නේ -->
-  <div id="search-area" style="display:none;">
+  <div id="search-section" style="display: none;">
     <div class="section-title">Search Results</div>
-    <div id="search-results"></div>
+    <div id="search-grid"></div>
   </div>
 
   <div id="main-content">
@@ -72,24 +111,29 @@
   <!-- Anime Details Modal -->
   <div id="detail-modal" class="modal">
     <div class="modal-content">
-      <button onclick="closeModal()" style="background:none; border:none; color:var(--red); cursor:pointer; font-weight:bold;">BACK</button>
-      <h1 id="m-title"></h1>
-      <p id="m-desc" style="color:#aaa; font-size:13px;"></p>
-      <div id="season-container" style="display:flex; gap:10px; margin:20px 0;"></div>
-      <div id="ep-container"></div>
+      <div class="close-modal" onclick="closeModal()"><i data-lucide="chevron-left"></i> BACK</div>
+      <h1 id="m-title" style="margin: 0 0 10px 0; font-size: 28px;"></h1>
+      <p id="m-desc" style="font-size: 13px; color: #888; line-height: 1.6; margin-bottom: 30px;"></p>
+
+      <div class="section-title" style="padding:0">Select Season Range</div>
+      <div class="season-tabs" id="season-tabs"></div>
+
+      <div class="section-title" style="padding:10px 0">Episodes & Subtitles</div>
+      <div class="ep-grid" id="ep-list"></div>
     </div>
   </div>
 
-  <!-- Admin Secret Panel -->
-  <div id="admin-panel" class="modal">
-    <div class="modal-content admin-box">
-      <h2 style="color:var(--red); text-align:center;">ADMIN: ADD SUBTITLE</h2>
-      <input type="text" id="up-name" placeholder="Anime Name">
-      <input type="number" id="up-season" placeholder="Season">
-      <input type="number" id="up-episode" placeholder="Episode">
+  <!-- Secret Admin Panel -->
+  <div id="admin-panel" class="admin-modal">
+    <div class="admin-box">
+      <h2>ADMIN UPLOAD</h2>
+      <input type="text" id="up-name" placeholder="Exact Anime Name">
+      <input type="number" id="up-season" placeholder="Season Number">
+      <input type="number" id="up-episode" placeholder="Episode Number">
+      <label style="font-size: 10px; color: #555; margin-left: 5px;">SUBTITLE FILE:</label>
       <input type="file" id="up-file">
-      <button class="upload-btn" onclick="saveSubtitle()">UPLOAD SUBTITLE</button>
-      <button onclick="closeAdmin()" style="width:100%; background:none; border:none; color:#555; margin-top:10px;">Close</button>
+      <button class="upload-btn" onclick="saveToDatabase()">UPLOAD SUBTITLE</button>
+      <button style="background:none; border:none; color:#444; width:100%; margin-top:15px; cursor:pointer;" onclick="closeAdmin()">Cancel</button>
     </div>
   </div>
 
@@ -97,88 +141,122 @@
     const API = "https://graphql.anilist.co";
     let currentAnime = null;
 
-    // මුලින්ම පේජ් එක ලෝඩ් වෙද්දී ට්‍රෙන්ඩින් ටික ගන්නවා
+    // Load Initial Data
     window.onload = () => {
-      fetchList(`{Page(perPage:10){media(sort:TRENDING_DESC,type:ANIME){id title{english romaji}description bannerImage coverImage{large}episodes}}}`, "trend-list");
-      fetchList(`{Page(perPage:10){media(sort:POPULARITY_DESC,type:ANIME){id title{english romaji}description bannerImage coverImage{large}episodes}}}`, "pop-list");
+      fetchList(`{Page(perPage:12){media(sort:TRENDING_DESC,type:ANIME){id title{english romaji}description bannerImage coverImage{large}episodes}}}`, "trend-list");
+      fetchList(`{Page(perPage:12){media(sort:POPULARITY_DESC,type:ANIME){id title{english romaji}description bannerImage coverImage{large}episodes}}}`, "pop-list");
       lucide.createIcons();
     };
 
-    // Logic එක: 9999 ගැහුවොත් Admin, නැත්තම් Search
+    async function fetchList(query, elementId) {
+      const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
+      const data = await res.json();
+      renderCards(data.data.Page.media, elementId);
+    }
+
+    function renderCards(list, elementId) {
+      document.getElementById(elementId).innerHTML = list.map(a => `
+        <div class="card" onclick='openDetails(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
+          <img src="${a.coverImage.large}">
+          <p>${(a.title.english || a.title.romaji)}</p>
+        </div>`).join('');
+    }
+
+    // Search & Admin Logic
     function handleLogic(val) {
       if(val === "9999") {
-        document.getElementById('admin-panel').style.display = 'block';
+        document.getElementById('admin-panel').style.display = 'flex';
         document.getElementById('searchInput').value = "";
       } else if(val.length > 2) {
         searchAnime(val);
       } else {
-        document.getElementById('search-area').style.display = 'none';
+        document.getElementById('search-section').style.display = 'none';
         document.getElementById('main-content').style.display = 'block';
       }
     }
 
     async function searchAnime(term) {
-      const query = `query($s:String){Page(perPage:12){media(search:$s,type:ANIME){id title{english romaji}description bannerImage coverImage{large}episodes}}}`;
+      const query = `query($s:String){Page(perPage:15){media(search:$s,type:ANIME){id title{english romaji}description bannerImage coverImage{large}episodes}}}`;
       const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query, variables:{s:term}})});
-      const json = await res.json();
-      const list = json.data.Page.media;
-      
-      document.getElementById('search-area').style.display = 'block';
+      const data = await res.json();
       document.getElementById('main-content').style.display = 'none';
-      
-      document.getElementById('search-results').innerHTML = list.map(a => `
-        <div class="card" onclick='openAnime(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
-          <img src="${a.coverImage.large}">
-          <p>${(a.title.english || a.title.romaji).substring(0,20)}</p>
-        </div>`).join('');
+      document.getElementById('search-section').style.display = 'block';
+      renderCards(data.data.Page.media, 'search-grid');
     }
 
-    async function fetchList(query, id) {
-      const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
-      const d = await res.json();
-      document.getElementById(id).innerHTML = d.data.Page.media.map(a => `
-        <div class="card" onclick='openAnime(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
-          <img src="${a.coverImage.large}">
-          <p>${(a.title.english || a.title.romaji).substring(0,12)}</p>
-        </div>`).join('');
-    }
-
-    function openAnime(a) {
+    // Modal & Episode Logic
+    function openDetails(a) {
       currentAnime = a;
       document.getElementById('hero-bg').style.backgroundImage = `url('${a.bannerImage || a.coverImage.large}')`;
-      document.getElementById('detail-modal').style.display = 'block';
       document.getElementById('m-title').innerText = a.title.english || a.title.romaji;
       document.getElementById('m-desc').innerHTML = a.description;
-      
+      document.getElementById('detail-modal').style.display = 'block';
+
+      // මුළු කථාංග ගණන අනුව Seasons සෑදීම (එකකට 24 බැගින්)
+      let totalEps = a.episodes || 1000; 
+      let seasonCount = Math.ceil(totalEps / 24);
       let sHtml = "";
-      for(let i=1; i<=2; i++) sHtml += `<div class="tab ${i==1?'active':''}" onclick="loadEpisodes(${i}, this)">Season ${i}</div>`;
-      document.getElementById('season-container').innerHTML = sHtml;
-      loadEpisodes(1);
-    }
-
-    function loadEpisodes(s, el) {
-      if(el) { document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
-      let html = "";
-      for(let i=1; i<=12; i++) {
-        html += `<div class="ep-item"><span>Episode ${i}</span><button onclick="downloadSub(${s},${i})" style="background:var(--red); color:white; border:none; padding:8px 12px; border-radius:5px; font-size:10px; cursor:pointer;">SUBTITLE</button></div>`;
+      for(let i=1; i<=seasonCount; i++) {
+        let start = (i-1)*24 + 1;
+        let end = i*24;
+        sHtml += `<div class="tab ${i===1?'active':''}" onclick="renderEpisodes(${i}, this)">EP ${start}-${end}</div>`;
       }
-      document.getElementById('ep-container').innerHTML = html;
+      document.getElementById('season-tabs').innerHTML = sHtml;
+      renderEpisodes(1);
     }
 
-    function saveSubtitle() {
-      const data = { anime: document.getElementById('up-name').value.toLowerCase(), s: document.getElementById('up-season').value, e: document.getElementById('up-episode').value, file: document.getElementById('up-file').files[0].name };
-      let db = JSON.parse(localStorage.getItem('my_subs') || "[]");
-      db.push(data);
-      localStorage.setItem('my_subs', JSON.stringify(db));
-      alert("සාර්ථකව එක් කළා!");
+    function renderEpisodes(seasonIdx, el) {
+      if(el) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+      }
+      let start = (seasonIdx - 1) * 24 + 1;
+      let end = seasonIdx * 24;
+      let total = currentAnime.episodes || 1000;
+      
+      let html = "";
+      for(let i=start; i<=end && i<=total; i++) {
+        html += `
+          <div class="ep-item">
+            <span><b>Episode ${i}</b></span>
+            <button class="sub-btn" onclick="checkAndDownload(${i})">
+              <i data-lucide="download" size="14"></i> SUBTITLE
+            </button>
+          </div>`;
+      }
+      document.getElementById('ep-list').innerHTML = html;
+      lucide.createIcons();
+    }
+
+    // Subtitle Data Logic
+    function saveToDatabase() {
+      const sub = {
+        name: document.getElementById('up-name').value.toLowerCase(),
+        s: document.getElementById('up-season').value,
+        e: document.getElementById('up-episode').value,
+        fileName: document.getElementById('up-file').files[0]?.name || "Subtitle.srt"
+      };
+
+      if(!sub.name || !sub.e) return alert("කරුණාකර සියලු විස්තර පුරවන්න!");
+
+      let db = JSON.parse(localStorage.getItem('anime_db') || "[]");
+      db.push(sub);
+      localStorage.setItem('anime_db', JSON.stringify(db));
+      alert("සාර්ථකව Upload කළා!");
       closeAdmin();
     }
 
-    function downloadSub(s, e) {
-      const name = (currentAnime.title.english || currentAnime.title.romaji).toLowerCase();
-      const db = JSON.parse(localStorage.getItem('my_subs') || "[]");
-      const found = db.find(x => name.includes(x.anime) && x.s == s && x.e == e);
-      if(found) alert("Downloading: " + found.file); else alert("තවම Sub එක නැත.");
+    function checkAndDownload(epNum) {
+      const currentTitle = (currentAnime.title.english || currentAnime.title.romaji).toLowerCase();
+      let db = JSON.parse(localStorage.getItem('anime_db') || "[]");
+      
+      const found = db.find(item => currentTitle.includes(item.name) && item.e == epNum);
+
+      if(found) {
+        alert("බාගත වෙමින් පවතී: " + found.fileName);
+      } else {
+        alert("කණගාටුයි, මෙම Episode එකට තවමත් Subtitles එක් කර නැත.");
+      }
     }
 
     function closeModal() { document.getElementById('detail-modal').style.display = 'none'; }
