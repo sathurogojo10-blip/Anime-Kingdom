@@ -2,171 +2,191 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anime Kingdom | Streaming</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Anime Kingdom | PS5 Elite</title>
   <style>
-    :root { --primary-red: #e74c3c; --bg-dark: #050505; }
-    body { margin: 0; font-family: 'Segoe UI', sans-serif; background: var(--bg-dark); color: white; overflow-x: hidden; }
+    :root { --primary-red: #e74c3c; --bg-dark: #080808; --glass: rgba(255, 255, 255, 0.1); }
+    
+    body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg-dark); color: white; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
 
-    /* Dynamic Background */
+    /* Fix Background Image Scaling */
     .hero-bg {
       position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-      background-size: cover; background-position: center;
-      transition: 1s ease-in-out; z-index: -2; filter: brightness(0.3) blur(2px);
+      background-size: cover; /* පින්තූරය Screen එකට හරියටම පුරවයි */
+      background-position: center; 
+      transition: background 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      z-index: -2;
+      filter: brightness(0.35) saturate(1.2);
     }
+    
     .hero-overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: linear-gradient(0deg, var(--bg-dark) 20%, transparent 100%);
+      background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, var(--bg-dark) 90%);
       z-index: -1;
     }
 
-    header { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
-    .logo { font-size: 18px; font-weight: bold; }
-    .logo span { color: var(--primary-red); }
+    /* Advanced Search Bar */
+    .header-top { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; }
+    .search-box {
+      position: relative; width: 100%; padding: 0 20px; box-sizing: border-box; margin-bottom: 10px;
+    }
+    .search-input {
+      width: 100%; background: var(--glass); border: 1px solid rgba(255,255,255,0.2);
+      padding: 12px 45px 12px 20px; border-radius: 30px; color: white; font-size: 16px;
+      backdrop-filter: blur(10px); outline: none; transition: 0.3s;
+    }
+    .search-input:focus { border-color: var(--primary-red); box-shadow: 0 0 15px rgba(231, 76, 60, 0.4); }
+    .search-icon { position: absolute; right: 35px; top: 12px; color: #aaa; }
 
-    /* PS5 Menu Scroll */
+    /* PS5 Menu Scroll - Adjusted for Mobile */
     .menu-scroll {
-      display: flex; overflow-x: auto; padding: 20px; gap: 15px;
-      scrollbar-width: none;
+      display: flex; overflow-x: auto; padding: 15px 20px; gap: 12px;
+      scroll-snap-type: x mandatory; scrollbar-width: none;
     }
     .menu-scroll::-webkit-scrollbar { display: none; }
 
-    .anime-item { min-width: 90px; text-align: center; cursor: pointer; transition: 0.3s; }
+    .anime-item { 
+      min-width: 85px; text-align: center; cursor: pointer; transition: 0.4s;
+      scroll-snap-align: start;
+    }
     .anime-item img {
-      width: 85px; height: 110px; border-radius: 10px; 
-      border: 3px solid transparent; object-fit: cover;
+      width: 80px; height: 110px; border-radius: 12px; 
+      border: 3px solid transparent; object-fit: cover; transition: 0.3s;
     }
-    .anime-item.active img { border-color: white; transform: scale(1.1); box-shadow: 0 0 15px rgba(255,255,255,0.5); }
-    .anime-item p { font-size: 10px; margin-top: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .anime-item.active img { border-color: white; transform: translateY(-5px) scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+    .anime-item p { font-size: 10px; margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.7; }
 
-    /* Content Area */
-    .content { padding: 20px; margin-top: 20px; }
-    .content h1 { font-size: 28px; margin: 0; text-shadow: 2px 2px 10px rgba(0,0,0,0.5); }
-    .content .meta { color: var(--primary-red); font-weight: bold; margin: 10px 0; }
-    .content p { font-size: 14px; line-height: 1.5; color: #ddd; max-height: 120px; overflow-y: auto; }
+    /* Main Content */
+    .main-content { padding: 25px 25px 100px 25px; }
+    .genres { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
+    .genre-tag { font-size: 11px; color: var(--primary-red); font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+    
+    .title { font-size: 32px; font-weight: 800; margin: 0; line-height: 1.1; }
+    .description { font-size: 14px; color: #bbb; line-height: 1.6; margin: 15px 0; height: 85px; overflow-y: auto; }
 
-    /* Video Player (Hidden initially) */
-    #player-container {
-      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: black; z-index: 2000;
-    }
-    iframe { width: 100%; height: 100%; border: none; }
-    .close-player {
-      position: absolute; top: 20px; right: 20px; background: var(--primary-red);
-      color: white; border: none; padding: 10px 20px; border-radius: 5px; z-index: 2001;
+    .watch-btn {
+      background: white; color: black; border: none; padding: 14px 45px;
+      border-radius: 40px; font-weight: bold; font-size: 16px; display: inline-flex;
+      align-items: center; gap: 10px; box-shadow: 0 5px 15px rgba(255,255,255,0.2);
     }
 
-    .btn-watch {
-      background: white; color: black; border: none; padding: 15px 40px;
-      border-radius: 30px; font-weight: bold; font-size: 16px; cursor: pointer;
-      margin-top: 20px; transition: 0.3s;
-    }
-    .btn-watch:hover { background: var(--primary-red); color: white; }
+    /* Loading Spinner */
+    #loader { position: fixed; top: 0; left: 0; width: 100%; height: 2px; background: var(--primary-red); z-index: 3000; transition: 0.3s; width: 0%; }
   </style>
 </head>
 <body>
 
+  <div id="loader"></div>
   <div id="hero-bg" class="hero-bg"></div>
   <div class="hero-overlay"></div>
 
-  <header>
-    <div class="logo">ANIME<span>KINGDOM</span></div>
-    <div>10:46 AM</div>
-  </header>
-
-  <!-- PS5 Icon List -->
-  <div class="menu-scroll" id="anime-list">
-    <!-- API Data will load here -->
+  <div class="header-top">
+    <div style="font-weight: bold; letter-spacing: 1px;">ANIME<span style="color:var(--primary-red)">KINGDOM</span></div>
+    <div id="clock" style="font-size: 14px; opacity: 0.8;"></div>
   </div>
 
-  <div class="content" id="anime-details">
-    <div class="meta" id="genre-list">GENRE</div>
-    <h1 id="main-title">Select an Anime</h1>
-    <p id="main-desc">Explore the world of anime with PS5 style interface.</p>
-    <button class="btn-watch" onclick="playAnime()">▶ WATCH NOW</button>
+  <!-- Advanced Instant Search -->
+  <div class="search-box">
+    <input type="text" id="searchInput" class="search-input" placeholder="Search anime instantly..." oninput="instantSearch()">
+    <span class="search-icon">🔍</span>
   </div>
 
-  <!-- Video Player Screen -->
-  <div id="player-container">
-    <button class="close-player" onclick="closePlayer()">CLOSE ×</button>
-    <iframe id="video-iframe" src="" allowfullscreen></iframe>
+  <!-- Horizontal Menu -->
+  <div class="menu-scroll" id="anime-list"></div>
+
+  <!-- Dynamic Details -->
+  <div class="main-content">
+    <div class="genres" id="genre-container"></div>
+    <h1 class="title" id="display-title">Welcome</h1>
+    <p class="description" id="display-desc">Type to search or select from the list.</p>
+    <button class="watch-btn" onclick="playAnime()">▶ WATCH NOW</button>
   </div>
 
   <script>
-    const ANILIST_API = "https://graphql.anilist.co";
-    let currentAnime = null;
+    const API = "https://graphql.anilist.co";
+    let searchTimeout;
 
-    // 1. Fetch Trending Anime
-    async function loadAnime() {
-      const query = `
-      {
-        Page(page: 1, perPage: 15) {
-          media(sort: TRENDING_DESC, type: ANIME) {
-            id
-            title { english romaji }
-            description
-            bannerImage
-            coverImage { large }
-            genres
-          }
-        }
-      }`;
+    // 1. Instant Search - අකුරක් ගැසූ සැණින් ප්‍රතිඵල පෙන්වයි
+    async function instantSearch() {
+      const term = document.getElementById('searchInput').value;
+      clearTimeout(searchTimeout);
+      
+      if(term.length < 2) return loadTrending(); // හිස් නම් Trending පෙන්වන්න
 
-      const response = await fetch(ANILIST_API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
-      });
-      const data = await response.json();
-      const list = data.data.Page.media;
-      renderMenu(list);
+      searchTimeout = setTimeout(async () => {
+        showLoader(30);
+        const query = `query ($s: String) { Page(perPage: 15) { media(search: $s, type: ANIME) { 
+          title { english romaji } coverImage { extraLarge large } bannerImage description genres 
+        }}}`;
+        
+        try {
+          const res = await fetch(API, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ query, variables: { s: term } })
+          });
+          const data = await res.json();
+          renderList(data.data.Page.media);
+          showLoader(100);
+        } catch(e) { console.error(e); }
+      }, 500); // 0.5s පමාවකින් පසු සර්ච් කරයි (Server load අඩු කිරීමට)
     }
 
-    function renderMenu(list) {
+    async function loadTrending() {
+      showLoader(40);
+      const query = `{ Page(perPage: 15) { media(sort: TRENDING_DESC, type: ANIME) { 
+        title { english romaji } coverImage { extraLarge large } bannerImage description genres 
+      }}}`;
+      const res = await fetch(API, { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ query }) });
+      const data = await res.json();
+      renderList(data.data.Page.media);
+      showLoader(100);
+    }
+
+    function renderList(list) {
       const container = document.getElementById('anime-list');
-      container.innerHTML = list.map((anime, index) => `
-        <div class="anime-item ${index === 0 ? 'active' : ''}" onclick="selectAnime(${JSON.stringify(anime).replace(/"/g, '&quot;')}, this)">
+      if(list.length === 0) { container.innerHTML = "<p>No results found.</p>"; return; }
+      
+      container.innerHTML = list.map((anime, i) => `
+        <div class="anime-item ${i === 0 ? 'active' : ''}" onclick="updateDisplay(${JSON.stringify(anime).replace(/"/g, '&quot;')}, this)">
           <img src="${anime.coverImage.large}">
           <p>${anime.title.english || anime.title.romaji}</p>
         </div>
       `).join('');
-      
-      selectAnime(list[0]); // Load first one
+      updateDisplay(list[0]);
     }
 
-    function selectAnime(anime, el) {
-      currentAnime = anime;
-      document.getElementById('hero-bg').style.backgroundImage = `url('${anime.bannerImage || anime.coverImage.large}')`;
-      document.getElementById('main-title').innerText = anime.title.english || anime.title.romaji;
-      document.getElementById('main-desc').innerHTML = anime.description;
-      document.getElementById('genre-list').innerText = anime.genres.join(" • ");
+    function updateDisplay(anime, el) {
+      if(!anime) return;
+      // පින්තූරය විශාල වැඩිනම් මෙතැනදී banner එක නැතිනම් විශාල cover එක ගනියි
+      const bg = anime.bannerImage || anime.coverImage.extraLarge;
+      document.getElementById('hero-bg').style.backgroundImage = `url('${bg}')`;
+      document.getElementById('display-title').innerText = anime.title.english || anime.title.romaji;
+      document.getElementById('display-desc').innerHTML = anime.description || "No description available.";
+      
+      document.getElementById('genre-container').innerHTML = anime.genres.map(g => `<span class="genre-tag">${g}</span>`).join('');
 
       if(el) {
-        document.querySelectorAll('.anime-item').forEach(i => i.classList.remove('active'));
+        document.querySelectorAll('.anime-item').forEach(item => item.classList.remove('active'));
         el.classList.add('active');
+        el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
       }
     }
 
-    // 2. Play Function (Simulating Anilab logic)
-    function playAnime() {
-      if(!currentAnime) return;
-      
-      // Anilab වල වගේම මෙහිදී අපි Consumet/GogoAnime වැනි Embed player එකක් පාවිච්චි කරනවා
-      // උදාහරණයක් ලෙස: අදාළ නම ඇතුළත් කර streaming සයිට් එකකට ලින්ක් කිරීම
-      const searchTitle = currentAnime.title.romaji.toLowerCase().replace(/\s+/g, '-');
-      const playerUrl = `https://www.highquality.cam{searchTitle}-episode-1`; 
-      
-      // සටහන: සැබෑ streaming සර්වර් එකකට API එකක් හරහා ලින්ක් කිරීම මෙහිදී සිදුකළ හැක.
-      document.getElementById('video-iframe').src = playerUrl;
-      document.getElementById('player-container').style.display = 'block';
+    function showLoader(width) {
+      const l = document.getElementById('loader');
+      l.style.width = width + "%";
+      if(width === 100) setTimeout(() => l.style.width = "0%", 500);
     }
 
-    function closePlayer() {
-      document.getElementById('player-container').style.display = 'none';
-      document.getElementById('video-iframe').src = '';
-    }
+    // වෙලාව පෙන්වීමට
+    setInterval(() => {
+      document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+    }, 1000);
 
-    loadAnime();
+    function playAnime() { alert("Streaming setup coming soon!"); }
+
+    loadTrending();
   </script>
 </body>
 </html>
