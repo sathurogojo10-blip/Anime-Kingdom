@@ -3,178 +3,193 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Anime Kingdom | Final Edition</title>
+  <title>Anime Kingdom | Firebase Edition</title>
+  
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com"></script>
+  <script src="https://www.gstatic.com"></script>
+  <script src="https://www.gstatic.com"></script>
+  
   <script src="https://unpkg.com"></script>
-  <link href="https://fonts.googleapis.com" rel="stylesheet">
   <style>
-    :root { --red: #ff3e3e; --bg: #050505; --glass: rgba(255, 255, 255, 0.08); }
-    body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
-    #hero-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-size: cover; background-position: center; transition: 0.8s; z-index: -2; filter: brightness(0.2); }
-    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(0deg, var(--bg) 10%, transparent 100%); z-index: -1; }
-    header { padding: 25px; display: flex; justify-content: space-between; align-items: center; }
-    .brand { font-size: 22px; font-weight: 900; letter-spacing: 2px; }
-    .brand span { color: var(--red); }
-    .search-wrapper { padding: 0 25px; margin-bottom: 20px; }
-    .search-container { display: flex; align-items: center; background: var(--glass); border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 15px; padding: 5px 15px; }
-    .search-input { width: 100%; background: transparent; border: none; padding: 12px; color: white; outline: none; font-size: 16px; }
-    .section-title { padding: 20px 25px 0; font-size: 13px; font-weight: 800; color: #777; text-transform: uppercase; letter-spacing: 1px; }
-    .menu-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 15px 25px; scrollbar-width: none; }
-    .card { min-width: 110px; cursor: pointer; transition: 0.3s; position: relative; }
-    .card img { width: 110px; height: 160px; border-radius: 12px; object-fit: cover; border: 2px solid transparent; }
-    .card:hover img { border-color: var(--red); transform: translateY(-5px); }
-    .card p { font-size: 11px; margin-top: 8px; text-align: center; opacity: 0.8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 2000; display: none; backdrop-filter: blur(15px); overflow-y: auto; }
-    .modal-content { padding: 40px 20px; max-width: 700px; margin: 0 auto; }
-    .season-tabs { display: flex; gap: 10px; margin: 20px 0; overflow-x: auto; padding-bottom: 10px; }
-    .tab { background: #111; padding: 10px 20px; border-radius: 10px; font-size: 12px; cursor: pointer; white-space: nowrap; border: 1px solid #222; }
-    .tab.active { background: var(--red); border-color: var(--red); font-weight: bold; }
-    .ep-item { background: #0f0f0f; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #1a1a1a; margin-bottom: 10px; }
-    .sub-btn { background: var(--red); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 11px; font-weight: bold; cursor: pointer; }
-    .admin-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 5000; display: none; align-items: center; justify-content: center; }
-    .admin-box { background: #0a0a0a; padding: 30px; border-radius: 25px; width: 85%; max-width: 400px; border: 1px solid var(--red); }
-    .admin-box input { width: 100%; padding: 14px; margin: 10px 0; background: #111; border: 1px solid #222; color: white; border-radius: 12px; box-sizing: border-box; outline: none; }
-    .upload-btn { background: var(--red); color: white; border: none; width: 100%; padding: 16px; border-radius: 12px; font-weight: 900; cursor: pointer; margin-top: 15px; }
+    /* පෙර තිබූ PS5 Pro Styles මෙතනට එක් කරන්න */
+    :root { --red: #ff3e3e; --bg: #000; }
+    body { background: var(--bg); color: white; font-family: sans-serif; margin: 0; }
+    header { padding: 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #111; }
+    .search-wrapper { padding: 20px; }
+    .search-input { width: 90%; padding: 12px; border-radius: 10px; border: 1px solid #222; background: #0a0a0a; color: white; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 15px; padding: 20px; }
+    .card { cursor: pointer; text-align: center; }
+    .card img { width: 100%; border-radius: 10px; height: 160px; object-fit: cover; }
+    .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); display: none; overflow-y: auto; z-index: 1000; }
+    .ep-row { background: #0a0a0a; padding: 15px; margin: 10px; border-radius: 10px; display: flex; justify-content: space-between; }
+    .admin-box { background: #0a0a0a; padding: 30px; border-radius: 20px; border: 1px solid var(--red); max-width: 350px; margin: 100px auto; }
+    .admin-box input { width: 100%; margin: 10px 0; padding: 12px; border-radius: 8px; border: 1px solid #222; background: #111; color: white; }
+    .btn { background: var(--red); color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; cursor: pointer; font-weight: bold; }
   </style>
 </head>
 <body>
 
-  <div id="hero-bg"></div>
-  <div class="overlay"></div>
+<header><div style="font-weight:900; font-size:22px;">ANIME<span>KINGDOM</span></div></header>
 
-  <header>
-    <div class="brand">ANIME<span>KINGDOM</span></div>
-    <div style="font-size: 11px; color: #555;">2026 PRO</div>
-  </header>
+<div class="search-wrapper">
+  <input type="text" id="searchInput" class="search-input" placeholder="Search or 9999..." oninput="handleInput(this.value)">
+</div>
 
-  <div class="search-wrapper">
-    <div class="search-container">
-      <i data-lucide="search" size="18" color="#ff3e3e"></i>
-      <input type="text" id="searchInput" class="search-input" placeholder="Search Anime or Code..." oninput="handleLogic(this.value)">
-    </div>
+<div id="home-content"><div id="trend-list" class="grid"></div></div>
+<div id="search-content" style="display:none;"><div id="search-grid" class="grid"></div></div>
+
+<!-- Details Modal -->
+<div id="detail-modal" class="modal">
+  <div style="padding:40px;">
+    <button onclick="closeModal()" style="background:none; color:var(--red); border:none; cursor:pointer;">BACK</button>
+    <h1 id="m-title"></h1>
+    <div id="ep-list"></div>
   </div>
+</div>
 
-  <div id="search-section" style="display: none;">
-    <div class="section-title">Search Results</div>
-    <div id="search-grid" class="menu-scroll" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));"></div>
+<!-- Admin Modal -->
+<div id="admin-panel" class="modal">
+  <div class="admin-box">
+    <h2 style="color:var(--red); text-align:center;">UPLOAD TO FIREBASE</h2>
+    <input type="text" id="up-name" placeholder="Anime Name">
+    <input type="number" id="up-ep" placeholder="Episode Number">
+    <input type="file" id="up-file">
+    <button class="btn" id="uploadBtn" onclick="uploadToFirebase()">UPLOAD SUBTITLE</button>
+    <p id="status" style="font-size:12px; text-align:center; color:#555;"></p>
+    <button onclick="closeAdmin()" style="background:none; border:none; color:#333; width:100%; margin-top:10px;">Cancel</button>
   </div>
+</div>
 
-  <div id="main-content">
-    <div class="section-title">Trending Now</div>
-    <div class="menu-scroll" id="trend-list"></div>
-    <div class="section-title">Popular Collection</div>
-    <div class="menu-scroll" id="pop-list"></div>
-  </div>
+<script>
+  // ඔබේ Firebase Config එක මෙතනට දමන්න
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+  };
 
-  <!-- Anime Details Modal -->
-  <div id="detail-modal" class="modal">
-    <div class="modal-content">
-      <div style="color:var(--red); cursor:pointer; margin-bottom:20px;" onclick="closeModal()">BACK</div>
-      <h1 id="m-title" style="margin: 0 0 10px 0;"></h1>
-      <p id="m-desc" style="font-size: 13px; color: #888; line-height: 1.6; margin-bottom: 30px;"></p>
-      <div class="section-title" style="padding:0">Select Episode Range</div>
-      <div class="season-tabs" id="season-tabs"></div>
-      <div id="ep-list"></div>
-    </div>
-  </div>
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  const storage = firebase.storage();
 
-  <!-- Secret Admin Panel (No Season Field) -->
-  <div id="admin-panel" class="admin-modal">
-    <div class="admin-box">
-      <h2 style="color:var(--red); text-align:center;">ADMIN UPLOAD</h2>
-      <input type="text" id="up-name" placeholder="Anime Name (e.g. Black Clover)">
-      <input type="number" id="up-episode" placeholder="Episode Number">
-      <label style="font-size: 10px; color: #444; margin-left: 5px;">SELECT FILE:</label>
-      <input type="file" id="up-file">
-      <button class="upload-btn" onclick="saveSubtitle()">UPLOAD SUBTITLE</button>
-      <button style="background:none; border:none; color:#444; width:100%; margin-top:15px; cursor:pointer;" onclick="closeAdmin()">Cancel</button>
-    </div>
-  </div>
+  const API = "https://graphql.anilist.co";
+  let currentAnime = null;
 
-  <script>
-    const API = "https://graphql.anilist.co";
-    let currentAnime = null;
+  // Initial Load
+  window.onload = () => {
+    fetchAniList(`{Page(perPage:12){media(sort:TRENDING_DESC,type:ANIME){id title{english romaji}description coverImage{large}episodes}}}`, "trend-list");
+  };
 
-    window.onload = () => {
-      fetchList(`{Page(perPage:12){media(sort:TRENDING_DESC,type:ANIME){id title{english romaji}description bannerImage coverImage{large}episodes}}}`, "trend-list");
-      fetchList(`{Page(perPage:12){media(sort:POPULARITY_DESC,type:ANIME){id title{english romaji}description bannerImage coverImage{large}episodes}}}`, "pop-list");
-      lucide.createIcons();
-    };
+  async function fetchAniList(query, id) {
+    const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
+    const d = await res.json();
+    renderCards(d.data.Page.media, id);
+  }
 
-    async function fetchList(query, id) {
-      const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query})});
-      const d = await res.json();
-      renderCards(d.data.Page.media, id);
+  function renderCards(list, id) {
+    document.getElementById(id).innerHTML = list.map(a => `
+      <div class="card" onclick='openAnime(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
+        <img src="${a.coverImage.large}"><p>${(a.title.english || a.title.romaji).substring(0,15)}</p>
+      </div>`).join('');
+  }
+
+  function handleInput(val) {
+    if(val === "9999") { document.getElementById('admin-panel').style.display='block'; document.getElementById('searchInput').value=""; }
+    else if(val.length > 2) { searchAnime(val); }
+    else { document.getElementById('search-content').style.display='none'; document.getElementById('home-content').style.display='block'; }
+  }
+
+  async function searchAnime(s) {
+    const query = `query($s:String){Page(perPage:18){media(search:$s,type:ANIME){id title{english romaji}description coverImage{large}episodes}}}`;
+    const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query, variables:{s}})});
+    const d = await res.json();
+    document.getElementById('home-content').style.display='none';
+    document.getElementById('search-content').style.display='block';
+    renderCards(d.data.Page.media, 'search-grid');
+  }
+
+  function openAnime(a) {
+    currentAnime = a;
+    document.getElementById('m-title').innerText = a.title.english || a.title.romaji;
+    document.getElementById('detail-modal').style.display='block';
+    let html = "";
+    for(let i=1; i<=(a.episodes || 24); i++) {
+      html += `<div class="ep-row"><span>Episode ${i}</span><button onclick="downloadFromFirebase(${i})" style="background:var(--red); color:white; border:none; padding:8px 15px; border-radius:5px; cursor:pointer;">SUBTITLE</button></div>`;
     }
+    document.getElementById('ep-list').innerHTML = html;
+  }
 
-    function renderCards(list, id) {
-      document.getElementById(id).innerHTML = list.map(a => `
-        <div class="card" onclick='openDetails(${JSON.stringify(a).replace(/'/g, "&apos;")})'>
-          <img src="${a.coverImage.large}">
-          <p>${(a.title.english || a.title.romaji)}</p>
-        </div>`).join('');
-    }
+  // Firebase Upload Logic
+  async function uploadToFirebase() {
+    const name = document.getElementById('up-name').value.trim().toLowerCase();
+    const ep = document.getElementById('up-ep').value;
+    const file = document.getElementById('up-file').files[0];
+    const btn = document.getElementById('uploadBtn');
 
-    function handleLogic(val) {
-      if(val === "9999") { document.getElementById('admin-panel').style.display = 'flex'; document.getElementById('searchInput').value = ""; }
-      else if(val.length > 2) { searchAnime(val); }
-      else { document.getElementById('search-section').style.display = 'none'; document.getElementById('main-content').style.display = 'block'; }
-    }
+    if(!name || !ep || !file) return alert("කරුණාකර සියල්ල පුරවන්න!");
 
-    async function searchAnime(term) {
-      const query = `query($s:String){Page(perPage:15){media(search:$s,type:ANIME){id title{english romaji}description bannerImage coverImage{large}episodes}}}`;
-      const res = await fetch(API, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query, variables:{s:term}})});
-      const d = await res.json();
-      document.getElementById('main-content').style.display = 'none';
-      document.getElementById('search-section').style.display = 'block';
-      renderCards(d.data.Page.media, 'search-grid');
-    }
+    btn.disabled = true;
+    btn.innerText = "UPLOADING...";
 
-    function openDetails(a) {
-      currentAnime = a;
-      document.getElementById('hero-bg').style.backgroundImage = `url('${a.bannerImage || a.coverImage.large}')`;
-      document.getElementById('m-title').innerText = a.title.english || a.title.romaji;
-      document.getElementById('m-desc').innerHTML = a.description;
-      document.getElementById('detail-modal').style.display = 'block';
-      let total = a.episodes || 1000;
-      let sHtml = "";
-      for(let i=1; i<=Math.ceil(total/24); i++) {
-        sHtml += `<div class="tab ${i===1?'active':''}" onclick="renderEpisodes(${i}, this)">EP ${(i-1)*24+1}-${i*24}</div>`;
-      }
-      document.getElementById('season-tabs').innerHTML = sHtml;
-      renderEpisodes(1);
-    }
+    try {
+      // 1. Storage එකට File එක යැවීම
+      const storageRef = storage.ref(`subs/${Date.now()}_${file.name}`);
+      await storageRef.put(file);
+      const downloadURL = await storageRef.getDownloadURL();
 
-    function renderEpisodes(idx, el) {
-      if(el) { document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active')); el.classList.add('active'); }
-      let start = (idx-1)*24+1, end = idx*24, total = currentAnime.episodes || 1000, html = "";
-      for(let i=start; i<=end && i<=total; i++) {
-        html += `<div class="ep-item"><span><b>Episode ${i}</b></span><button class="sub-btn" onclick="downloadSub(${i})">SUBTITLE</button></div>`;
-      }
-      document.getElementById('ep-list').innerHTML = html;
-    }
+      // 2. Firestore එකේ විස්තර සුරැකීම
+      await db.collection("subtitles").add({
+        animeName: name,
+        episode: parseInt(ep),
+        fileUrl: downloadURL,
+        fileName: file.name,
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+      });
 
-    function saveSubtitle() {
-      const name = document.getElementById('up-name').value.trim().toLowerCase();
-      const ep = document.getElementById('up-episode').value;
-      const file = document.getElementById('up-file').files[0]?.name || "Sub.srt";
-      if(!name || !ep) return alert("නම සහ Episode එක ඇතුළත් කරන්න!");
-      let db = JSON.parse(localStorage.getItem('final_db') || "[]");
-      db.push({ name, ep, file });
-      localStorage.setItem('final_db', JSON.stringify(db));
-      alert(`සාර්ථකයි! ${name} E${ep} එක් විය.`);
+      alert("Firebase වෙත සාර්ථකව එක් විය!");
       closeAdmin();
+    } catch (e) {
+      console.error(e);
+      alert("Upload කිරීමට නොහැකි විය. Rules පරීක්ෂා කරන්න.");
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "UPLOAD SUBTITLE";
     }
+  }
 
-    function downloadSub(epNum) {
-      const currentTitle = (currentAnime.title.english || currentAnime.title.romaji).toLowerCase();
-      let db = JSON.parse(localStorage.getItem('final_db') || "[]");
-      const found = db.find(item => (currentTitle.includes(item.name) || item.name.includes(currentTitle)) && item.ep == epNum);
-      if(found) alert("Downloading: " + found.file);
-      else alert("තවමත් මෙම Episode එකට Subtitles එක් කර නැත.");
+  // Firebase Download Logic
+  async function downloadFromFirebase(epNum) {
+    const title = (currentAnime.title.english || currentAnime.title.romaji).toLowerCase();
+    
+    try {
+      const snapshot = await db.collection("subtitles")
+        .where("episode", "==", epNum)
+        .get();
+
+      let found = null;
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        if(title.includes(data.animeName) || data.animeName.includes(title)) {
+          found = data;
+        }
+      });
+
+      if(found) {
+        window.open(found.fileUrl, '_blank'); // File එක බ්‍රවුසරයේ Open/Download වේ
+      } else {
+        alert("තවම මෙම Episode එකට Sub එකක් නැත.");
+      }
+    } catch (e) {
+      alert("දත්ත ලබා ගැනීමට නොහැකි විය.");
     }
+  }
 
-    function closeModal() { document.getElementById('detail-modal').style.display = 'none'; }
-    function closeAdmin() { document.getElementById('admin-panel').style.display = 'none'; }
-  </script>
+  function closeModal() { document.getElementById('detail-modal').style.display='none'; }
+  function closeAdmin() { document.getElementById('admin-panel').style.display='none'; }
+</script>
 </body>
 </html>
