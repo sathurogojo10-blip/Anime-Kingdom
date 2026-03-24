@@ -3,73 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Anime Kingdom | PS5 Ultimate</title>
+  <title>Anime Kingdom | Pro Player</title>
   <script src="https://unpkg.com"></script>
   <style>
     :root { --red: #ff3e3e; --bg: #050505; --glass: rgba(255, 255, 255, 0.08); }
-    
-    html, body { 
-      margin: 0; padding: 0; background: var(--bg); color: white; 
-      font-family: 'Inter', sans-serif; overflow-x: hidden; 
-      overscroll-behavior-y: contain; /* Pull-to-refresh සඳහා */
-    }
+    body { margin: 0; background: var(--bg); color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
-    #hero-bg {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-      background-size: cover; background-position: center;
-      transition: background 0.8s ease; z-index: -2; filter: brightness(0.4);
-    }
-    
-    .overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-      background: linear-gradient(0deg, var(--bg) 25%, transparent 100%);
-      z-index: -1;
-    }
+    /* Background Setup */
+    #hero-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background-size: cover; background-position: center; transition: 0.8s; z-index: -2; filter: brightness(0.4); }
+    .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: linear-gradient(0deg, var(--bg) 30%, transparent 100%); z-index: -1; }
 
-    header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; }
-    .brand { font-size: 20px; font-weight: 900; letter-spacing: 2px; }
+    /* Search & Header */
+    header { padding: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .brand { font-size: 20px; font-weight: 900; }
     .brand span { color: var(--red); }
+    .search-bar { margin: 0 20px 20px; background: var(--glass); border: 1px solid rgba(255,255,255,0.1); border-radius: 15px; display: flex; align-items: center; padding: 5px 15px; backdrop-filter: blur(10px); }
+    .search-input { width: 100%; background: transparent; border: none; padding: 12px; color: white; outline: none; }
 
-    /* Modern Search Bar - Fixed Color Issue */
-    .search-wrapper { padding: 0 25px; margin-bottom: 20px; }
-    .search-container {
-      display: flex; align-items: center; background: var(--glass);
-      border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 15px;
-      padding: 5px 15px; backdrop-filter: blur(15px);
-    }
-    .search-input {
-      width: 100%; background: transparent !important; border: none !important;
-      padding: 12px; color: white !important; outline: none !important; font-size: 16px;
-    }
+    /* Info */
+    .info { padding: 20px; min-height: 150px; }
+    .title { font-size: 32px; font-weight: 900; margin: 0; }
+    .desc { font-size: 14px; color: #aaa; margin: 15px 0; height: 60px; overflow: hidden; }
 
-    /* Content Area */
-    .info-panel { padding: 20px 25px; min-height: 200px; display: flex; flex-direction: column; justify-content: flex-end; }
-    .meta { font-size: 11px; font-weight: 800; color: var(--red); text-transform: uppercase; margin-bottom: 5px; }
-    .title { font-size: 34px; font-weight: 900; margin: 0; line-height: 1.1; }
-    .desc { font-size: 14px; color: rgba(255,255,255,0.6); margin: 15px 0; height: 65px; overflow: hidden; }
+    /* Buttons */
+    .btn-row { display: flex; gap: 10px; margin-top: 10px; }
+    .play-btn { background: white; color: black; border: none; padding: 15px 30px; border-radius: 30px; font-weight: 900; cursor: pointer; display: flex; align-items: center; gap: 8px; }
 
-    /* Horizontal Anime List */
-    .menu-scroll {
-      display: flex; overflow-x: auto; gap: 18px; padding: 20px 25px;
-      scrollbar-width: none; -webkit-overflow-scrolling: touch;
-    }
-    .menu-scroll::-webkit-scrollbar { display: none; }
-    .card { min-width: 100px; transition: 0.4s; cursor: pointer; text-align: center; }
-    .card img { width: 100px; height: 145px; border-radius: 12px; object-fit: cover; border: 3px solid transparent; }
-    .card.active { transform: scale(1.1); }
-    .card.active img { border-color: white; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
-    .card p { font-size: 10px; margin-top: 10px; opacity: 0.6; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    /* External Player Menu (Modal) */
+    .player-modal { display: none; position: fixed; bottom: 0; left: 0; width: 100%; background: #111; border-radius: 25px 25px 0 0; z-index: 4000; padding: 25px 20px; box-sizing: border-box; border-top: 2px solid var(--red); animation: slideUp 0.3s ease-out; }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    
+    .player-option { display: flex; align-items: center; gap: 15px; padding: 15px; background: #1a1a1a; margin-bottom: 10px; border-radius: 12px; cursor: pointer; border: 1px solid #333; }
+    .player-option:active { background: #333; }
+    .player-name { font-weight: bold; font-size: 16px; }
 
-    .btn-watch {
-      background: white; color: black; border: none; padding: 16px 45px; border-radius: 50px;
-      font-weight: 900; font-size: 15px; display: inline-flex; align-items: center; gap: 10px;
-    }
+    /* Menu Scroll */
+    .menu-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 20px; scrollbar-width: none; }
+    .card { min-width: 90px; text-align: center; }
+    .card img { width: 90px; height: 130px; border-radius: 12px; object-fit: cover; border: 2px solid transparent; transition: 0.3s; }
+    .card.active img { border-color: white; transform: scale(1.1); }
+    .card p { font-size: 10px; margin-top: 8px; opacity: 0.6; }
 
-    /* Modern Video Player Overlay */
-    #player-overlay {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: black; z-index: 3000; display: none; flex-direction: column;
-    }
+    .close-modal { position: absolute; top: 15px; right: 20px; color: #888; font-size: 20px; cursor: pointer; }
   </style>
 </head>
 <body>
@@ -79,112 +54,116 @@
 
   <header>
     <div class="brand">ANIME<span>KINGDOM</span></div>
-    <div id="clock" style="font-size: 13px; font-weight: bold; opacity: 0.8;"></div>
+    <div id="clock"></div>
   </header>
 
-  <div class="search-wrapper">
-    <div class="search-container">
-      <i data-lucide="search" size="20" color="#ff3e3e"></i>
-      <input type="text" id="searchInput" class="search-input" placeholder="Search your anime..." oninput="handleSearch()">
+  <div class="search-bar">
+    <i data-lucide="search" size="18" color="#ff3e3e"></i>
+    <input type="text" id="q" class="search-input" placeholder="Search anime..." oninput="doSearch()">
+  </div>
+
+  <div class="info">
+    <h1 class="title" id="m-title">Anime Kingdom</h1>
+    <p class="desc" id="m-desc">Select an anime and pick your favorite player.</p>
+    <div class="btn-row">
+      <button class="play-btn" onclick="openPlayerMenu()">
+        <i data-lucide="play-circle" fill="black"></i> WATCH NOW
+      </button>
     </div>
   </div>
 
-  <div class="info-panel">
-    <div class="meta" id="m-genres">DRAMA • ACTION</div>
-    <h1 class="title" id="m-title">Welcome</h1>
-    <p class="desc" id="m-desc">Select an anime to view details and start streaming.</p>
-    <button class="btn-watch" onclick="openPlayer()">
-      <i data-lucide="play" fill="black" size="20"></i> WATCH NOW
-    </button>
-  </div>
+  <div class="menu-scroll" id="main-list"></div>
 
-  <div class="menu-scroll" id="anime-list"></div>
-
-  <!-- Fullscreen Player -->
-  <div id="player-overlay">
-    <div style="padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #0a0a0a;">
-      <span id="p-title" style="font-size: 13px; font-weight: 900; color: white;"></span>
-      <button onclick="closePlayer()" style="background:var(--red); color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold;">EXIT ×</button>
+  <!-- Player Selector Modal -->
+  <div id="p-modal" class="player-modal">
+    <span class="close-modal" onclick="closeModal()">×</span>
+    <h3 style="margin-top:0; color:var(--red);">Choose Player</h3>
+    
+    <div class="player-option" onclick="playIn('splayer')">
+      <div style="background:#222; padding:10px; border-radius:8px;">🚀</div>
+      <div class="player-name">SPlayer (Recommended)</div>
     </div>
-    <!-- 2Embed provides high compatibility for Anilist IDs -->
-    <iframe id="video-iframe" src="" style="width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
+    
+    <div class="player-option" onclick="playIn('vlc')">
+      <div style="background:#222; padding:10px; border-radius:8px;">🧡</div>
+      <div class="player-name">VLC Media Player</div>
+    </div>
+
+    <div class="player-option" onclick="playIn('mx')">
+      <div style="background:#222; padding:10px; border-radius:8px;">💙</div>
+      <div class="player-name">MX Player</div>
+    </div>
+
+    <div class="player-option" onclick="playIn('browser')">
+      <div style="background:#222; padding:10px; border-radius:8px;">🌐</div>
+      <div class="player-name">Internal Browser Player</div>
+    </div>
   </div>
 
   <script>
-    const API_URL = "https://graphql.anilist.co";
-    let currentAnime = null;
-    let searchTimer;
+    const API = "https://graphql.anilist.co";
+    let cur = null;
 
-    async function loadContent(query, vars = {}) {
-      try {
-        const response = await fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ query, variables: vars })
-        });
-        const result = await response.json();
-        renderList(result.data.Page.media);
-      } catch (err) { console.error("API Error"); }
+    async function loadData(query, vars = {}) {
+      const res = await fetch(API, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, variables: vars }) });
+      const d = await res.json();
+      render(d.data.Page.media);
     }
 
-    function renderList(data) {
-      const listDiv = document.getElementById('anime-list');
-      listDiv.innerHTML = data.map((a, i) => `
-        <div class="card ${i===0?'active':''}" onclick="updateDisplay(${JSON.stringify(a).replace(/"/g, '&quot;')}, this)">
+    function render(list) {
+      const container = document.getElementById('main-list');
+      container.innerHTML = list.map((a, i) => `
+        <div class="card ${i===0?'active':''}" onclick="sel(${JSON.stringify(a).replace(/"/g, '&quot;')}, this)">
           <img src="${a.coverImage.large}">
-          <p>${(a.title.english || a.title.romaji).substring(0, 15)}</p>
-        </div>
-      `).join('');
-      if(data.length > 0) updateDisplay(data[0]);
-      lucide.createIcons(); // සර්ච් අයිකන් එක පෙන්වීමට
+          <p>${(a.title.english || a.title.romaji).substring(0, 12)}</p>
+        </div>`).join('');
+      if(list.length > 0) sel(list);
+      lucide.createIcons();
     }
 
-    function updateDisplay(anime, element) {
-      currentAnime = anime;
-      document.getElementById('hero-bg').style.backgroundImage = `url('${anime.bannerImage || anime.coverImage.extraLarge}')`;
-      document.getElementById('m-title').innerText = anime.title.english || anime.title.romaji;
-      document.getElementById('m-desc').innerHTML = anime.description || "No description available.";
-      document.getElementById('m-genres').innerText = anime.genres.join(" • ");
-
-      if(element) {
+    function sel(a, el) {
+      cur = a;
+      document.getElementById('hero-bg').style.backgroundImage = `url('${a.bannerImage || a.coverImage.extraLarge}')`;
+      document.getElementById('m-title').innerText = a.title.english || a.title.romaji;
+      document.getElementById('m-desc').innerHTML = a.description;
+      if(el) {
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
-        element.classList.add('active');
-        element.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+        el.classList.add('active');
+        el.scrollIntoView({ behavior: 'smooth', inline: 'center' });
       }
     }
 
-    function handleSearch() {
-      const term = document.getElementById('searchInput').value;
-      clearTimeout(searchTimer);
-      if(term.length < 2) { loadTrending(); return; }
-      
-      searchTimer = setTimeout(() => {
-        loadContent(`query($s:String){Page(perPage:12){media(search:$s,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, {s:term});
-      }, 600);
+    // --- Player Logic ---
+    function openPlayerMenu() {
+      if(!cur) return;
+      document.getElementById('p-modal').style.display = 'block';
     }
 
-    function loadTrending() {
-      loadContent(`{Page(perPage:15){media(sort:TRENDING_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`);
+    function closeModal() { document.getElementById('p-modal').style.display = 'none'; }
+
+    function playIn(type) {
+      // මෙය ඇත්තටම ප්ලේ වීමට නම් Direct Video URL එකක් (m3u8/mp4) අවශ්‍ය වේ.
+      // දැනට අපි AniList ID එක හරහා Streaming Proxy එකක් පාවිච්චි කරමු.
+      const videoUrl = `https://www.2embed.cc{cur.id}/1`; 
+
+      let intentUrl = "";
+      if(type === 'splayer') intentUrl = `intent:${videoUrl}#Intent;package=com.sentis.splayer;end`;
+      if(type === 'vlc') intentUrl = `vlc://${videoUrl}`;
+      if(type === 'mx') intentUrl = `intent:${videoUrl}#Intent;package=com.mxtech.videoplayer.ad;end`;
+      if(type === 'browser') { window.open(videoUrl, '_blank'); return; }
+
+      window.location.href = intentUrl;
+      closeModal();
     }
 
-    function openPlayer() {
-      if(!currentAnime) return;
-      document.getElementById('p-title').innerText = "PLAYING: " + (currentAnime.title.english || currentAnime.title.romaji).toUpperCase();
-      // සැබෑ වීඩියෝ ප්ලේයර් එක (2Embed Server)
-      document.getElementById('video-iframe').src = `https://www.2embed.cc{currentAnime.id}/1`;
-      document.getElementById('player-overlay').style.display = 'flex';
+    function doSearch() {
+      const s = document.getElementById('q').value;
+      if(s.length < 2) return;
+      loadData(`query($s:String){Page(perPage:12){media(search:$s,type:ANIME){id title{english romaji}description bannerImage coverImage{extraLarge large}}}}`, {s:s});
     }
 
-    function closePlayer() {
-      document.getElementById('player-overlay').style.display = 'none';
-      document.getElementById('video-iframe').src = '';
-    }
-
-    // Initialize
-    loadTrending();
-    setInterval(() => {
-      document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-    }, 1000);
+    loadData(`{Page(perPage:15){media(sort:TRENDING_DESC,type:ANIME){id title{english romaji}description bannerImage coverImage{extraLarge large}}}}`);
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}); }, 1000);
   </script>
 </body>
 </html>
