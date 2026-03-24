@@ -2,32 +2,39 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Anime Kingdom</title>
+  <title>Anime Kingdom 2026</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { margin:0; font-family:Arial; background:#121212; color:#fff; }
     header { background:#1f1f1f; padding:15px; display:flex; justify-content:space-between; flex-wrap:wrap; }
     header h1 { color:#3498db; font-size:22px; }
-    nav a { color:#fff; margin:5px 10px; text-decoration:none; font-size:14px; }
+    nav a { color:#fff; margin:5px 10px; text-decoration:none; font-size:14px; cursor:pointer; }
     .search-bar { padding:15px; text-align:center; }
-    .search-bar input { padding:8px; width:70%; border-radius:5px; border:none; }
-    .search-bar button { padding:8px 12px; margin-left:5px; background:#e74c3c; color:#fff; border:none; border-radius:5px; cursor:pointer; }
-    .anime-card { background:#1f1f1f; border-radius:8px; margin:15px auto; padding:15px; max-width:500px; }
+    .search-bar input { padding:10px; width:70%; border-radius:5px; border:none; }
+    .search-bar button { padding:10px 15px; margin-left:5px; background:#e74c3c; color:#fff; border:none; border-radius:5px; cursor:pointer; }
+    .anime-card { background:#1f1f1f; border-radius:8px; margin:15px; padding:15px; max-width:500px; transition:transform 0.3s; }
+    .anime-card:hover { transform:scale(1.05); }
     .anime-card img { width:100%; border-radius:8px; }
     .anime-card h2 { color:#e74c3c; font-size:20px; margin:10px 0; }
     .anime-card p { font-size:14px; }
     footer { background:#1f1f1f; text-align:center; padding:10px; font-size:12px; margin-top:20px; }
+
+    /* Modal styling */
+    .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); }
+    .modal-content { background:#1f1f1f; margin:5% auto; padding:20px; border-radius:10px; width:90%; max-width:900px; color:#fff; }
+    .close { float:right; font-size:24px; cursor:pointer; }
+    .anime-list { display:flex; flex-wrap:wrap; gap:15px; justify-content:center; }
   </style>
 </head>
 <body>
   <header>
-    <h1>Anime Kingdom</h1>
+    <h1>Anime Kingdom 2026</h1>
     <nav>
-      <a href="#">Home</a>
-      <a href="#">Categories</a>
-      <a href="#">Popular</a>
-      <a href="#">Latest</a>
-      <a href="#">My List</a>
+      <a onclick="openModal('home')">Home</a>
+      <a onclick="openModal('categories')">Categories</a>
+      <a onclick="openModal('popular')">Popular</a>
+      <a onclick="openModal('latest')">Latest</a>
+      <a onclick="openModal('mylist')">My List</a>
     </nav>
   </header>
 
@@ -40,15 +47,66 @@
   <!-- Results -->
   <div id="anime-container"></div>
 
+  <!-- Modal -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
   <footer>
     <p>© 2026 Anime Kingdom | Powered by AniList API</p>
   </footer>
 
   <script>
+    function openModal(section) {
+      document.getElementById("modal").style.display = "block";
+      document.getElementById("modal-body").innerHTML = `<h2>${section.toUpperCase()}</h2><div id="modal-list" class="anime-list"></div>`;
+      if(section === "home") fetchAnimeList("TRENDING_DESC");
+      if(section === "popular") fetchAnimeList("POPULARITY_DESC");
+      if(section === "latest") fetchAnimeList("START_DATE_DESC");
+      if(section === "categories") fetchAnimeList("SCORE_DESC"); // demo category
+      if(section === "mylist") document.getElementById("modal-list").innerHTML = "<p>Your saved anime will appear here.</p>";
+    }
+    function closeModal() {
+      document.getElementById("modal").style.display = "none";
+    }
+
+    async function fetchAnimeList(sortType) {
+      const query = `
+        query ($sort: [MediaSort]) {
+          Page(page:1, perPage:6) {
+            media(type: ANIME, sort: $sort) {
+              title { romaji english }
+              description
+              coverImage { large }
+              episodes
+              genres
+            }
+          }
+        }`;
+      const response = await fetch("https://graphql.anilist.co", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Accept": "application/json" },
+        body: JSON.stringify({ query, variables: { sort: [sortType] } })
+      });
+      const data = await response.json();
+      const animeList = data.data.Page.media;
+      document.getElementById("modal-list").innerHTML = animeList.map(anime => `
+        <div class="anime-card">
+          <img src="${anime.coverImage.large}" alt="${anime.title.romaji}">
+          <h2>${anime.title.english || anime.title.romaji}</h2>
+          <p>${anime.description ? anime.description.substring(0,120)+"..." : ""}</p>
+          <p><b>Episodes:</b> ${anime.episodes || "N/A"}</p>
+          <p><b>Genres:</b> ${anime.genres.join(", ")}</p>
+        </div>
+      `).join("");
+    }
+
     async function searchAnime() {
       const searchTerm = document.getElementById("searchInput").value;
       if (!searchTerm) return;
-
       const query = `
         query ($search: String) {
           Media(search: $search, type: ANIME) {
@@ -59,16 +117,13 @@
             genres
           }
         }`;
-
       const response = await fetch("https://graphql.anilist.co", {
         method: "POST",
         headers: { "Content-Type": "application/json", "Accept": "application/json" },
         body: JSON.stringify({ query, variables: { search: searchTerm } })
       });
-
       const data = await response.json();
       const anime = data.data.Media;
-
       document.getElementById("anime-container").innerHTML = `
         <div class="anime-card">
           <img src="${anime.coverImage.large}" alt="${anime.title.romaji}">
