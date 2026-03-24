@@ -3,76 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Anime Kingdom | PS5 Elite Edition</title>
+  <title>Anime Kingdom | PS5 Elite</title>
   <script src="https://unpkg.com"></script>
   <style>
     :root { --red: #ff3e3e; --bg: #050505; --glass: rgba(255, 255, 255, 0.1); }
-    
     body { margin: 0; font-family: 'Inter', sans-serif; background: var(--bg); color: white; overflow: hidden; }
 
     /* Dynamic Immersive Background */
     #hero-bg {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background-size: cover; background-position: center 20%;
-      transition: background 1.2s cubic-bezier(0.4, 0, 0.2, 1);
-      z-index: -2; transform: scale(1.1); /* පොඩි Zoom එකක් ලස්සනට */
+      transition: background 1s ease-in-out; z-index: -2;
     }
     
     .overlay {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%;
       background: radial-gradient(circle at top right, transparent, var(--bg) 90%),
-                  linear-gradient(0deg, var(--bg) 10%, transparent 100%);
+                  linear-gradient(0deg, var(--bg) 20%, transparent 100%);
       z-index: -1;
     }
 
-    /* Modern Header */
-    header { padding: 25px; display: flex; justify-content: space-between; align-items: center; }
+    header { padding: 20px 25px; display: flex; justify-content: space-between; align-items: center; }
     .brand { font-size: 20px; font-weight: 900; letter-spacing: 2px; }
     .brand span { color: var(--red); }
 
-    /* Floating Search */
-    .search-area { padding: 0 25px; margin-bottom: 20px; }
+    /* Search & Refresh Section */
+    .action-bar { padding: 0 25px; display: flex; gap: 10px; align-items: center; }
     .search-bar {
-      background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(255,255,255,0.15); border-radius: 18px;
-      display: flex; align-items: center; padding: 5px 15px; transition: 0.4s;
+      flex: 1; background: var(--glass); backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.15); border-radius: 12px;
+      display: flex; align-items: center; padding: 2px 15px;
     }
-    .search-bar:focus-within { border-color: var(--red); transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .search-input { width: 100%; background: none; border: none; padding: 12px; color: white; outline: none; font-size: 15px; }
-
-    /* Anime Info */
-    .info-box { padding: 20px 25px; min-height: 220px; display: flex; flex-direction: column; justify-content: flex-end; }
-    .meta { font-size: 11px; font-weight: 800; color: var(--red); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1.5px; }
-    .title { font-size: 38px; font-weight: 900; margin: 0; line-height: 1; text-shadow: 0 5px 20px rgba(0,0,0,0.8); }
-    .desc { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.6; margin: 15px 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-
-    /* Horizontal Menu - PS5 Style */
-    .menu-container { padding: 20px 0 40px 25px; }
-    .menu-scroll { display: flex; overflow-x: auto; gap: 18px; scrollbar-width: none; padding-right: 25px; }
-    .menu-scroll::-webkit-scrollbar { display: none; }
+    .search-input { width: 100%; background: none; border: none; padding: 12px; color: white; outline: none; }
     
-    .card { min-width: 100px; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
-    .card img { width: 100px; height: 140px; border-radius: 15px; object-fit: cover; border: 3px solid transparent; box-shadow: 0 10px 20px rgba(0,0,0,0.4); }
-    .card.active { transform: scale(1.15) translateY(-10px); }
-    .card.active img { border-color: white; box-shadow: 0 0 25px rgba(255,255,255,0.3); }
-    .card p { font-size: 10px; margin-top: 10px; text-align: center; opacity: 0; transition: 0.3s; font-weight: bold; }
-    .card.active p { opacity: 1; }
-
-    /* Watch Button */
-    .btn-row { display: flex; gap: 15px; }
-    .play-btn {
-      background: white; color: black; border: none; padding: 15px 35px; border-radius: 40px;
-      font-weight: 900; font-size: 15px; display: flex; align-items: center; gap: 10px;
-      cursor: pointer; transition: 0.3s;
+    /* Refresh Button Styling */
+    .refresh-btn {
+      background: var(--glass); border: 1px solid rgba(255,255,255,0.15);
+      color: white; padding: 12px; border-radius: 12px; cursor: pointer;
+      display: flex; align-items: center; transition: 0.3s;
     }
-    .play-btn:active { transform: scale(0.95); }
+    .refresh-btn:active { transform: rotate(180deg); background: var(--red); }
 
-    /* Multi-Server Player Overlay */
-    #player-view {
+    /* Info Display */
+    .info-box { padding: 25px; min-height: 180px; display: flex; flex-direction: column; justify-content: flex-end; }
+    .meta { font-size: 10px; font-weight: 800; color: var(--red); text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
+    .title { font-size: 32px; font-weight: 900; margin: 0; line-height: 1.1; }
+    .desc { font-size: 13px; color: rgba(255,255,255,0.6); line-height: 1.5; margin: 15px 0; height: 60px; overflow: hidden; }
+
+    /* Horizontal Menu */
+    .menu-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 20px 25px; scrollbar-width: none; }
+    .menu-scroll::-webkit-scrollbar { display: none; }
+    .card { min-width: 90px; transition: 0.4s; cursor: pointer; text-align: center; }
+    .card img { width: 90px; height: 130px; border-radius: 12px; object-fit: cover; border: 2px solid transparent; }
+    .card.active { transform: scale(1.1); }
+    .card.active img { border-color: white; box-shadow: 0 0 20px rgba(255,255,255,0.2); }
+    .card p { font-size: 10px; margin-top: 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; opacity: 0.6; }
+    .card.active p { opacity: 1; font-weight: bold; }
+
+    .play-btn {
+      background: white; color: black; border: none; padding: 14px 35px; border-radius: 30px;
+      font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 8px; margin-top: 10px;
+    }
+
+    /* Player Overlay */
+    #player-screen {
       position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black;
       z-index: 2000; display: none; flex-direction: column;
     }
-    .player-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #0a0a0a; }
   </style>
 </head>
 <body>
@@ -82,68 +79,75 @@
 
   <header>
     <div class="brand">ANIME<span>KINGDOM</span></div>
-    <div id="time" style="font-size: 13px; font-weight: 600;"></div>
+    <div id="time" style="font-size: 13px; opacity: 0.7;"></div>
   </header>
 
-  <div class="search-area">
+  <div class="action-bar">
     <div class="search-bar">
       <i data-lucide="search" size="18" color="#ff3e3e"></i>
-      <input type="text" id="q" class="search-input" placeholder="Search titles, genres..." oninput="search()">
+      <input type="text" id="searchInput" class="search-input" placeholder="Search..." oninput="searchAnime()">
     </div>
+    <!-- Refresh Button -->
+    <button class="refresh-btn" onclick="refreshContent()" title="Refresh Data">
+      <i data-lucide="rotate-cw" size="18"></i>
+    </button>
   </div>
 
   <div class="info-box">
-    <div class="meta" id="m-genres">Action • Fantasy</div>
-    <h1 class="title" id="m-title">Loading...</h1>
-    <p class="desc" id="m-desc">Fetching the best anime for you.</p>
-    <div class="btn-row">
-      <button class="play-btn" onclick="play()">
-        <i data-lucide="play" fill="black" size="20"></i> WATCH NOW
-      </button>
-    </div>
+    <div class="meta" id="m-genres">...</div>
+    <h1 class="title" id="m-title">Anime Kingdom</h1>
+    <p class="desc" id="m-desc">Select an anime to start watching.</p>
+    <button class="play-btn" onclick="playVideo()">
+      <i data-lucide="play" fill="black" size="18"></i> WATCH NOW
+    </button>
   </div>
 
-  <div class="menu-container">
-    <div class="menu-scroll" id="list"></div>
-  </div>
+  <div class="menu-scroll" id="anime-list"></div>
 
-  <!-- Video Player -->
-  <div id="player-view">
-    <div class="player-header">
-      <div id="p-name" style="font-weight: bold; font-size: 14px;"></div>
-      <button onclick="closeP()" style="background:var(--red); color:white; border:none; padding:8px 15px; border-radius:8px; font-weight:bold;">EXIT ×</button>
+  <!-- Player -->
+  <div id="player-screen">
+    <div style="padding: 15px; display: flex; justify-content: space-between; align-items: center; background: #0a0a0a;">
+      <span id="p-title" style="font-size: 12px; font-weight: bold;"></span>
+      <button onclick="closeVideo()" style="background:var(--red); color:white; border:none; padding:8px 15px; border-radius:8px;">EXIT ×</button>
     </div>
-    <iframe id="venom-player" src="" style="width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
+    <iframe id="main-frame" src="" style="width: 100%; height: 100%; border: none;" allowfullscreen></iframe>
   </div>
 
   <script>
     const API = "https://graphql.anilist.co";
-    let cur = null;
+    let currentData = null;
 
-    async function load(query, vars = {}) {
-      const res = await fetch(API, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query, variables: vars })
-      });
-      const json = await res.json();
-      const items = json.data.Page.media;
-      render(items);
+    // 1. Refresh Function (දත්ත අලුත් කිරීමට)
+    async function refreshContent() {
+      document.getElementById('searchInput').value = ''; // සර්ච් එක ක්ලියර් කරන්න
+      await fetchAnime(`{Page(perPage:15){media(sort:TRENDING_DESC,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`);
     }
 
-    function render(list) {
-      const container = document.getElementById('list');
+    async function fetchAnime(query, vars = {}) {
+      try {
+        const res = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query, variables: vars })
+        });
+        const data = await res.json();
+        renderItems(data.data.Page.media);
+      } catch (e) { console.error("Error fetching data"); }
+    }
+
+    function renderItems(list) {
+      const container = document.getElementById('anime-list');
       container.innerHTML = list.map((a, i) => `
-        <div class="card ${i===0?'active':''}" onclick="sel(${JSON.stringify(a).replace(/"/g, '&quot;')}, this)">
+        <div class="card ${i===0?'active':''}" onclick="selectItem(${JSON.stringify(a).replace(/"/g, '&quot;')}, this)">
           <img src="${a.coverImage.large}">
-          <p>${(a.title.english || a.title.romaji).substring(0,15)}...</p>
+          <p>${(a.title.english || a.title.romaji).substring(0, 12)}</p>
         </div>
       `).join('');
-      if(list[0]) sel(list[0]);
+      if(list.length > 0) selectItem(list[0]);
     }
 
-    function sel(a, el) {
-      cur = a;
+    function selectItem(a, el) {
+      currentData = a;
       document.getElementById('hero-bg').style.backgroundImage = `url('${a.bannerImage || a.coverImage.extraLarge}')`;
       document.getElementById('m-title').innerText = a.title.english || a.title.romaji;
       document.getElementById('m-desc').innerHTML = a.description;
@@ -152,35 +156,32 @@
       if(el) {
         document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
-        el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        el.scrollIntoView({ behavior: 'smooth', inline: 'center' });
       }
     }
 
-    function search() {
-      const val = document.getElementById('q').value;
+    function searchAnime() {
+      const val = document.getElementById('searchInput').value;
       if(val.length < 2) return;
-      load(`query($s:String){Page(perPage:10){media(search:$s,type:ANIME){title{english romaji}description bannerImage genres coverImage{extraLarge large}id}}}`, {s:val});
+      fetchAnime(`query($s:String){Page(perPage:10){media(search:$s,type:ANIME){id title{english romaji}description bannerImage genres coverImage{extraLarge large}}}}`, {s:val});
     }
 
-    function play() {
-      if(!cur) return;
-      const player = document.getElementById('player-view');
-      const frame = document.getElementById('venom-player');
-      // Advance Multi-server link (2Embed is reliable for most titles)
-      frame.src = `https://www.2embed.cc{cur.id}/1`;
-      document.getElementById('p-name').innerText = cur.title.english || cur.title.romaji;
-      player.style.display = 'flex';
+    function playVideo() {
+      if(!currentData) return;
+      document.getElementById('p-title').innerText = currentData.title.english || currentData.title.romaji;
+      document.getElementById('main-frame').src = `https://www.2embed.cc{currentData.id}/1`;
+      document.getElementById('player-screen').style.display = 'flex';
     }
 
-    function closeP() {
-      document.getElementById('player-view').style.display = 'none';
-      document.getElementById('venom-player').src = '';
+    function closeVideo() {
+      document.getElementById('player-screen').style.display = 'none';
+      document.getElementById('main-frame').src = '';
     }
 
-    // Trending on start
-    load(`{Page(perPage:15){media(sort:TRENDING_DESC,type:ANIME){title{english romaji}description bannerImage genres coverImage{extraLarge large}id}}}`);
+    // Initial Load
+    refreshContent();
 
-    // Clock & Icons
+    // Icons & Clock
     lucide.createIcons();
     setInterval(() => {
       document.getElementById('time').innerText = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
