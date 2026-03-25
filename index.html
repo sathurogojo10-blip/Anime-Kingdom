@@ -3,171 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Kingdom | Unlimited Streaming v10.0</title>
+    <title>Anime Kingdom | Powered by HiAnime</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com');
-        body { background: #020205; color: white; font-family: 'Poppins', sans-serif; overflow-x: hidden; }
-        .page { display: none; opacity: 0; transition: 0.5s; }
-        .active-page { display: block; opacity: 1; }
-        .anime-card:hover { transform: scale(1.05) translateY(-10px); border: 2px solid #ffcc00; box-shadow: 0 0 30px rgba(255,204,0,0.5); }
-        iframe { background: #000; border-radius: 20px; border: 2px solid #1a1a1a; box-shadow: 0 0 50px rgba(0,0,0,1); }
-        .ep-btn { transition: 0.3s; background: #111; border: 1px solid #333; }
-        .ep-btn:hover, .active-ep { background: #ffcc00; color: #000; border-color: #ffcc00; transform: scale(1.1); font-weight: 900; }
-        .server-btn { background: #1a1a1a; padding: 5px 15px; border-radius: 8px; font-size: 10px; font-weight: bold; border: 1px solid #333; }
-        .active-server { border-color: #ffcc00; color: #ffcc00; }
+        body { background: #0b0c10; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .anime-card:hover { transform: translateY(-10px); border: 2px solid #ffcc00; box-shadow: 0 0 25px rgba(255, 204, 0, 0.4); }
+        #player-modal { display: none; background: rgba(0, 0, 0, 0.98); }
+        .ep-btn { background: #1f2833; border: 1px solid #45a29e; transition: 0.3s; }
+        .ep-btn:hover, .active-ep { background: #ffcc00; color: black; border-color: #ffcc00; transform: scale(1.1); }
+        iframe { border-radius: 20px; background: #000; border: 2px solid #1f2833; }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #ffcc00; border-radius: 10px; }
     </style>
 </head>
 <body>
 
 <!-- Navigation -->
-<nav class="flex flex-col md:flex-row items-center justify-between px-10 py-6 bg-black/90 sticky top-0 z-50 border-b border-[#ffcc00]/20 backdrop-blur-xl">
-    <div class="flex items-center gap-4 cursor-pointer" onclick="showPage('home')">
-        <div class="bg-[#ffcc00] p-2 rounded-xl rotate-12"><i class="fas fa-bolt text-black text-2xl"></i></div>
+<nav class="flex flex-col md:flex-row items-center justify-between px-10 py-6 bg-black sticky top-0 z-50 border-b border-[#45a29e]/30">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="location.reload()">
+        <i class="fas fa-crown text-[#ffcc00] text-4xl"></i>
         <div class="leading-none">
-            <span style="font-family: 'Orbitron';" class="text-3xl font-black uppercase tracking-tighter block">Anime <span class="text-[#ffcc00]">Kingdom</span></span>
-            <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.5em]">The Ultimate Stream Engine</span>
+            <span class="text-3xl font-black uppercase tracking-tighter block">Anime <span class="text-[#ffcc00]">Kingdom</span></span>
+            <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.3em]">HiAnime Streaming Engine</span>
         </div>
     </div>
-    <div class="flex gap-10 font-black text-[11px] uppercase tracking-widest">
-        <button onclick="showPage('home')" class="hover:text-[#ffcc00] transition">PORTAL</button>
-        <button onclick="showPage('shop')" class="text-purple-500 hover:text-purple-400 transition animate-pulse">PREMIUM SHOP</button>
+    <div class="relative w-full md:w-1/3">
+        <input type="text" id="search" oninput="searchAnime()" placeholder="Search Anime (e.g. One Piece)..." class="w-full bg-[#1f2833] border border-white/10 rounded-full py-3 px-12 focus:border-[#ffcc00] outline-none text-sm shadow-inner">
+        <i class="fas fa-search absolute left-5 top-4 text-gray-500"></i>
     </div>
 </nav>
 
-<!-- HOME PAGE -->
-<div id="home" class="page active-page p-8 max-w-7xl mx-auto">
-    <div class="max-w-xl mx-auto mb-16 relative">
-        <input type="text" id="searchInput" oninput="searchAnime()" placeholder="ඕනෑම ඇනිමේ එකක් සොයන්න..." class="w-full bg-[#111] border border-white/10 py-4 px-14 rounded-2xl outline-none focus:border-[#ffcc00] text-white shadow-2xl">
-        <i class="fas fa-search absolute left-6 top-5 text-gray-500"></i>
-    </div>
-    <div class="flex items-center gap-4 mb-10">
-        <div class="h-8 w-2 bg-[#ffcc00] rounded-full"></div>
-        <h2 id="grid-title" class="text-3xl font-black uppercase tracking-tighter italic">Trending Universe</h2>
-    </div>
-    <div id="anime-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
-        <!-- AI Loading Content... -->
+<!-- Main Grid -->
+<div id="home" class="p-8 max-w-7xl mx-auto">
+    <h2 class="text-2xl font-bold border-l-4 border-[#ffcc00] pl-4 uppercase tracking-widest mb-10 text-[#ffcc00]">Trending Now</h2>
+    <div id="grid-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <!-- Loading... -->
     </div>
 </div>
 
-<!-- PLAYER PAGE -->
-<div id="player" class="page p-4 md:p-10 max-w-7xl mx-auto">
-    <button onclick="showPage('home')" class="mb-8 text-gray-500 hover:text-white font-black uppercase text-xs tracking-widest"><i class="fas fa-chevron-left mr-2"></i> Back to Portal</button>
-    
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-10">
-        <div class="lg:col-span-3">
-            <div class="flex justify-between items-end mb-4 px-2">
-                <h2 id="playing-title" class="text-2xl md:text-4xl font-black text-[#ffcc00] uppercase italic tracking-tighter"></h2>
-                <div class="flex gap-2" id="server-list">
-                    <button onclick="setServer('vidsrc.me', 1)" class="server-btn active-server" id="s1">S1</button>
-                    <button onclick="setServer('vidsrc.to', 2)" class="server-btn" id="s2">S2</button>
-                    <button onclick="setServer('vidsrc.xyz', 3)" class="server-btn" id="s3">S3</button>
-                </div>
-            </div>
-            <div class="aspect-video w-full rounded-[2rem] overflow-hidden border-4 border-[#111] shadow-[0_0_100px_rgba(0,0,0,1)]">
-                <iframe id="video-frame" src="" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-            </div>
-            <!-- Download & Info -->
-            <div class="mt-8 p-8 bg-zinc-900/40 rounded-[2.5rem] border border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
-                <div>
-                    <h3 id="ep-text" class="text-2xl font-black text-[#ffcc00]">EPISODE: 01</h3>
-                    <p class="text-[10px] text-gray-500 uppercase font-bold mt-1">Multi-Language Audio & Subtitles Available</p>
-                </div>
-                <div class="flex gap-4">
-                    <button onclick="dl('v')" class="bg-green-600 px-8 py-3 rounded-2xl font-black hover:bg-green-500 transition shadow-lg shadow-green-900/20">DOWNLOAD</button>
-                    <button onclick="dl('s')" class="bg-blue-600 px-8 py-3 rounded-2xl font-black hover:bg-blue-500 transition shadow-lg shadow-blue-900/20">SINHALA SUB</button>
-                </div>
-            </div>
+<!-- HiAnime Style Player Modal -->
+<div id="player-modal" class="fixed inset-0 z-50 flex flex-col p-4 md:p-8 overflow-y-auto">
+    <div class="max-w-6xl mx-auto w-full">
+        <div class="flex justify-between items-center mb-6">
+            <h2 id="v-title" class="text-xl md:text-3xl font-black text-[#ffcc00] uppercase truncate pr-4"></h2>
+            <button onclick="closePlayer()" class="bg-red-600 px-6 py-2 rounded-full font-bold shadow-lg hover:bg-red-700 transition">CLOSE X</button>
         </div>
-        <!-- Episodes Sidebar -->
-        <div class="bg-black/50 p-8 rounded-[2.5rem] h-[550px] border border-white/5 flex flex-col shadow-2xl">
-            <h3 class="font-black mb-6 border-b border-white/10 pb-4 uppercase tracking-widest text-gray-400 text-sm italic">Episodes List</h3>
-            <div id="ep-list" class="grid grid-cols-4 lg:grid-cols-3 gap-3 overflow-y-auto pr-2 custom-scroll"></div>
-        </div>
-    </div>
-</div>
 
-<!-- SHOP PAGE -->
-<div id="shop" class="page p-20 text-center">
-    <h2 style="font-family: 'Orbitron';" class="text-6xl font-black mb-4">CHEAP <span class="text-[#ffcc00]">OTT</span> SHOP</h2>
-    <p class="text-gray-500 tracking-[0.5em] mb-20 font-bold">PREMIUM ENTERTAINMENT SOLUTIONS</p>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-12 max-w-6xl mx-auto">
-        <div class="bg-zinc-900/50 p-12 rounded-[3rem] border border-white/5 hover:border-red-600 transition-all duration-700 group shadow-2xl">
-            <img src="https://upload.wikimedia.org" class="h-10 mx-auto mb-10 group-hover:scale-110 transition">
-            <p class="text-5xl font-black text-[#ffcc00] italic">Rs. 450</p>
-            <button onclick="buy('Netflix')" class="mt-12 bg-white text-black w-full py-5 rounded-2xl font-black hover:bg-[#ffcc00] transition transform active:scale-95">ORDER NOW</button>
-        </div>
-        <div class="bg-zinc-900/50 p-12 rounded-[3rem] border border-white/5 hover:border-blue-500 transition-all duration-700 group shadow-2xl">
-            <img src="https://upload.wikimedia.org" class="h-12 mx-auto mb-10 group-hover:scale-110 transition">
-            <p class="text-5xl font-black text-[#ffcc00] italic">Rs. 300</p>
-            <button onclick="buy('Disney+')" class="mt-12 bg-white text-black w-full py-5 rounded-2xl font-black hover:bg-[#ffcc00] transition transform active:scale-95">ORDER NOW</button>
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-3">
+                <div class="aspect-video w-full shadow-2xl">
+                    <!-- HiAnime Database Connection -->
+                    <iframe id="v-frame" src="" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+                </div>
+                <div class="mt-6 flex justify-between items-center bg-[#1f2833] p-6 rounded-2xl border border-white/5">
+                    <p id="v-ep" class="font-bold text-gray-300 uppercase tracking-widest">Episode: 1</p>
+                    <div class="flex gap-4">
+                        <button onclick="dl('v')" class="bg-green-600 px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition">DOWNLOAD</button>
+                        <button onclick="dl('s')" class="bg-blue-600 px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition">SINHALA SUB</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Episode Selector Sidebar -->
+            <div class="bg-[#1f2833] p-6 rounded-2xl h-[450px] lg:h-[550px] border border-white/10 flex flex-col">
+                <h3 class="font-bold mb-4 border-b border-white/10 pb-2 text-[#45a29e] uppercase text-xs tracking-widest"><i class="fas fa-list-ul mr-2"></i> Episodes List</h3>
+                <div id="v-eps" class="grid grid-cols-4 gap-2 overflow-y-auto pr-2 custom-scroll">
+                    <!-- Episodes -->
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const ANILIST_URL = 'https://graphql.anilist.co';
-    let currentId = '', currentTitle = '', currentEp = 1, currentBase = 'vidsrc.me';
-
-    function showPage(p) {
-        document.querySelectorAll('.page').forEach(div => div.classList.remove('active-page'));
-        document.getElementById(p).classList.add('active-page');
-        if(p !== 'player') document.getElementById('video-frame').src = '';
-        window.scrollTo({top: 0, behavior: 'smooth'});
-    }
+    const ANILIST = 'https://graphql.anilist.co';
+    let currentMalId = '', currentTitle = '', currentEpisode = 1;
 
     async function load(q = '') {
-        const query = q ? `query($s:String){Page(perPage:24){media(search:$s,type:ANIME){idMal title{english romaji}coverImage{extraLarge}episodes}}}` 
-                        : `query{Page(perPage:24){media(sort:TRENDING_DESC,type:ANIME){idMal title{english romaji}coverImage{extraLarge}episodes}}}`;
-        const res = await fetch(ANILIST_URL, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query, variables:{s:q}}) });
+        const query = q ? `query($s:String){Page(perPage:24){media(search:$s,type:ANIME){idMal title{english romaji}coverImage{large}episodes}}}` 
+                        : `query{Page(perPage:24){media(sort:TRENDING_DESC,type:ANIME){idMal title{english romaji}coverImage{large}episodes}}}`;
+        const res = await fetch(ANILIST, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query, variables:{s:q}}) });
         const { data } = await res.json();
-        const grid = document.getElementById('anime-grid');
-        grid.innerHTML = data.Page.media.map(a => `
-            <div class="anime-card bg-zinc-900/30 border border-white/5 rounded-[2rem] overflow-hidden cursor-pointer transition-all duration-700" onclick="initP('${a.idMal}', '${(a.title.english||a.title.romaji).replace(/'/g,"")}', ${a.episodes || 12})">
-                <img src="${a.coverImage.extraLarge}" class="h-72 w-full object-cover">
-                <div class="p-5"><h3 class="text-[10px] font-black truncate text-center uppercase tracking-tighter">${a.title.english||a.title.romaji}</h3></div>
-            </div>`).join('');
+        const grid = document.getElementById('grid-container');
+        grid.innerHTML = data.Page.media.map(a => {
+            const t = a.title.english || a.title.romaji;
+            return `
+            <div class="anime-card bg-[#1f2833] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 group" onclick="openPlayer('${a.idMal}', '${t.replace(/'/g,"")}', ${a.episodes || 12})">
+                <div class="relative overflow-hidden">
+                    <img src="${a.coverImage.large}" class="h-64 w-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fas fa-play-circle text-5xl text-[#ffcc00]"></i>
+                    </div>
+                </div>
+                <p class="p-3 text-[10px] font-bold truncate text-center uppercase tracking-tighter">${t}</p>
+            </div>`;
+        }).join('');
     }
 
-    function searchAnime() { load(document.getElementById('searchInput').value); }
+    function searchAnime() { load(document.getElementById('search').value); }
 
-    function initP(id, title, eps) {
-        currentId = id; currentTitle = title;
-        document.getElementById('playing-title').innerText = title;
-        const el = document.getElementById('ep-list'); el.innerHTML = '';
+    function openPlayer(id, title, eps) {
+        currentMalId = id; currentTitle = title;
+        document.getElementById('v-title').innerText = title;
+        document.getElementById('player-modal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+
+        const list = document.getElementById('v-eps'); list.innerHTML = '';
         for(let i=1; i<=eps; i++) {
-            el.innerHTML += `<button onclick="setEp(${i})" class="ep-btn py-4 rounded-2xl font-black text-xs">${i}</button>`;
+            list.innerHTML += `<button onclick="playEp(${i})" class="ep-btn py-3 rounded-lg font-bold text-xs">${i}</button>`;
         }
-        showPage('player'); setEp(1);
+        playEp(1);
     }
 
-    function setEp(e) {
-        currentEp = e;
-        document.getElementById('ep-text').innerText = "EPISODE: " + (e < 10 ? '0'+e : e);
-        document.getElementById('video-frame').src = `https://${currentBase}/embed/anime/${currentId}/${e}`;
-        document.querySelectorAll('.ep-btn').forEach((b, idx) => {
-            if(idx+1 === e) b.classList.add('active-ep'); else b.classList.remove('active-ep');
+    function playEp(e) {
+        currentEpisode = e;
+        document.getElementById('v-ep').innerText = "EPISODE: " + e;
+        // HiAnime/Aniwatch ප්ලේයර් එකට අදාළ 100% වැඩ කරන ලින්ක් එක
+        document.getElementById('v-frame').src = `https://vidsrc.icu{currentMalId}/${e}`;
+        
+        const btns = document.querySelectorAll('.ep-btn');
+        btns.forEach((b, i) => {
+            if(i+1 === e) b.classList.add('active-ep'); else b.classList.remove('active-ep');
         });
     }
 
-    function setServer(base, num) {
-        currentBase = base;
-        setEp(currentEp);
-        document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active-server'));
-        document.getElementById('s'+num).classList.add('active-server');
-    }
-
-    function dl(t) {
+    function dl(type) {
         const q = encodeURIComponent(currentTitle);
-        if(t === 'v') window.open(`https://www.google.com{q}+episode+${currentEp}+download+720p`, '_blank');
+        if(type === 'v') window.open(`https://www.google.com{q}+episode+${currentEpisode}+download`, '_blank');
         else window.open(`https://www.google.com{q}+sinhala+subtitle+download`, '_blank');
     }
 
-    function buy(i) { window.open(`https://wa.me, Anime Kingdom හරහා මට ${i} account එකක් මිලදී ගැනීමට අවශ්‍යයි.`, '_blank'); }
+    function closePlayer() {
+        document.getElementById('player-modal').style.display = 'none';
+        document.getElementById('v-frame').src = '';
+        document.body.style.overflow = 'auto';
+    }
 
     window.onload = () => load();
 </script>
-
 </body>
 </html>
