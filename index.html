@@ -3,79 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Kingdom | Final Build</title>
+    <title>Anime Kingdom | Unlimited Streaming</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com" rel="stylesheet">
     <style>
-        body { background-color: #050505; color: white; font-family: 'Poppins', sans-serif; }
-        .anime-card:hover { transform: translateY(-8px); border: 2px solid #ffcc00; box-shadow: 0 0 20px rgba(255,204,0,0.3); }
-        #video-overlay { display: none; background: rgba(0,0,0,0.98); }
-        iframe { background: black; border: 2px solid #ffcc00; border-radius: 12px; }
+        @import url('https://fonts.googleapis.com');
+        body { background-color: #050505; color: white; font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+        .anime-card:hover { transform: translateY(-10px) scale(1.02); border: 2px solid #ffcc00; box-shadow: 0 0 30px rgba(255,204,0,0.4); }
+        #video-overlay { display: none; background: rgba(0,0,0,0.99); backdrop-filter: blur(10px); }
+        .ep-btn:hover { background: #ffcc00; color: black; transform: scale(1.1); }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #ffcc00; border-radius: 10px; }
+        iframe { border: 2px solid #333; border-radius: 15px; background: #000; box-shadow: 0 0 50px rgba(0,0,0,1); }
     </style>
 </head>
 <body>
 
-<!-- AI Video Player Overlay -->
-<div id="video-overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center p-4">
-    <div class="w-full max-w-4xl relative">
-        <div class="flex justify-between items-center mb-4">
-            <h2 id="playing-title" class="text-[#ffcc00] font-bold pr-4"></h2>
-            <button onclick="stopVideo()" class="bg-red-600 px-4 py-1 rounded font-bold shadow-lg">CLOSE X</button>
+<!-- Ultra Player Overlay -->
+<div id="video-overlay" class="fixed inset-0 z-[100] flex flex-col p-4 md:p-8 overflow-y-auto custom-scroll">
+    <div class="max-w-6xl mx-auto w-full">
+        <!-- Header Info -->
+        <div class="flex justify-between items-start mb-6">
+            <div>
+                <h2 id="playing-title" class="text-2xl md:text-4xl font-black text-[#ffcc00] uppercase tracking-tighter"></h2>
+                <p id="playing-ep" class="text-gray-400 mt-1 font-bold">SELECT AN EPISODE TO START</p>
+            </div>
+            <button onclick="stopVideo()" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-full font-bold shadow-xl transition">CLOSE X</button>
         </div>
-        <div class="aspect-video w-full">
-            <!-- ඇත්තටම ඇනිමේ සර්වර් එකකින් වීඩියෝ ගේන කොටස -->
-            <iframe id="video-frame" src="" class="w-full h-full" frameborder="0" allowfullscreen scrolling="no"></iframe>
+
+        <!-- Video Player Section -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-3">
+                <div class="aspect-video w-full relative">
+                    <iframe id="video-frame" src="" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+                </div>
+                <!-- Server Switcher -->
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <span class="text-gray-500 font-bold self-center mr-2">SERVERS:</span>
+                    <button onclick="changeServer(1)" class="bg-zinc-800 px-4 py-1 rounded border border-white/10 hover:border-[#ffcc00]">SERVER 1</button>
+                    <button onclick="changeServer(2)" class="bg-zinc-800 px-4 py-1 rounded border border-white/10 hover:border-[#ffcc00]">SERVER 2</button>
+                    <button onclick="changeServer(3)" class="bg-zinc-800 px-4 py-1 rounded border border-white/10 hover:border-[#ffcc00]">SERVER 3 (MULTI)</button>
+                </div>
+            </div>
+
+            <!-- Episode List Sidebar -->
+            <div class="bg-zinc-900/50 p-6 rounded-2xl border border-white/5 h-[300px] lg:h-[500px] flex flex-col">
+                <h3 class="text-xl font-bold mb-4 border-b border-white/10 pb-2"><i class="fas fa-list mr-2 text-[#ffcc00]"></i> EPISODES</h3>
+                <div id="ep-list" class="grid grid-cols-4 lg:grid-cols-3 gap-2 overflow-y-auto custom-scroll pr-2">
+                    <!-- Episodes will load here -->
+                </div>
+            </div>
         </div>
-        <p class="text-[10px] text-gray-500 mt-2 text-center italic">සටහන: සිංහල උපසිරසි ඇතුළත් කිරීමට වීඩියෝව තුළ ඇති 'CC' හෝ 'Settings' පරීක්ෂා කරන්න.</p>
     </div>
 </div>
 
-<!-- Nav -->
-<nav class="flex flex-col md:flex-row items-center justify-between px-6 py-4 bg-black/95 sticky top-0 z-50 border-b border-white/10 gap-4 shadow-2xl">
-    <div class="flex items-center gap-3">
-        <i class="fas fa-crown text-[#ffcc00] text-3xl"></i>
+<!-- Navbar -->
+<nav class="flex flex-col md:flex-row items-center justify-between px-8 py-6 bg-black/80 sticky top-0 z-50 border-b border-white/5 backdrop-blur-md gap-6">
+    <div class="flex items-center gap-4 cursor-pointer" onclick="location.reload()">
+        <div class="bg-[#ffcc00] p-2 rounded-lg rotate-12 group-hover:rotate-0 transition">
+            <i class="fas fa-crown text-black text-2xl"></i>
+        </div>
         <div>
-            <span class="text-2xl font-black uppercase block tracking-tighter">Anime <span class="text-[#ffcc00]">Kingdom</span></span>
-            <span class="text-[10px] text-gray-400 font-bold uppercase tracking-widest leading-none">The Ultimate Sub Portal</span>
+            <span class="text-3xl font-black uppercase tracking-tighter leading-none block">Anime <span class="text-[#ffcc00]">Kingdom</span></span>
+            <span class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.4em]">Multi-Database Portal</span>
         </div>
     </div>
-    <div class="relative w-full md:w-1/3">
-        <input type="text" id="searchInput" oninput="searchKingdom()" placeholder="සොයන්න (Search Anime)..." class="w-full bg-zinc-900 border border-white/10 rounded-full py-2 px-10 focus:border-[#ffcc00] outline-none text-sm shadow-inner">
-        <i class="fas fa-search absolute left-4 top-3 text-gray-500"></i>
+    <div class="relative w-full md:w-2/5">
+        <input type="text" id="searchInput" oninput="searchKingdom()" placeholder="Search Anime (e.g. Naruto, Demon Slayer)..." class="w-full bg-[#111] border border-white/10 rounded-2xl py-3 px-12 focus:border-[#ffcc00] outline-none text-white shadow-2xl transition">
+        <i class="fas fa-search absolute left-5 top-4 text-gray-500"></i>
     </div>
 </nav>
 
-<!-- Content -->
+<!-- Main Grid -->
 <div class="p-8 max-w-7xl mx-auto">
-    <h2 id="grid-title" class="text-2xl font-bold border-l-4 border-[#ffcc00] pl-4 uppercase tracking-widest mb-10 text-[#ffcc00]">Trending Anime</h2>
-    <div id="grid-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
-        <!-- Loading items... -->
+    <div class="flex items-center gap-4 mb-12">
+        <div class="h-10 w-2 bg-[#ffcc00] rounded-full"></div>
+        <h2 id="grid-title" class="text-3xl font-black uppercase tracking-widest">Trending Now</h2>
+    </div>
+    <div id="grid-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
+        <!-- AI is Fetching Data... -->
     </div>
 </div>
 
 <script>
     const ANILIST_URL = 'https://graphql.anilist.co';
-
-    async function fetchAniList(query, variables = {}) {
-        const res = await fetch(ANILIST_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ query, variables })
-        });
-        return res.json();
-    }
+    let currentMalId = '';
+    let currentTitle = '';
+    let currentServer = 1;
 
     async function loadTrending() {
-        const query = `query { Page(perPage: 24) { media(sort: TRENDING_DESC, type: ANIME) { title { english romaji } coverImage { large } } } }`;
-        const { data } = await fetchAniList(query);
+        const query = `query { Page(perPage: 30) { media(sort: TRENDING_DESC, type: ANIME) { idMal title { english romaji } coverImage { extraLarge } episodes } } }`;
+        const res = await fetch(ANILIST_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query }) });
+        const { data } = await res.json();
         render(data.Page.media);
     }
 
     async function searchKingdom() {
         const term = document.getElementById('searchInput').value;
         if (term.length > 2) {
-            const query = `query ($search: String) { Page(perPage: 18) { media(search: $search, type: ANIME) { title { english romaji } coverImage { large } } } }`;
-            const { data } = await fetchAniList(query, { search: term });
+            const query = `query ($search: String) { Page(perPage: 24) { media(search: $search, type: ANIME) { idMal title { english romaji } coverImage { extraLarge } episodes } } }`;
+            const res = await fetch(ANILIST_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ query, variables: { search: term } }) });
+            const { data } = await res.json();
             render(data.Page.media);
         } else if (term.length === 0) { loadTrending(); }
     }
@@ -83,33 +111,59 @@
     function render(list) {
         const grid = document.getElementById('grid-container');
         grid.innerHTML = list.map(anime => {
+            if(!anime.idMal) return '';
             const title = anime.title.english || anime.title.romaji;
             return `
-            <div class="anime-card bg-zinc-900 rounded-xl overflow-hidden cursor-pointer transition-all duration-300 group" onclick="play('${title}')">
-                <img src="${anime.coverImage.large}" class="w-full h-64 object-cover group-hover:opacity-40 transition-opacity">
-                <div class="p-3">
-                    <h3 class="text-[11px] font-bold truncate group-hover:text-[#ffcc00] transition-colors uppercase">${title}</h3>
+            <div class="anime-card bg-zinc-900/50 border border-white/5 rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 group" onclick="openKingdomPlayer('${anime.idMal}', '${title}', ${anime.episodes || 12})">
+                <div class="relative overflow-hidden">
+                    <img src="${anime.coverImage.extraLarge}" class="w-full h-72 object-cover group-hover:scale-110 transition-transform duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent opacity-60"></div>
+                    <div class="absolute bottom-3 left-3 bg-[#ffcc00] text-black text-[10px] font-black px-2 py-1 rounded">EP: ${anime.episodes || '??'}</div>
+                </div>
+                <div class="p-4 text-center">
+                    <h3 class="text-xs font-bold truncate group-hover:text-[#ffcc00] uppercase tracking-tighter">${title}</h3>
                 </div>
             </div>`;
         }).join('');
     }
 
-    // මෙය තමයි වීඩියෝව හරියටම ප්ලේ කරන පියවර
-    function play(title) {
-        const overlay = document.getElementById('video-overlay');
+    function openKingdomPlayer(id, title, epCount) {
+        currentMalId = id;
+        currentTitle = title;
+        document.getElementById('playing-title').innerText = title;
+        document.getElementById('video-overlay').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+
+        // Episode ලැයිස්තුව සෑදීම
+        const epList = document.getElementById('ep-list');
+        epList.innerHTML = '';
+        for(let i = 1; i <= (epCount || 1); i++) {
+            epList.innerHTML += `<button onclick="playEpisode(${i})" class="ep-btn bg-zinc-800 py-3 rounded-lg font-bold text-sm transition-all border border-white/5">${i}</button>`;
+        }
+        playEpisode(1); // Default Episode 1 ප්ලේ කිරීම
+    }
+
+    function playEpisode(ep) {
         const frame = document.getElementById('video-frame');
-        document.getElementById('playing-title').innerText = "Playing: " + title;
+        document.getElementById('playing-ep').innerText = "NOW STREAMING: EPISODE " + ep;
         
-        // අපි දැන් YouTube වෙනුවට ඇනිමේ සර්වර් එකක් පාවිච්චි කරමු (උදා: Vidsrc)
-        // මෙය පරීක්ෂා කිරීම සඳහා මම සර්වර් එකක් ඇතුළත් කළා
-        frame.src = `https://vidsrc.to{encodeURIComponent(title)}`;
+        // Multi-Database Servers (ID මත පදනම්ව)
+        if(currentServer === 1) frame.src = `https://vidsrc.me{currentMalId}/${ep}`;
+        else if(currentServer === 2) frame.src = `https://vidsrc.to{currentMalId}/${ep}`;
+        else frame.src = `https://vidsrc.xyz{currentMalId}/${ep}`;
         
-        overlay.style.display = 'flex';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function changeServer(s) {
+        currentServer = s;
+        alert("Switched to Server " + s + ". Please select the episode again.");
     }
 
     function stopVideo() {
         document.getElementById('video-overlay').style.display = 'none';
         document.getElementById('video-frame').src = '';
+        document.body.style.overflow = 'auto';
     }
 
     window.onload = loadTrending;
