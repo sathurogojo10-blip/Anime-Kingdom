@@ -7,119 +7,162 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com" rel="stylesheet">
     <style>
-        body { background: #050505; color: white; font-family: 'Poppins', sans-serif; }
-        .page { display: none; }
-        .active-page { display: block; }
-        .nav-btn:hover { color: #ffcc00; }
+        body { background: #050505; color: white; font-family: 'Poppins', sans-serif; overflow-x: hidden; }
+        .page { display: none; transition: opacity 0.5s; }
+        .active-page { display: block; opacity: 1; }
+        .anime-card:hover { transform: translateY(-8px); border: 2px solid #ffcc00; }
+        iframe { background: #000; border: 2px solid #333; border-radius: 12px; }
+        .ep-btn:hover, .active-ep { background: #ffcc00; color: #000; }
     </style>
 </head>
 <body>
 
 <!-- Navigation Bar -->
-<nav class="flex justify-between items-center px-8 py-5 bg-black/90 sticky top-0 z-50 border-b border-white/5">
+<nav class="flex flex-col md:flex-row items-center justify-between px-8 py-5 bg-black/90 sticky top-0 z-50 border-b border-white/5 gap-4">
     <div class="flex items-center gap-3 cursor-pointer" onclick="showPage('home')">
         <i class="fas fa-crown text-[#ffcc00] text-3xl"></i>
-        <span class="text-2xl font-black uppercase">ANIME <span class="text-[#ffcc00]">KINGDOM</span></span>
+        <div class="leading-none">
+            <span class="text-2xl font-black uppercase block tracking-tighter">ANIME <span class="text-[#ffcc00]">KINGDOM</span></span>
+            <span class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">Live Streaming Portal</span>
+        </div>
     </div>
     <div class="flex gap-8 font-bold text-sm uppercase tracking-widest">
-        <button onclick="showPage('home')" class="nav-btn">HOME</button>
-        <button onclick="showPage('shop')" class="nav-btn text-purple-400">OTT SHOP</button>
+        <button onclick="showPage('home')" class="hover:text-[#ffcc00] transition">HOME</button>
+        <button onclick="showPage('shop')" class="text-purple-400 hover:text-purple-300 transition">OTT SHOP</button>
     </div>
 </nav>
 
-<!-- PAGE 1: HOME (Anime Grid) -->
+<!-- PAGE 1: HOME -->
 <div id="home" class="page active-page p-8">
-    <div class="mb-10 w-full md:w-1/3 mx-auto relative">
-        <input type="text" id="searchInput" oninput="searchAnime()" placeholder="Anime සොයන්න..." class="w-full bg-zinc-900 border border-white/10 py-2 px-10 rounded-full outline-none focus:border-[#ffcc00]">
-        <i class="fas fa-search absolute left-4 top-3 text-gray-400"></i>
+    <div class="max-w-md mx-auto mb-12 relative">
+        <input type="text" id="searchInput" oninput="searchAnime()" placeholder="ඇනිමේ නම සොයන්න..." class="w-full bg-zinc-900 border border-white/10 py-3 px-12 rounded-full outline-none focus:border-[#ffcc00] text-white">
+        <i class="fas fa-search absolute left-5 top-4 text-gray-500"></i>
     </div>
-    <h2 class="text-2xl font-bold border-l-4 border-[#ffcc00] pl-4 mb-8 uppercase tracking-widest">Trending Now</h2>
-    <div id="anime-grid" class="grid grid-cols-2 md:grid-cols-6 gap-6"></div>
+    <h2 class="text-2xl font-black border-l-4 border-[#ffcc00] pl-4 mb-10 tracking-widest uppercase">Trending Anime</h2>
+    <div id="anime-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-8">
+        <!-- Loading... -->
+    </div>
 </div>
 
-<!-- PAGE 2: PLAYER (Streaming) -->
-<div id="player" class="page p-8">
-    <div class="max-w-5xl mx-auto">
-        <button onclick="showPage('home')" class="mb-6 text-gray-400 hover:text-white"><i class="fas fa-arrow-left mr-2"></i> ආපසු යන්න</button>
-        <h2 id="playing-title" class="text-2xl font-bold text-[#ffcc00] mb-4 uppercase"></h2>
-        <div class="aspect-video w-full rounded-2xl overflow-hidden border-2 border-zinc-800 bg-black">
-            <iframe id="video-frame" src="" class="w-full h-full" frameborder="0" allowfullscreen></iframe>
+<!-- PAGE 2: PLAYER -->
+<div id="player" class="page p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <button onclick="showPage('home')" class="mb-6 text-gray-400 hover:text-white font-bold"><i class="fas fa-arrow-left mr-2"></i> ආපසු යන්න</button>
+        <div class="flex justify-between items-center mb-6">
+            <h2 id="playing-title" class="text-xl md:text-3xl font-black text-[#ffcc00] uppercase tracking-tighter"></h2>
+            <div class="flex gap-2">
+                <button onclick="changeServer('me')" class="text-[10px] bg-zinc-800 px-3 py-1 rounded border border-[#ffcc00]">SERVER 1</button>
+                <button onclick="changeServer('to')" class="text-[10px] bg-zinc-800 px-3 py-1 rounded border border-gray-600">SERVER 2</button>
+            </div>
         </div>
-        <div class="mt-8">
-            <h3 class="font-bold mb-4 border-b border-white/5 pb-2">EPISODES</h3>
-            <div id="ep-list" class="grid grid-cols-6 md:grid-cols-12 gap-2"></div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-3">
+                <div class="aspect-video w-full rounded-2xl overflow-hidden shadow-2xl">
+                    <iframe id="video-frame" src="" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay"></iframe>
+                </div>
+                <div class="mt-6 p-5 bg-zinc-900/50 rounded-xl border border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <p id="current-ep-text" class="text-sm font-bold text-gray-400">EPISODE: 1</p>
+                    <div class="flex gap-3">
+                        <button onclick="downloadAction('v')" class="bg-green-600 px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition">VIDEO</button>
+                        <button onclick="downloadAction('s')" class="bg-blue-600 px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition">SINHALA SUB</button>
+                    </div>
+                </div>
+            </div>
+            <!-- Episode List -->
+            <div class="bg-zinc-900 p-6 rounded-2xl h-[400px] lg:h-[550px] border border-white/5 flex flex-col">
+                <h3 class="font-bold mb-4 border-b border-white/10 pb-2 uppercase text-sm tracking-widest text-gray-400">Episode List</h3>
+                <div id="ep-list" class="grid grid-cols-4 lg:grid-cols-3 gap-2 overflow-y-auto pr-2 custom-scroll"></div>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- PAGE 3: OTT SHOP -->
-<div id="shop" class="page p-8">
-    <div class="max-w-6xl mx-auto">
-        <header class="text-center py-10">
-            <h2 class="text-4xl font-black italic uppercase">CHEAP OTT <span class="text-[#ffcc00]">SHOP</span></h2>
-            <p class="text-gray-400 mt-2 tracking-widest">Premium Accounts for Lowest Price</p>
-        </header>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-10">
-            <div class="bg-zinc-900 p-8 rounded-3xl border border-white/5 text-center">
-                <img src="https://upload.wikimedia.org" class="h-10 mx-auto mb-6">
-                <h3 class="text-xl font-bold">Netflix Premium</h3>
-                <p class="text-[#ffcc00] text-3xl font-black mt-4">Rs. 450</p>
-                <button onclick="buy('Netflix')" class="mt-8 bg-white text-black w-full py-3 rounded-xl font-bold hover:bg-[#ffcc00]">මිලදී ගන්න</button>
+<div id="shop" class="page p-12">
+    <div class="max-w-5xl mx-auto text-center">
+        <h2 class="text-5xl font-black italic mb-2 uppercase">CHEAP OTT <span class="text-[#ffcc00]">SHOP</span></h2>
+        <p class="text-gray-500 tracking-[0.3em] mb-16">PREMIUM ACCOUNTS FOR SRI LANKA</p>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div class="bg-zinc-900 p-10 rounded-[2.5rem] border border-white/5 hover:border-[#ffcc00] transition group">
+                <img src="https://upload.wikimedia.org" class="h-8 mx-auto mb-8">
+                <p class="text-4xl font-black text-[#ffcc00]">Rs. 450</p>
+                <button onclick="order('Netflix')" class="mt-10 bg-white text-black w-full py-4 rounded-2xl font-black hover:bg-[#ffcc00] transition">BUY NOW</button>
             </div>
-            <!-- තව OTT වර්ග මෙතනට එක් කළ හැක -->
+            <div class="bg-zinc-900 p-10 rounded-[2.5rem] border border-white/5 hover:border-[#ffcc00] transition">
+                <img src="https://upload.wikimedia.org" class="h-10 mx-auto mb-8">
+                <p class="text-4xl font-black text-[#ffcc00]">Rs. 300</p>
+                <button onclick="order('Disney+')" class="mt-10 bg-white text-black w-full py-4 rounded-2xl font-black hover:bg-[#ffcc00] transition">BUY NOW</button>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-    const API = 'https://graphql.anilist.co';
-    let currentId = '';
+    const ANILIST_API = 'https://graphql.anilist.co';
+    let activeId = '', activeTitle = '', activeServer = 'me';
 
-    // පිටු මාරු කිරීමේ Logic එක
-    function showPage(pageId) {
-        document.querySelectorAll('.page').forEach(p => p.classList.remove('active-page'));
-        document.getElementById(pageId).classList.add('active-page');
+    function showPage(p) {
+        document.querySelectorAll('.page').forEach(div => div.classList.remove('active-page'));
+        document.getElementById(p).classList.add('active-page');
+        if(p !== 'player') document.getElementById('video-frame').src = '';
         window.scrollTo(0,0);
-        if(pageId !== 'player') document.getElementById('video-frame').src = '';
     }
 
-    // Anime දත්ත ගෙන්වීම
-    async function loadAnime(q = '') {
+    async function loadData(q = '') {
         const query = q ? `query($s:String){Page(perPage:24){media(search:$s,type:ANIME){idMal title{english romaji}coverImage{large}episodes}}}` 
-                      : `query{Page(perPage:24){media(sort:TRENDING_DESC,type:ANIME){idMal title{english romaji}coverImage{large}episodes}}}`;
-        const res = await fetch(API, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query, variables:{s:q}}) });
+                        : `query{Page(perPage:24){media(sort:TRENDING_DESC,type:ANIME){idMal title{english romaji}coverImage{large}episodes}}}`;
+        const res = await fetch(ANILIST_API, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query, variables:{s:q}}) });
         const { data } = await res.json();
         const grid = document.getElementById('anime-grid');
         grid.innerHTML = data.Page.media.map(a => `
-            <div class="cursor-pointer group" onclick="watch('${a.idMal}', '${(a.title.english||a.title.romaji).replace(/'/g,"")}', ${a.episodes || 12})">
-                <img src="${a.coverImage.large}" class="h-64 w-full object-cover rounded-xl group-hover:border-2 border-[#ffcc00] transition-all">
-                <p class="mt-3 text-[10px] font-bold truncate text-center uppercase tracking-tighter">${a.title.english||a.title.romaji}</p>
+            <div class="anime-card bg-zinc-900/50 rounded-2xl overflow-hidden cursor-pointer transition-all duration-500 group" onclick="initPlayer('${a.idMal}', '${(a.title.english||a.title.romaji).replace(/'/g,"")}', ${a.episodes || 12})">
+                <img src="${a.coverImage.large}" class="h-64 w-full object-cover">
+                <p class="p-4 text-[10px] font-black truncate text-center uppercase tracking-tighter">${a.title.english||a.title.romaji}</p>
             </div>`).join('');
     }
 
-    function searchAnime() { loadAnime(document.getElementById('searchInput').value); }
+    function searchAnime() { loadData(document.getElementById('searchInput').value); }
 
-    function watch(id, title, eps) {
-        currentId = id;
+    function initPlayer(id, title, eps) {
+        activeId = id; activeTitle = title;
         document.getElementById('playing-title').innerText = title;
-        const el = document.getElementById('ep-list');
-        el.innerHTML = '';
+        const el = document.getElementById('ep-list'); el.innerHTML = '';
         for(let i=1; i<=eps; i++) {
-            el.innerHTML += `<button onclick="playEp(${i})" class="bg-zinc-800 p-2 rounded hover:bg-[#ffcc00] hover:text-black font-bold text-xs">${i}</button>`;
+            el.innerHTML += `<button onclick="setEp(${i})" class="ep-btn bg-zinc-800 p-3 rounded-xl font-bold text-xs transition border border-white/5">${i}</button>`;
         }
-        showPage('player');
-        playEp(1);
+        showPage('player'); setEp(1);
     }
 
-    function playEp(ep) {
-        document.getElementById('video-frame').src = `https://vidsrc.cc{currentId}/${ep}`;
+    function setEp(e) {
+        document.getElementById('current-ep-text').innerText = "EPISODE: " + e;
+        const frame = document.getElementById('video-frame');
+        // වඩාත් ස්ථාවර vidsrc.me භාවිතා කිරීම
+        frame.src = `https://vidsrc.me{activeId}/${e}`;
+        
+        document.querySelectorAll('.ep-btn').forEach((b, idx) => {
+            if(idx+1 === e) b.classList.add('active-ep'); else b.classList.remove('active-ep');
+        });
     }
 
-    function buy(item) {
-        window.open(`https://wa.me, මට ${item} account එකක් මිලදී ගැනීමට අවශ්‍යයි.`, '_blank');
+    function changeServer(s) {
+        activeServer = s;
+        const currentEp = parseInt(document.getElementById('current-ep-text').innerText.split(': ')[1]);
+        const frame = document.getElementById('video-frame');
+        frame.src = `https://vidsrc.${s}/embed/anime/${activeId}/${currentEp}`;
+        alert("Server switched to: " + s.toUpperCase());
     }
 
-    window.onload = () => loadAnime();
+    function downloadAction(t) {
+        const q = encodeURIComponent(activeTitle);
+        const ep = document.getElementById('current-ep-text').innerText.split(': ')[1];
+        if(t === 'v') window.open(`https://www.google.com{q}+episode+${ep}+download+720p`, '_blank');
+        else window.open(`https://www.google.com{q}+sinhala+subtitle+download`, '_blank');
+    }
+
+    function order(i) { window.open(`https://wa.me, මට ${i} account එකක් මිලදී ගැනීමට අවශ්‍යයි.`, '_blank'); }
+
+    window.onload = () => loadData();
 </script>
 
 </body>
