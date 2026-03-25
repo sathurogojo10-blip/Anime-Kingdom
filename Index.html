@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anime Kingdom | Powered by HiAnime</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com" rel="stylesheet">
+    <style>
+        body { background: #0b0c10; color: white; font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        .anime-card:hover { transform: translateY(-10px); border: 2px solid #ffcc00; box-shadow: 0 0 25px rgba(255, 204, 0, 0.4); }
+        #player-modal { display: none; background: rgba(0, 0, 0, 0.98); }
+        .ep-btn { background: #1f2833; border: 1px solid #45a29e; transition: 0.3s; }
+        .ep-btn:hover, .active-ep { background: #ffcc00; color: black; border-color: #ffcc00; transform: scale(1.1); }
+        iframe { border-radius: 20px; background: #000; border: 2px solid #1f2833; }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #ffcc00; border-radius: 10px; }
+    </style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="flex flex-col md:flex-row items-center justify-between px-10 py-6 bg-black sticky top-0 z-50 border-b border-[#45a29e]/30">
+    <div class="flex items-center gap-3 cursor-pointer" onclick="location.reload()">
+        <i class="fas fa-crown text-[#ffcc00] text-4xl"></i>
+        <div class="leading-none">
+            <span class="text-3xl font-black uppercase tracking-tighter block">Anime <span class="text-[#ffcc00]">Kingdom</span></span>
+            <span class="text-[9px] text-gray-500 font-bold uppercase tracking-[0.3em]">HiAnime Streaming Engine</span>
+        </div>
+    </div>
+    <div class="relative w-full md:w-1/3">
+        <input type="text" id="search" oninput="searchAnime()" placeholder="Search Anime (e.g. One Piece)..." class="w-full bg-[#1f2833] border border-white/10 rounded-full py-3 px-12 focus:border-[#ffcc00] outline-none text-sm shadow-inner">
+        <i class="fas fa-search absolute left-5 top-4 text-gray-500"></i>
+    </div>
+</nav>
+
+<!-- Main Grid -->
+<div id="home" class="p-8 max-w-7xl mx-auto">
+    <h2 class="text-2xl font-bold border-l-4 border-[#ffcc00] pl-4 uppercase tracking-widest mb-10 text-[#ffcc00]">Trending Now</h2>
+    <div id="grid-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+        <!-- Loading... -->
+    </div>
+</div>
+
+<!-- HiAnime Style Player Modal -->
+<div id="player-modal" class="fixed inset-0 z-50 flex flex-col p-4 md:p-8 overflow-y-auto">
+    <div class="max-w-6xl mx-auto w-full">
+        <div class="flex justify-between items-center mb-6">
+            <h2 id="v-title" class="text-xl md:text-3xl font-black text-[#ffcc00] uppercase truncate pr-4"></h2>
+            <button onclick="closePlayer()" class="bg-red-600 px-6 py-2 rounded-full font-bold shadow-lg hover:bg-red-700 transition">CLOSE X</button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+            <div class="lg:col-span-3">
+                <div class="aspect-video w-full shadow-2xl">
+                    <!-- HiAnime Database Connection -->
+                    <iframe id="v-frame" src="" class="w-full h-full" frameborder="0" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+                </div>
+                <div class="mt-6 flex justify-between items-center bg-[#1f2833] p-6 rounded-2xl border border-white/5">
+                    <p id="v-ep" class="font-bold text-gray-300 uppercase tracking-widest">Episode: 1</p>
+                    <div class="flex gap-4">
+                        <button onclick="dl('v')" class="bg-green-600 px-6 py-2 rounded-lg font-bold hover:bg-green-700 transition">DOWNLOAD</button>
+                        <button onclick="dl('s')" class="bg-blue-600 px-6 py-2 rounded-lg font-bold hover:bg-blue-700 transition">SINHALA SUB</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Episode Selector Sidebar -->
+            <div class="bg-[#1f2833] p-6 rounded-2xl h-[450px] lg:h-[550px] border border-white/10 flex flex-col">
+                <h3 class="font-bold mb-4 border-b border-white/10 pb-2 text-[#45a29e] uppercase text-xs tracking-widest"><i class="fas fa-list-ul mr-2"></i> Episodes List</h3>
+                <div id="v-eps" class="grid grid-cols-4 gap-2 overflow-y-auto pr-2 custom-scroll">
+                    <!-- Episodes -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ANILIST = 'https://graphql.anilist.co';
+    let currentMalId = '', currentTitle = '', currentEpisode = 1;
+
+    async function load(q = '') {
+        const query = q ? `query($s:String){Page(perPage:24){media(search:$s,type:ANIME){idMal title{english romaji}coverImage{large}episodes}}}` 
+                        : `query{Page(perPage:24){media(sort:TRENDING_DESC,type:ANIME){idMal title{english romaji}coverImage{large}episodes}}}`;
+        const res = await fetch(ANILIST, { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({query, variables:{s:q}}) });
+        const { data } = await res.json();
+        const grid = document.getElementById('grid-container');
+        grid.innerHTML = data.Page.media.map(a => {
+            const t = a.title.english || a.title.romaji;
+            return `
+            <div class="anime-card bg-[#1f2833] rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 group" onclick="openPlayer('${a.idMal}', '${t.replace(/'/g,"")}', ${a.episodes || 12})">
+                <div class="relative overflow-hidden">
+                    <img src="${a.coverImage.large}" class="h-64 w-full object-cover group-hover:scale-110 transition-transform duration-500">
+                    <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                        <i class="fas fa-play-circle text-5xl text-[#ffcc00]"></i>
+                    </div>
+                </div>
+                <p class="p-3 text-[10px] font-bold truncate text-center uppercase tracking-tighter">${t}</p>
+            </div>`;
+        }).join('');
+    }
+
+    function searchAnime() { load(document.getElementById('search').value); }
+
+    function openPlayer(id, title, eps) {
+        currentMalId = id; currentTitle = title;
+        document.getElementById('v-title').innerText = title;
+        document.getElementById('player-modal').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+
+        const list = document.getElementById('v-eps'); list.innerHTML = '';
+        for(let i=1; i<=eps; i++) {
+            list.innerHTML += `<button onclick="playEp(${i})" class="ep-btn py-3 rounded-lg font-bold text-xs">${i}</button>`;
+        }
+        playEp(1);
+    }
+
+    function playEp(e) {
+        currentEpisode = e;
+        document.getElementById('v-ep').innerText = "EPISODE: " + e;
+        // HiAnime/Aniwatch ප්ලේයර් එකට අදාළ 100% වැඩ කරන ලින්ක් එක
+        document.getElementById('v-frame').src = `https://vidsrc.icu{currentMalId}/${e}`;
+        
+        const btns = document.querySelectorAll('.ep-btn');
+        btns.forEach((b, i) => {
+            if(i+1 === e) b.classList.add('active-ep'); else b.classList.remove('active-ep');
+        });
+    }
+
+    function dl(type) {
+        const q = encodeURIComponent(currentTitle);
+        if(type === 'v') window.open(`https://www.google.com{q}+episode+${currentEpisode}+download`, '_blank');
+        else window.open(`https://www.google.com{q}+sinhala+subtitle+download`, '_blank');
+    }
+
+    function closePlayer() {
+        document.getElementById('player-modal').style.display = 'none';
+        document.getElementById('v-frame').src = '';
+        document.body.style.overflow = 'auto';
+    }
+
+    window.onload = () => load();
+</script>
+</body>
+</html>
