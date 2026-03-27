@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <title>My Anime Stream</title>
+    <style>
+        body { background: #111; color: white; font-family: sans-serif; text-align: center; }
+        .anime-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; padding: 20px; }
+        .anime-card { cursor: pointer; border: 1px solid #333; padding: 10px; border-radius: 10px; }
+        .anime-card img { width: 100%; border-radius: 5px; }
+        #player-container { margin-top: 20px; display: none; }
+        video { width: 80%; border: 2px solid #00f; }
+    </style>
+</head>
+<body>
+
+    <h1>AniStream - Anilab Clone</h1>
+    
+    <!-- වීඩියෝ ප්ලේයර් එක -->
+    <div id="player-container">
+        <h2 id="playing-title"></h2>
+        <video id="videoPlayer" controls></video>
+        <button onclick="closePlayer()">Close</button>
+    </div>
+
+    <!-- ඇනිමේ ලැයිස්තුව -->
+    <div class="anime-grid" id="animeList">Loading Anime...</div>
+
+    <script src="script.js"></script>
+</body>
+</html>
