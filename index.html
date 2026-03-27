@@ -4,140 +4,126 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Anime Kingdom</title>
-    <script src="https://www.gstatic.com"></script>
-    <script src="https://www.gstatic.com"></script>
     <style>
-        :root { --red: #e50914; --white: #ffffff; --bg: #f5f5f5; --card: #ffffff; }
+        :root { --red: #e50914; --white: #ffffff; --bg: #f8f8f8; }
         body { background: var(--bg); color: #333; font-family: 'Segoe UI', sans-serif; margin: 0; }
-        
-        /* Banner */
-        .hero { 
-            width: 100%; height: 350px; 
-            background: linear-gradient(to bottom, transparent, var(--bg)), url('IMG_20260322_225449_963.jpg');
-            background-size: cover; background-position: center;
-            display: flex; flex-direction: column; align-items: center; justify-content: flex-end;
-        }
-
-        .search-container { margin-bottom: 30px; width: 80%; max-width: 600px; display: flex; gap: 10px; }
-        /* 9999 hint එක අයින් කළා */
-        input { flex: 1; padding: 15px; border-radius: 30px; border: 2px solid var(--red); background: white; color: black; outline: none; }
-        
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; padding: 40px; }
-        .anime-card { background: var(--card); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 1px solid #ddd; transition: 0.3s; cursor: pointer; }
-        .anime-card:hover { transform: translateY(-10px); border-color: var(--red); }
-        .anime-card img { width: 100%; height: 280px; object-fit: cover; }
-        .info { padding: 15px; text-align: center; }
-
-        /* Admin Modal */
-        #adminModal { 
-            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: white; padding: 30px; border-radius: 20px; border: 3px solid var(--red); z-index: 2000; width: 320px; box-shadow: 0 0 50px rgba(0,0,0,0.5);
-        }
-        #adminModal input { width: 93%; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; padding: 10px; }
-
+        .hero { width: 100%; height: 350px; background: linear-gradient(to bottom, transparent, var(--bg)), url('IMG_20260322_225449_963.jpg'); background-size: cover; background-position: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+        .search-box { margin-bottom: 30px; width: 85%; max-width: 500px; }
+        input { width: 100%; padding: 15px; border-radius: 30px; border: 2px solid var(--red); outline: none; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 25px; }
+        .card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); cursor: pointer; transition: 0.3s; border: 1px solid #eee; text-align: center; }
+        .card:hover { transform: translateY(-10px); border-color: var(--red); }
+        .card img { width: 100%; height: 240px; object-fit: cover; }
+        .card h4 { margin: 10px 0 5px; color: #222; font-size: 14px; }
+        #adminModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 20px; border: 4px solid var(--red); z-index: 2000; width: 85%; max-width: 320px; }
+        #adminModal input { width: 92%; margin-bottom: 10px; border: 1px solid #ccc; padding: 10px; border-radius: 8px; }
         #playerView { display: none; text-align: center; padding: 20px; background: white; min-height: 100vh; }
-        video { width: 100%; max-width: 850px; border: 5px solid var(--red); border-radius: 10px; }
-        .download-btn { display: inline-block; margin-top: 15px; padding: 12px 25px; background: var(--red); color: white; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        video { width: 100%; max-width: 850px; border: 4px solid var(--red); border-radius: 15px; background: black; }
+        .btn { padding: 12px 25px; background: var(--red); color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-top: 15px; }
     </style>
 </head>
 <body>
 
 <div class="hero">
-    <h1 style="color:var(--red); font-size: 3rem; text-shadow: 2px 2px 10px white;">ANIME KINGDOM</h1>
-    <div class="search-container">
-        <!-- මෙතන "9999" කියලා පෙන්නන්නේ නැහැ -->
-        <input type="text" id="searchBox" placeholder="සොයන්න (Search anime)..." onkeyup="checkAdmin(this.value)">
-        <button onclick="handleSearch()" style="background:var(--red); color:white; border:none; padding:15px 25px; border-radius:30px; cursor:pointer; font-weight:bold;">GO</button>
+    <h1 style="color:var(--red); font-size: 2.5rem; text-shadow: 2px 2px 5px white;">ANIME KINGDOM</h1>
+    <div class="search-box">
+        <input type="text" id="searchBox" placeholder="සොයන්න..." onkeyup="checkAdmin(this.value)">
     </div>
 </div>
 
 <div id="playerView">
     <h2 id="viewTitle" style="color:var(--red)"></h2>
-    <video id="mainVideo" controls crossorigin="anonymous">
-        <track id="subTrack" kind="subtitles" srclang="si" label="Sinhala" default>
-    </video>
-    <br>
-    <a id="downloadLink" class="download-btn" target="_blank">Download Episode</a>
-    <button onclick="location.reload()" style="background:#444; color:white; border:none; padding:12px; cursor:pointer; margin-left:10px; border-radius:5px;">Back Home</button>
+    <video id="mainVideo" controls crossorigin="anonymous"><track id="subTrack" kind="subtitles" srclang="si" label="Sinhala" default></video>
+    <br><button class="btn" onclick="location.reload()">Back to Home</button>
 </div>
 
 <div class="container" id="homeView">
-    <div id="animeGrid" class="grid">Loading Database...</div>
+    <h3 style="padding-left: 25px; color: var(--red);">මෑතකදී එක් කළ ඇනිමේ</h3>
+    <div id="animeGrid" class="grid">දත්ත ලබා ගනිමින්...</div>
 </div>
 
+<!-- Admin Panel -->
 <div id="adminModal">
     <h3 style="color:var(--red)">Admin Panel</h3>
     <input type="text" id="upTitle" placeholder="Anime Name">
     <input type="text" id="upSeason" placeholder="Season">
     <input type="text" id="upEpisode" placeholder="Episode">
-    <input type="text" id="upVideoUrl" placeholder="Direct Video URL">
-    <input type="text" id="upSubUrl" placeholder="Direct Subtitle URL (.vtt)">
-    <button onclick="saveLinkToFirebase()" style="width:100%; padding:12px; background:var(--red); color:white; border:none; cursor:pointer; font-weight:bold; border-radius:5px;">SAVE DATA</button>
-    <button onclick="closeAdmin()" style="width:100%; margin-top:10px; background:#666; color:white; border:none; cursor:pointer; border-radius:5px;">Close</button>
+    <input type="text" id="upVideoUrl" placeholder="Paste Google Drive Link">
+    <input type="text" id="upSubUrl" placeholder="Subtitle Link (.vtt)">
+    <button onclick="saveToSheet()" id="saveBtn" style="width:100%; padding:12px; background:var(--red); color:white; border:none; cursor:pointer; font-weight:bold; border-radius:8px;">SAVE DATA</button>
+    <button onclick="document.getElementById('adminModal').style.display='none'" style="width:100%; margin-top:8px; background:#666; color:white; border:none; cursor:pointer; border-radius:8px;">Close</button>
 </div>
 
 <script>
-    // ඔබේ Firebase Config එක මෙතනට දමන්න
-    const firebaseConfig = {
-      apiKey: "AIzaSyBlwDjM9xw4feTKfoT971PXNH6qWO_nH6Y",
-      authDomain: "anime-kingdom-f82b9.firebaseapp.com",
-      projectId: "anime-kingdom-f82b9",
-      storageBucket: "anime-kingdom-f82b9.firebasestorage.app",
-      messagingSenderId: "415915463056",
-      appId: "1:415915463056:web:1093f045031cfa71eae315",
-      measurementId: "G-XR8YWJ7XRZ"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
+    // ඔබේ API URL එක මෙන්න
+    const SHEETDB_URL = "https://sheetdb.io"; 
 
     function checkAdmin(val) { if(val === "9999") { document.getElementById('adminModal').style.display = 'block'; document.getElementById('searchBox').value = ""; } }
-    function closeAdmin() { document.getElementById('adminModal').style.display = 'none'; }
 
-    async function saveLinkToFirebase() {
-        const title = document.getElementById('upTitle').value;
-        const vUrl = document.getElementById('upVideoUrl').value;
-        const sUrl = document.getElementById('upSubUrl').value;
-
-        if(!vUrl || !title) return alert("අඩුම තරමේ නම සහ වීඩියෝ ලින්ක් එකවත් දෙන්න!");
-
-        const query = `query($s:String){Media(search:$s,type:ANIME){coverImage{large}}}`;
-        const aniRes = await fetch('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query,variables:{s:title}})});
-        const aniData = await aniRes.json();
-        const imgUrl = aniData.data.Media ? aniData.data.Media.coverImage.large : "https://via.placeholder.com";
-
-        await db.collection("animes").add({
-            title, season: document.getElementById('upSeason').value, ep: document.getElementById('upEpisode').value, 
-            imgUrl, videoUrl: vUrl, subUrl: sUrl, createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-
-        alert("සාර්ථකව දත්ත ගබඩා කළා!");
-        location.reload();
+    // Google Drive Link එක Auto-Convert කරන Function එක
+    function toDirect(link) {
+        if (!link || !link.includes("drive.google.com")) return link;
+        let id = "";
+        if (link.includes("/d/")) id = link.split("/d/")[1].split("/")[0];
+        else if (link.includes("id=")) id = link.split("id=")[1].split("&")[0];
+        return id ? `https://drive.google.com{id}` : link;
     }
 
-    db.collection("animes").orderBy("createdAt", "desc").onSnapshot(snap => {
-        const grid = document.getElementById('animeGrid');
-        grid.innerHTML = "";
-        snap.forEach(doc => {
-            const a = doc.data();
-            grid.innerHTML += `<div class="anime-card" onclick='playAnime(${JSON.stringify(a)})'><img src="${a.imgUrl}"><div class="info"><b>${a.title}</b><br><small>S${a.season} E${a.ep}</small></div></div>`;
+    // දත්ත පෙන්වීම
+    async function loadAnimes() {
+        try {
+            const res = await fetch(SHEETDB_URL);
+            const data = await res.json();
+            const grid = document.getElementById('animeGrid');
+            grid.innerHTML = data.length ? "" : "තවමත් ඇනිමේ ඇතුළත් කර නැත.";
+            data.forEach(a => {
+                grid.innerHTML += `<div class="card" onclick='playAnime(${JSON.stringify(a)})'><img src="${a.imgUrl}"><h4>${a.title}</h4><small>Season ${a.season} - Ep ${a.ep}</small></div>`;
+            });
+        } catch(e) { document.getElementById('animeGrid').innerText = "දත්ත ලබා ගැනීමේ දෝෂයකි."; }
+    }
+
+    // දත්ත සේව් කිරීම
+    async function saveToSheet() {
+        const btn = document.getElementById('saveBtn');
+        const title = document.getElementById('upTitle').value;
+        if(!title) return alert("නම ඇතුළත් කරන්න!");
+        
+        btn.innerText = "Saving..."; btn.disabled = true;
+
+        // AniList පින්තූරය ලබා ගැනීම
+        const aniRes = await fetch('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:`query($s:String){Media(search:$s,type:ANIME){coverImage{large}}}`,variables:{s:title}})});
+        const aniData = await aniRes.json();
+        const img = aniData.data.Media ? aniData.data.Media.coverImage.large : "https://via.placeholder.com";
+
+        const newAnime = {
+            title: title,
+            season: document.getElementById('upSeason').value,
+            ep: document.getElementById('upEpisode').value,
+            videoUrl: toDirect(document.getElementById('upVideoUrl').value),
+            subUrl: toDirect(document.getElementById('upSubUrl').value),
+            imgUrl: img
+        };
+
+        await fetch(SHEETDB_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: [newAnime] })
         });
-    });
+
+        alert("සාර්ථකව සේව් කළා!");
+        location.reload();
+    }
 
     function playAnime(a) {
         document.getElementById('homeView').style.display = 'none';
         document.getElementById('playerView').style.display = 'block';
-        document.getElementById('viewTitle').innerText = `${a.title} - S${a.season} E${a.ep}`;
-        const v = document.getElementById('mainVideo');
-        v.src = a.videoUrl;
+        document.getElementById('viewTitle').innerText = a.title + " - S" + a.season + " E" + a.ep;
+        document.getElementById('mainVideo').src = a.videoUrl;
         if(a.subUrl) document.getElementById('subTrack').src = a.subUrl;
-        document.getElementById('downloadLink').href = a.videoUrl;
-        v.play();
+        window.scrollTo(0,0);
     }
 
-    function handleSearch() {
-        alert("සමාවන්න, මෙම ඇනිමේ එක තවමත් ඇතුළත් කර නැත!");
-    }
+    loadAnimes();
 </script>
 </body>
 </html>
