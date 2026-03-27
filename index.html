@@ -3,149 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Kingdom - Stream Your Favorite Anime</title>
-    <link href="https://fonts.googleapis.com" rel="stylesheet">
+    <title>Anime Kingdom</title>
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com"></script>
+    <script src="https://www.gstatic.com"></script>
+    <script src="https://www.gstatic.com"></script>
     <style>
-        :root { --primary: #ffcc00; --bg: #0b0b0b; --card-bg: #1a1a1a; --accent: #ff4500; }
-        body { background: var(--bg); color: #fff; font-family: 'Poppins', sans-serif; margin: 0; }
-        
-        /* Header */
-        nav { background: #000; padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); position: sticky; top: 0; z-index: 1000; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .logo { font-size: 26px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; cursor: pointer; }
-        
-        .search-box { display: flex; gap: 8px; }
-        input { padding: 10px 15px; border-radius: 5px; border: 1px solid #333; width: 200px; outline: none; background: #111; color: #fff; }
-        button { padding: 10px 20px; border-radius: 5px; border: none; background: var(--primary); color: #000; cursor: pointer; font-weight: bold; }
-
-        /* Player Section */
-        #player-section { display: none; padding: 30px 5%; background: #000; text-align: center; }
-        .video-wrapper { max-width: 900px; margin: 0 auto; }
-        iframe { width: 100%; aspect-ratio: 16/9; border: 2px solid var(--primary); border-radius: 10px; }
-        
-        /* Episode List Styles */
-        .ep-container { margin-top: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
-        .ep-btn { background: #222; color: #fff; padding: 8px 15px; border-radius: 5px; cursor: pointer; border: 1px solid #444; }
-        .ep-btn:hover { background: var(--primary); color: #000; }
-
-        /* Grid */
-        .container { padding: 30px 5%; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); border-radius: 10px; overflow: hidden; transition: 0.3s; cursor: pointer; border: 1px solid #222; }
-        .card:hover { transform: scale(1.05); border-color: var(--primary); }
-        .card img { width: 100%; height: 240px; object-fit: cover; }
-        .card-info { padding: 10px; font-size: 13px; text-align: center; }
-        
-        .loader { text-align: center; margin-top: 50px; color: var(--primary); }
+        :root { --gold: #ffcc00; --bg: #050505; --card: #151515; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; }
+        .hero { width: 100%; height: 350px; background: linear-gradient(to bottom, transparent, var(--bg)), url('IMG_20260322_225449_963.jpg'); background-size: cover; background-position: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; }
+        .search-container { margin-bottom: 30px; width: 80%; max-width: 600px; display: flex; gap: 10px; }
+        input { flex: 1; padding: 15px; border-radius: 30px; border: 2px solid var(--gold); background: rgba(0,0,0,0.7); color: white; outline: none; }
+        .container { padding: 40px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 25px; }
+        .anime-card { background: var(--card); border-radius: 15px; overflow: hidden; border: 1px solid #222; transition: 0.3s; cursor: pointer; }
+        .anime-card:hover { transform: translateY(-10px); border-color: var(--gold); }
+        .anime-card img { width: 100%; height: 280px; object-fit: cover; }
+        .info { padding: 15px; text-align: center; }
+        #adminModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; padding: 30px; border-radius: 20px; border: 2px solid var(--gold); z-index: 2000; width: 320px; max-height: 80vh; overflow-y: auto; }
+        #adminModal input, #adminModal label { width: 95%; margin-bottom: 10px; display: block; }
+        #playerView { display: none; text-align: center; padding: 20px; background: #000; min-height: 100vh; }
+        video { width: 100%; max-width: 900px; border: 2px solid var(--gold); }
+        .download-btn { display: inline-block; margin-top: 10px; padding: 12px 25px; background: var(--gold); color: black; text-decoration: none; border-radius: 5px; font-weight: bold; }
+        #status { color: var(--gold); font-size: 14px; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-<nav>
-    <div class="logo" onclick="location.reload()">Anime Kingdom</div>
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search anime...">
-        <button onclick="searchAnime()">SEARCH</button>
-    </div>
-</nav>
-
-<!-- Video & Episode Player -->
-<div id="player-section">
-    <div class="video-wrapper">
-        <h2 id="videoTitle" style="color:var(--primary)"></h2>
-        <iframe id="mainPlayer" src="" allowfullscreen frameborder="0"></iframe>
-        <h3>Episodes</h3>
-        <div id="episodeList" class="ep-container">
-            <!-- Episode buttons will appear here -->
-        </div>
-        <br>
-        <button onclick="closePlayer()" style="background:#333; color:#fff">CLOSE PLAYER</button>
+<div class="hero">
+    <h1 style="color:var(--gold); font-size: 2.5rem; text-shadow: 2px 2px 10px black;">ANIME KINGDOM</h1>
+    <div class="search-container">
+        <input type="text" id="searchBox" placeholder="සොයන්න හෝ කේතය ඇතුළත් කරන්න..." onkeyup="checkAdmin(this.value)">
+        <button onclick="handleSearch()" style="background:var(--gold); border:none; padding:15px 25px; border-radius:30px; cursor:pointer;">GO</button>
     </div>
 </div>
 
-<div class="container">
-    <h2 id="listTitle">🔥 Trending Now</h2>
-    <div id="animeGrid" class="grid"></div>
+<div id="playerView">
+    <h2 id="viewTitle" style="color: var(--gold);"></h2>
+    <video id="mainVideo" controls crossorigin="anonymous">
+        <track id="subTrack" kind="subtitles" srclang="si" label="Sinhala" default>
+    </video>
+    <br>
+    <a id="downloadLink" class="download-btn" target="_blank">Download Now</a>
+    <button onclick="location.reload()" style="background:#444; color:white; border:none; padding:12px; cursor:pointer; margin-left:10px; border-radius:5px;">Back Home</button>
+</div>
+
+<div class="container" id="homeView">
+    <h2>අලුත්ම නිකුත් කිරීම්</h2>
+    <div id="animeGrid" class="grid">Loading Kingdom...</div>
+</div>
+
+<!-- Admin Modal -->
+<div id="adminModal">
+    <h3>Admin Upload Center</h3>
+    <input type="text" id="upTitle" placeholder="Anime Name (Exact)">
+    <input type="text" id="upSeason" placeholder="Season">
+    <input type="text" id="upEpisode" placeholder="Episode">
+    <label>Video File:</label>
+    <input type="file" id="upVideo" accept="video/*">
+    <label>Subtitle (.vtt පමණි):</label>
+    <input type="file" id="upSub" accept=".vtt">
+    <div id="status"></div>
+    <button onclick="uploadToFirebase()" id="upBtn" style="width:100%; padding:12px; background:var(--gold); border:none; cursor:pointer; font-weight:bold;">START UPLOAD</button>
+    <button onclick="closeAdmin()" style="width:100%; margin-top:10px; background:#444; color:white; border:none; cursor:pointer;">Cancel</button>
 </div>
 
 <script>
-    const grid = document.getElementById('animeGrid');
-    const playerSection = document.getElementById('player-section');
-    const player = document.getElementById('mainPlayer');
-    const videoTitle = document.getElementById('videoTitle');
-    const epList = document.getElementById('episodeList');
+    // --- ඔබේ FIREBASE CONFIG එක මෙතන තියෙනවා ---
+    const firebaseConfig = {
+      apiKey: "AIzaSyBlwDjM9xw4feTKfoT971PXNH6qWO_nH6Y",
+      authDomain: "anime-kingdom-f82b9.firebaseapp.com",
+      projectId: "anime-kingdom-f82b9",
+      storageBucket: "anime-kingdom-f82b9.firebasestorage.app",
+      messagingSenderId: "415915463056",
+      appId: "1:415915463056:web:1093f045031cfa71eae315",
+      measurementId: "G-XR8YWJ7XRZ"
+    };
 
-    // 1. Load Trending Anime
-    async function loadTrending() {
-        grid.innerHTML = '<div class="loader">Entering the Kingdom...</div>';
-        const res = await fetch('https://api.jikan.moe');
-        const data = await res.json();
-        renderCards(data.data);
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+
+    function checkAdmin(val) { if(val === "9999") { document.getElementById('adminModal').style.display = 'block'; document.getElementById('searchBox').value = ""; } }
+    function closeAdmin() { document.getElementById('adminModal').style.display = 'none'; }
+
+    async function uploadToFirebase() {
+        const title = document.getElementById('upTitle').value;
+        const season = document.getElementById('upSeason').value;
+        const ep = document.getElementById('upEpisode').value;
+        const videoFile = document.getElementById('upVideo').files[0];
+        const subFile = document.getElementById('upSub').files[0];
+        const status = document.getElementById('status');
+        const upBtn = document.getElementById('upBtn');
+
+        if(!videoFile || !title) return alert("Title and Video required!");
+
+        upBtn.disabled = true;
+        status.innerText = "Uploading... කරුණාකර රැඳී සිටින්න.";
+
+        // AniList Image Fetch
+        const query = `query($s:String){Media(search:$s,type:ANIME){coverImage{large}}}`;
+        const aniRes = await fetch('https://graphql.anilist.co',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query,variables:{s:title}})});
+        const aniData = await aniRes.json();
+        const imgUrl = aniData.data.Media ? aniData.data.Media.coverImage.large : "https://via.placeholder.com";
+
+        // Upload Video
+        const vRef = storage.ref(`videos/${Date.now()}_${videoFile.name}`);
+        const vTask = await vRef.put(videoFile);
+        const vUrl = await vRef.getDownloadURL();
+
+        // Upload Subtitle
+        let sUrl = "";
+        if(subFile) {
+            const sRef = storage.ref(`subs/${Date.now()}_${subFile.name}`);
+            await sRef.put(subFile);
+            sUrl = await sRef.getDownloadURL();
+        }
+
+        // Save to Firestore
+        await db.collection("animes").add({
+            title, season, ep, imgUrl, videoUrl: vUrl, subUrl: sUrl, createdAt: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("සාර්ථකව අප්ලෝඩ් කරන ලදී!");
+        location.reload();
     }
 
-    // 2. Search Anime
-    async function searchAnime() {
-        const query = document.getElementById('searchInput').value;
-        if(!query) return;
-        grid.innerHTML = '<div class="loader">Searching...</div>';
-        const res = await fetch(`https://api.jikan.moe{query}&limit=20`);
-        const data = await res.json();
-        renderCards(data.data);
-    }
-
-    // 3. Display Cards
-    function renderCards(list) {
-        grid.innerHTML = '';
-        list.forEach(anime => {
+    // Load Data from Firestore
+    db.collection("animes").orderBy("createdAt", "desc").onSnapshot(snap => {
+        const grid = document.getElementById('animeGrid');
+        grid.innerHTML = "";
+        snap.forEach(doc => {
+            const a = doc.data();
             const card = document.createElement('div');
-            card.className = 'card';
-            card.innerHTML = `
-                <img src="${anime.images.jpg.image_url}" alt="${anime.title}">
-                <div class="card-info"><b>${anime.title}</b></div>
-            `;
-            card.onclick = () => showEpisodes(anime);
+            card.className = 'anime-card';
+            card.innerHTML = `<img src="${a.imgUrl}"><div class="info"><b>${a.title}</b><br><small>S${a.season} E${a.ep}</small></div>`;
+            card.onclick = () => playAnime(a);
             grid.appendChild(card);
         });
+    });
+
+    function playAnime(a) {
+        document.getElementById('homeView').style.display = 'none';
+        document.getElementById('playerView').style.display = 'block';
+        document.getElementById('viewTitle').innerText = `${a.title} - Season ${a.season} Ep ${a.ep}`;
+        const v = document.getElementById('mainVideo');
+        v.src = a.videoUrl;
+        if(a.subUrl) { document.getElementById('subTrack').src = a.subUrl; }
+        document.getElementById('downloadLink').href = a.videoUrl;
+        window.scrollTo(0,0);
+        v.play();
     }
 
-    // 4. Show Episodes (Logic)
-    function showEpisodes(anime) {
-        window.scrollTo({top: 0, behavior: 'smooth'});
-        videoTitle.innerText = anime.title;
-        playerSection.style.display = 'block';
-        
-        // Episode ගණන අනුව බටන් සෑදීම (උදාහරණයක් ලෙස උපරිම 12ක් පෙන්වයි)
-        const totalEp = anime.episodes || 12;
-        epList.innerHTML = '';
-        
-        for(let i=1; i <= totalEp; i++) {
-            const btn = document.createElement('button');
-            btn.className = 'ep-btn';
-            btn.innerText = `Ep ${i}`;
-            btn.onclick = () => playVideo(anime.title, i);
-            epList.appendChild(btn);
-        }
-        
-        // පලමු එපිසෝඩ් එක ප්ලේ කිරීම (Preview)
-        playVideo(anime.title, 1);
+    function handleSearch() {
+        const q = document.getElementById('searchBox').value.toLowerCase();
+        if(!q) return;
+        alert("සමාවන්න, ඔබ සොයන ඇනිමේ එක තවමත් ඇතුළත් කර නැත!");
     }
-
-    // 5. Play Video (GogoAnime Embed Logic)
-    function playVideo(title, ep) {
-        // ඇනිමේ නම ලින්ක් එකකට ගැලපෙන ලෙස සකස් කිරීම
-        const slug = title.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
-        // මෙය සැබෑ ඇනිමේ එම්බෙඩ් ප්ලේයර් එකකට උදාහරණයක් (නිරාවරණය වන සර්වර් අනුව වෙනස් වේ)
-        const videoUrl = `https://www.youtube.com{title}+episode+${ep}+anime`;
-        
-        player.src = videoUrl;
-    }
-
-    function closePlayer() {
-        playerSection.style.display = 'none';
-        player.src = "";
-    }
-
-    loadTrending();
 </script>
-
 </body>
 </html>
