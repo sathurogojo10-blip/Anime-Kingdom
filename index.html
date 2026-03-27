@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Kingdom</title>
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com"></script>
+    <title>Anime Kingdom - Free Cloud</title>
     <script src="https://www.gstatic.com"></script>
     <script src="https://www.gstatic.com"></script>
     <style>
@@ -20,12 +18,11 @@
         .anime-card:hover { transform: translateY(-10px); border-color: var(--gold); }
         .anime-card img { width: 100%; height: 280px; object-fit: cover; }
         .info { padding: 15px; text-align: center; }
-        #adminModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; padding: 30px; border-radius: 20px; border: 2px solid var(--gold); z-index: 2000; width: 320px; max-height: 80vh; overflow-y: auto; }
-        #adminModal input, #adminModal label { width: 95%; margin-bottom: 10px; display: block; }
+        #adminModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #222; padding: 30px; border-radius: 20px; border: 2px solid var(--gold); z-index: 2000; width: 320px; }
+        #adminModal input { width: 95%; margin-bottom: 10px; display: block; padding: 10px; border-radius: 5px; border: none; }
         #playerView { display: none; text-align: center; padding: 20px; background: #000; min-height: 100vh; }
         video { width: 100%; max-width: 900px; border: 2px solid var(--gold); }
         .download-btn { display: inline-block; margin-top: 10px; padding: 12px 25px; background: var(--gold); color: black; text-decoration: none; border-radius: 5px; font-weight: bold; }
-        #status { color: var(--gold); font-size: 14px; margin-top: 5px; }
     </style>
 </head>
 <body>
@@ -33,7 +30,7 @@
 <div class="hero">
     <h1 style="color:var(--gold); font-size: 2.5rem; text-shadow: 2px 2px 10px black;">ANIME KINGDOM</h1>
     <div class="search-container">
-        <input type="text" id="searchBox" placeholder="සොයන්න හෝ කේතය ඇතුළත් කරන්න..." onkeyup="checkAdmin(this.value)">
+        <input type="text" id="searchBox" placeholder="සොයන්න හෝ 9999 ඇතුළත් කරන්න..." onkeyup="checkAdmin(this.value)">
         <button onclick="handleSearch()" style="background:var(--gold); border:none; padding:15px 25px; border-radius:30px; cursor:pointer;">GO</button>
     </div>
 </div>
@@ -44,32 +41,29 @@
         <track id="subTrack" kind="subtitles" srclang="si" label="Sinhala" default>
     </video>
     <br>
-    <a id="downloadLink" class="download-btn" target="_blank">Download Now</a>
-    <button onclick="location.reload()" style="background:#444; color:white; border:none; padding:12px; cursor:pointer; margin-left:10px; border-radius:5px;">Back Home</button>
+    <a id="downloadLink" class="download-btn" target="_blank">Download Episode</a>
+    <button onclick="location.reload()" style="background:#444; color:white; border:none; padding:12px; cursor:pointer; margin-left:10px; border-radius:5px;">Home</button>
 </div>
 
 <div class="container" id="homeView">
-    <h2>අලුත්ම නිකුත් කිරීම්</h2>
+    <h2 id="listTitle">👑 මෑතකදී එකතු කළ ඇනිමේ</h2>
     <div id="animeGrid" class="grid">Loading Kingdom...</div>
 </div>
 
 <!-- Admin Modal -->
 <div id="adminModal">
-    <h3>Admin Upload Center</h3>
+    <h3 style="color:var(--gold)">Admin - Add Anime Link</h3>
     <input type="text" id="upTitle" placeholder="Anime Name (Exact)">
     <input type="text" id="upSeason" placeholder="Season">
     <input type="text" id="upEpisode" placeholder="Episode">
-    <label>Video File:</label>
-    <input type="file" id="upVideo" accept="video/*">
-    <label>Subtitle (.vtt පමණි):</label>
-    <input type="file" id="upSub" accept=".vtt">
-    <div id="status"></div>
-    <button onclick="uploadToFirebase()" id="upBtn" style="width:100%; padding:12px; background:var(--gold); border:none; cursor:pointer; font-weight:bold;">START UPLOAD</button>
+    <input type="text" id="upVideoUrl" placeholder="Direct Video Link (URL)">
+    <input type="text" id="upSubUrl" placeholder="Subtitle Link (.vtt URL)">
+    <button onclick="saveLinkToFirebase()" style="width:100%; padding:12px; background:var(--gold); border:none; cursor:pointer; font-weight:bold;">SAVE TO DATABASE</button>
     <button onclick="closeAdmin()" style="width:100%; margin-top:10px; background:#444; color:white; border:none; cursor:pointer;">Cancel</button>
 </div>
 
 <script>
-    // --- ඔබේ FIREBASE CONFIG එක මෙතන තියෙනවා ---
+    // ඔබේ Firebase Config එක මෙතැනට දමන්න
     const firebaseConfig = {
       apiKey: "AIzaSyBlwDjM9xw4feTKfoT971PXNH6qWO_nH6Y",
       authDomain: "anime-kingdom-f82b9.firebaseapp.com",
@@ -82,24 +76,19 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
-    const storage = firebase.storage();
 
     function checkAdmin(val) { if(val === "9999") { document.getElementById('adminModal').style.display = 'block'; document.getElementById('searchBox').value = ""; } }
     function closeAdmin() { document.getElementById('adminModal').style.display = 'none'; }
 
-    async function uploadToFirebase() {
+    // Save Logic (Links Only)
+    async function saveLinkToFirebase() {
         const title = document.getElementById('upTitle').value;
         const season = document.getElementById('upSeason').value;
         const ep = document.getElementById('upEpisode').value;
-        const videoFile = document.getElementById('upVideo').files[0];
-        const subFile = document.getElementById('upSub').files[0];
-        const status = document.getElementById('status');
-        const upBtn = document.getElementById('upBtn');
+        const vUrl = document.getElementById('upVideoUrl').value;
+        const sUrl = document.getElementById('upSubUrl').value;
 
-        if(!videoFile || !title) return alert("Title and Video required!");
-
-        upBtn.disabled = true;
-        status.innerText = "Uploading... කරුණාකර රැඳී සිටින්න.";
+        if(!vUrl || !title) return alert("Title and Video Link required!");
 
         // AniList Image Fetch
         const query = `query($s:String){Media(search:$s,type:ANIME){coverImage{large}}}`;
@@ -107,29 +96,15 @@
         const aniData = await aniRes.json();
         const imgUrl = aniData.data.Media ? aniData.data.Media.coverImage.large : "https://via.placeholder.com";
 
-        // Upload Video
-        const vRef = storage.ref(`videos/${Date.now()}_${videoFile.name}`);
-        const vTask = await vRef.put(videoFile);
-        const vUrl = await vRef.getDownloadURL();
-
-        // Upload Subtitle
-        let sUrl = "";
-        if(subFile) {
-            const sRef = storage.ref(`subs/${Date.now()}_${subFile.name}`);
-            await sRef.put(subFile);
-            sUrl = await sRef.getDownloadURL();
-        }
-
-        // Save to Firestore
         await db.collection("animes").add({
             title, season, ep, imgUrl, videoUrl: vUrl, subUrl: sUrl, createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
 
-        alert("සාර්ථකව අප්ලෝඩ් කරන ලදී!");
+        alert("Link Saved Successfully!");
         location.reload();
     }
 
-    // Load Data from Firestore
+    // Display
     db.collection("animes").orderBy("createdAt", "desc").onSnapshot(snap => {
         const grid = document.getElementById('animeGrid');
         grid.innerHTML = "";
@@ -146,7 +121,7 @@
     function playAnime(a) {
         document.getElementById('homeView').style.display = 'none';
         document.getElementById('playerView').style.display = 'block';
-        document.getElementById('viewTitle').innerText = `${a.title} - Season ${a.season} Ep ${a.ep}`;
+        document.getElementById('viewTitle').innerText = `${a.title} - S${a.season} E${a.ep}`;
         const v = document.getElementById('mainVideo');
         v.src = a.videoUrl;
         if(a.subUrl) { document.getElementById('subTrack').src = a.subUrl; }
@@ -157,8 +132,19 @@
 
     function handleSearch() {
         const q = document.getElementById('searchBox').value.toLowerCase();
-        if(!q) return;
-        alert("සමාවන්න, ඔබ සොයන ඇනිමේ එක තවමත් ඇතුළත් කර නැත!");
+        const grid = document.getElementById('animeGrid');
+        const cards = grid.getElementsByClassName('anime-card');
+        let found = false;
+
+        for (let card of cards) {
+            if (card.innerText.toLowerCase().includes(q)) {
+                card.style.display = "block";
+                found = true;
+            } else {
+                card.style.display = "none";
+            }
+        }
+        if(!found) alert("මෙම ඇනිමේ එක තවමත් ඇතුළත් කර නැත!");
     }
 </script>
 </body>
